@@ -5,40 +5,55 @@ nox = {}
 nox.is_template = (object) ->
   return object._nox_template
 
+nox.deep_clone = (source) ->
+  if(_.isFunction(source) || _.isNumber(source) || _.isString(source))
+    return source
+  if(_.isArray(source))
+    ret_val = []
+    for i in source
+      ret_val.push nox.deep_clone i
+    return ret_val
+  if(_.isObject(source))  
+    ret_val = {}
+    for key in _.keys(source)
+      ret_val[key] = nox.deep_clone(source[key])
+    return ret_val
+
+
 nox.templates = {}
 
+# Note this will owerwrite any other template by this name
 nox.create_template = (name,properties) ->
   nox.templates[name] = properties
+  properties._nox_template = true
+  properties._nox_template_name = name
   return properties 
 
 nox.construct_template = (template,parent,index) ->
   ret_val = 
-    _nox_template : true
     _parent : parent
     _index : index
+    _nox_errors : []
+
+  if !template?
+    ret_val._nox_errors.push "Cannot construct template with undefined template parameter."
+    return ret_val
+
+  if _.isString(template)
+    template_str = template
+    template = nox.templates[template]
+    if !template?
+      ret_val._nox_errors.push "Cannot find template [#{template_str}]."
+      return ret_val
+
+
   for key in _.keys(template)
     if template[key]._nox_method == true
-      if(parent?)
-        target = @_parent.key +'.'+key 
-      template[key]._target = target
       ret_val[key] = template[key].run(ret_val)
+    else 
+      ret_val[key] = nox.deep_clone template[key]
   return ret_val  
 
-nox.deep_clone = (source) ->
-  ret_val = {}
-  #console.log '----'
-  for key in _.keys(source)
-    if(_.isObject(source[key]))
-      if(!_.isFunction(source[key]) && !_.isArray(source[key]) && !_.isNumber(source[key]))
-        #console.log 'Deep',key,source[key]
-        ret_val[key] = nox.deep_clone(source[key])
-      else 
-        #console.log 'Shallow',key,source[key]
-        ret_val[key] = source[key]
-    else
-      #console.log 'Shallow',key,source[key]
-      ret_val[key] = source[key]
-  return ret_val
 
 nox.extend_template = (source_template,name,properties) ->
   ret_val = nox.deep_clone(source_template)
@@ -51,26 +66,40 @@ nox.extend_template = (source_template,name,properties) ->
 nox.resolve = (parameter,target_object) ->
   return if parameter._nox_method then parameter.run target_object else parameter
 
-nox.const = (input) ->
+nox.check_field = (field,field_name,errors) ->
+  if !field?
+    errors.push "Required field [#{field_name}] is missing."  
+
+nox.check_fields = (source,field_list) ->
+  for field in field_list
+    nox.check_field source[field],field,source._nox_errors
+  
+  return _.size(source._nox_errors)>0
+
+nox.const = (input) ->  
   ret_val = 
     _nox_method : true
+    _nox_errors : []
     value : input.value
     run : (target_object) ->
-      if(@value._nox_method)
-        return @value.run(target_object)
-      else
-        return @value
+      if nox.check_fields @,['value']
+        return @_nox_errors
+
+      value = nox.resolve @value,target_object
+      return value
   return ret_val 
 
 nox.method = (input) ->
   ret_val = 
     _nox_method : true
+    _nox_errors : []
     method : input.method
     run : (target_object) ->
-      if(@method._nox_method)
-        return @method.run(target_object) target_object 
-      else
-        return @method target_object
+      if nox.check_fields @,['method']
+        return @_nox_errors
+
+      method = nox.resolve @method,target_object
+      return method(target_object)
   return ret_val
 
 nox.rnd = (input) ->
@@ -79,11 +108,14 @@ nox.rnd = (input) ->
 
   ret_val = 
     _nox_method : true
+    _nox_errors : []
     min : input.min
     max : input.max
-    floor : input.floor
     normal : input.normal
     run : (target_object) ->
+      if nox.check_fields @,['min','max','normal']
+        return @_nox_errors
+
       min = nox.resolve @min, target_object
       max = nox.resolve @max, target_object
       normal = nox.resolve @normal, target_object
@@ -112,7 +144,7 @@ nox.select = (input) ->
     values : input.values
     return_one : input.return_one
     run : (target_object) ->
-      count = nox.resolve @count, target_object
+      count = Math.floor nox.resolve @count, target_object
       values = nox.resolve @values, target_object
       return_one = nox.resolve @return_one, target_object
       
@@ -151,65 +183,5 @@ nox.select_one = (input) ->
   return nox.select input 
   
 
-
-
-
-
-
-get_name = (target_object) ->
-  if target_object.type == 'Orc'
-    return 'HamishOrc'
-  else
-    return "No an orc"
-
-YEAR = 
-  name : 'Years'
-  symbol : 'T'
-
-MonsterTemplate = nox.create_template 'MonsterTemplate',
-  type : nox.const
-    value : 'Generic Monster'
-  name : nox.const
-    value : 'Generic Monster Name'
-  age : nox.rnd
-    min : 10
-    max : 15
-  color : nox.select_one
-    values : ['Green','Brown','White']
-  children : nox.select
-    count : 3
-
-OrcTemplate = nox.extend_template MonsterTemplate,'OrcTemplate',
-  type : 
-    value : 'Orc'
-  name : 
-    value : nox.method
-      method : nox.const
-        value : get_name
-  age : 
-    min : 20
-    max : nox.rnd_normal
-      min : 20 
-      max : 40
-
-  children : 
-    values : ['OrcChildTemplate']  
-
-
-OrcChildTemplate = nox.extend_template OrcTemplate,'OrcChildTemplate',
-  children : nox.const
-    value : []
-  age : nox.rnd
-    min : 0
-    max : 14
-
-
-
-#console.log MonsterTemplate
-console.log OrcTemplate
-
-
-#console.log nox.construct_template MonsterTemplate
-console.log nox.construct_template OrcTemplate
-
+module.exports = nox
 
