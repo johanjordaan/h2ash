@@ -1,0 +1,213 @@
+Determine Your Star Type
+ The Sun The first step is to determine which type of star your planets revolve around. This chart approximately represents the ratio of different types of stars we know to exist in our universe. To roll a random star type, take your two ten-sided dice (2d10) and choose one of them to represent the tens digit. The other represents the ones digit (note: a roll of 0 and 0 means 100). Be sure to write down your results as you go.
+
+Stars
+1 Dwarf or hypergiant star - no planets, but feel free to roll for a companion star.
+2 Non main-sequence star, see chart below.
+3-75 M class - Red. Typically half the mass of our sun.
+76-89 K Class - Orange. Typically less mass than our sun.
+90-96 G Class - Yellow. Equal to or slightly greater mass than our sun.
+97-99 F Class - White. About twice the mass of our sun.
+100 A Class - Blue-white. About 3 times the mass of our sun.
+
+Non Main-Sequence Stars
+These stars are bigger than their main-sequence relatives of the same color. If you need a non main-sequence star, roll one six-sided die (1d6) on this chart to determine its color, then multiply the result by 1d10 (one ten-sided die) for its size (in solar masses).
+1 Red
+2 Orange
+3 Yellow
+4 White
+5 Blue-white
+6 Blue
+
+Companion Stars
+Some stars orbit other stars. If you'd like your star to have a companion, simply roll again on the chart. Keep in mind that if your stars orbit too closely to each other, they will gobble up all of their surrounding planets, or make them uninhabitable.
+
+
+Roll your Planets
+ Planets You may choose the number of planets or roll it. I recommend rolling 3d6 (three six-sided dice) to decide your total number of planets. This should give you a nice manageable number while ensuring some variety.
+
+For planet size, roll 1d10 (one ten-sided die). You may arrange your planets after rolling them, or place them in the order rolled. Though gas giants have been observed close to their parent stars (believed by most to be captured objects), you may wish to emulate the solar model for your system. For a randomly generated sol-like system, ignore rolls above 8 for your inner planets, and ignore rolls between 2-7 for your desired gas giant range. Ignore rolls above 4 for anything beyond that.
+
+Planet Size
+1 Asteroid Belt
+Diameter: 0-2000 mi, Gravity: 0.0-.05 G
+2 Sub-lunar (Pluto, Eris)
+Diameter: 1000-2000 mi, Gravity: .05-0.1 G
+3 Lunar (Earth's Moon)
+Diameter: 2000-3000 mi, Gravity: 0.1-0.3 G
+4 Super-lunar (Mars, Mercury)
+Diameter: 3000-5000 mi, Gravity: 0.3-0.7 G
+5 Sub-Terran (Venus)
+Diameter: 5000-8000 mi, Gravity: 0.7-1.0 G
+6 Terran (Earth)
+Diameter: 8000-11,000 mi, Gravity:1.0-2.0 G
+7 Super-Terran (Gliese 581 c)
+Diameter: 11,000-20,000 mi, Gravity: 2.0-3.0 G
+8 Sub-Jovian (Uranus, Neptune)
+Diameter: 20,000-50,000 mi, Gravity*: 1.0-2.0 G
+9 Jovian (Jupiter, Saturn)
+Diameter: 50,000-100,000 mi, Gravity*: 2.0-3.0 G
+10 Super-Jovian (Methuselah)
+Diameter: 100,000+ mi, Gravity*: 3.0+ G
+
+* Surface gravity of gas giants is measured at the cloud tops.
+
+Image Credit: Wikipedia (various)
+
+Give Your Planets Moons
+Moons Here are some general guidelines for naturally occurring moons. The size of the planet will determine how big the moons can be.
+
+If your planet is size 3 or smaller:
+1: Roll 1d6 (one six-sided die).
+2: Divide the result by two, rounding down. Your planet has this many asteroid-sized moons.
+
+If your planet is size 4 - 7:
+1: Subtract 3 from the roll from your original planet. This is your maximum moon size.
+2: Roll 4d10 (four ten-sided dice), ignoring any results higher than your maximum moon size. A result of 1 means that the moon is asteroid sized.
+3: If your planet is size 5 or larger and all your moons are size 1, roll 1d10 (one ten-sided die). Your planet has this many rings.
+
+If your planet is size 8 - 10:
+1: Subtract 4 from the roll from your original planet. This is your maximum moon size.
+4: Roll 1d10 (one ten-sided die) for your number of major moons.
+3: Roll again on the chart for each moon, ignoring any results higher than your maximum moon size.
+A result of 1 means a planetary ring made up of asteroid-sized rocks and dust.
+4: Roll 10d10 (ten ten-sided dice) for your number of minor moons. These are asteroid-sized and possess eccentric orbits outside the planetary ring system.
+Determine Habitability
+Image credit: http://commons.wikimedia.org/wiki/User:ChewieHabitablity
+
+The most important question you're going to ask yourself now is 'Could I live there?'. A planet is considered 'habitable' if it lies within a certain range from its star; the range at which temperatures allow water to be present in its liquid phase. The Earth lies right in the middle of this range, unsurprisingly. As our sun ages, this range will move out toward the orbit of Mars.
+
+If you're just sketching a rough solar system and don't need to know the specifics, then set one or two planets within the habitable zone and decide whether one or both can sustain life. You needn't go any further than this unless you expect your system to undergo a lot of scrutiny. If you don't think you're finished yet, keep going - but don't be afraid to call it done at any point you choose.
+
+Depending on the size of the star they orbit, 2 or possibly 3 planets could simultaneously lie within the habitability range. (If you want more habitable planets than this, try placing your moon-rich gas giants within this range.) Our planet lives at a distance called 1 AU (Astronomical Unit) from the sun. For a larger star (the sun in 6 billion years, for example), this distance will be inside the evaporation limit. For a smaller one, this distance would be outside the freeze limit.
+
+Note: If you want to get technical, you can also calculate the actual distance of your planets from their star. Based on what we know from our own solar system, planets like to form somewhere between 1 1/2 to 2 times as far from their parent star as the previous planet. The innermost ring might be pretty close to its parent, or a little further out - it really depends on the object's velocity and the star's size. Pick a starting orbit for your closest planet, then work your way out as you go.
+
+Atmosphere
+
+Next you'll need to know whether you can breathe there. Your planet's mass will play the biggest factor in this, so go back and take a glance at your size category.
+
+Pressure
+-4 Vacuum of space
+-2 Aircraft altitudes
+-1 Top of Mount Everest
+0 0 to 8000 ft above sea level
+2 2000 ft below sea level
+4 Mariana Trench
+6 Surface of Jupiter
+10 Black hole
+
+Rather than go into a detailed explanation of measuring atmosphere, we're going to use this simplified chart. There are some example pressure ranges plotted on the chart for reference. (Note that this chart is not in any way to scale, and that the numbers indicated refer to principles which will be explained in a later section.)
+
+Now, take a look at your planet size. Say for example you had a nice Earth-sized 6. According to our chart, the pressure at sea level on Earth is a baseline 0. We're going to go out on a limb and say that a planet the size of Earth might have a sea-level atmospheric pressure between categories -1 and 1. If we go to the larger end of size 6, maybe we should look at a category range more like 0 to 2. Use the following numbers for a guideline.
+
+Size 1 or 2: -4
+Size 3: -4 to -2
+Size 4: -4 to -1
+Size 5: -2 to 1
+Size 6: -1 to 2
+Size 7: 1 to 4
+Size 8: 2 to 5
+Size 9: 4 to 7
+Size 10: 5 to 8
+
+If a planet has an atmosphere rating of 0, a human can walk around in it without any need for technological aids. A 1 or -1 rating may be made hospitable by means of medicine or a simple machine, but anything farther from 0 will be harmful to the human body. Also, If you want to choose your atmospheric pressure at random, you can assign each number in your possible range to a number on a die and roll it.
+
+Toxicity
+
+The next thing to know, once you've determined that a planet has an atmosphere, is whether that atmosphere is breathable by humans. Nothing in the cold or hot ranges will be breathable (under normal circumstances), but you can still roll for atmospheric composition if you like. Roll 1d6 (one six-sided die) and subtract 3 from the roll. This is your atmosphere's toxicity.
+
+-2 Inert gasses
+0 Earth's atmosphere
+2 Volcanic Ash
+3 Chemical weapons
+
+Like atmospheric pressure, 0 is just the right mix of gasses for unaided breathing. A rating of -1 or 1 might be endurable for short periods, or with simple machines or medication, but anything outside that range requires breathing filters or oxygen tanks, and a level 3 will be caustic to the skin as well.
+
+Now let's get back to temperature. Start with the planet or planets within your habitability zone. These have a base temperature rating of 0 on the following chart.
+
+Temperature
+-5 Absolute zero
+-4 Vacuum of space
+-2 Arctic temperatures
+-1 Temperate winters
+0 Optimal human habitability - 40-90° Fahrenheit
+1 Desert summers
+3 Boiling point of water
+4 Temperatures required for atmospheric re-entry
+8 The surface of a star
+
+Starting temperature: Distance from habitable zone.
+
+Now we need to apply some modifiers. First, check how many steps out from the habitability zone your planet is. Say you have 10 planets, and planet 5 is in your habitable zone. The next one out - planet 6 - has a base temperature of -1. Planet 7 has a -3, and planets 8, 9 and 10 are all -4. Now work inward. The next planet closer than the habitable zone (4 in this case) is a nice toasty 1. Planet 3 is 2, planet 2 is 3, and planet 1 is temperature rating 4. Assuming you can really get any planets that close, we're going to max out the temperature at a 6.
+
+Add or subtract your atmosphere rating.
+
+Hang on tight here; this is the hardest part, but once you're through it, the rest is a breeze. Take that base number you found using your distance, and look at your atmosphere pressure rating. This time it's simple math; add or subtract this number from the number you got based on distance. Say your planet at spot 3 had a nice thick atmosphere at rating 2. Now you've got a temperature rating of 5.
+
+Add one for planets with multiple large moons or moons closely orbiting gas giants.
+
+You're not done yet! One last step. Go back and look at your moons. If your planet has 2 or more moons at the maximum size (that was 3 sizes less than your planet, 4 for the gas giants) or has 3 moons one step less than the maximum, then add one to your temperature rating. There's a lot of tidal force working on these, which creates geothermal heat. The same goes for the 3 or more closest moons of any gas giant.
+
+Phew! That wasn't so bad, was it? Now that you've got your final temperature numbers ready, there might be a few more planets that look habitable. Some of them are, but not most of them.
+
+One point of radiation per step inward from habitability, one point for each step below 0 of the atmosphere rating.
+
+You can pretty much cross out anything closer to the star than your habitable range. The only thing dropping these temperatures is a thinning of the atmosphere, and that's going to let in a lot more radiation than a human wants to deal with. Give it a Radiation rating (yes, a new number to keep track of...just jot it down and we'll get to it) of 1 for every step closer than your 'Goldilocks' zone, and one for every step below 0 the atmosphere is. That means at least 2 for even the outermost of these.
+
+You can also forget about those outer gas giants. Jupiter gets up to 10,000 degrees Kelvin at its 'sea level', but by the time you got deep enough to feel that much heat, you'd be smashed as flat as a pancake. Stick with regular sized planets and orbiting moons outside the zone. On the other hand, keep in mind that a gas giant within or just outside the habitability range is going to have at least a thin layer just under the cloud tops that might suit your needs (as long as its toxicity is fine). You'll need some advanced technology for that, but you're already traveling the stars anyway, so what's a floating city or two to you?
+
+Now you should have everything you need to figure out which planets in your solar system can support human life. Remember: this is your system. If you absolutely need a planet with a perfect atmosphere, just pick your favorite one and set the values instead of rolling. If anything else doesn't feel right then change it, move it or throw it out. It's up to you.
+
+Image Credit: Chewie
+
+Such a Nice Little Planet...
+... surely somebody lives there?
+Now, let's get on with the promised explanation of that chart.
+
+Technology/Habitability Level
+0 Uninhabited - No technology
+1 Stone age - Crude weapons and simple clothing
+2 Iron Age - Iron tools, textiles
+3 Industrial Age - Mechanical manufacturing
+4 Space Age - Plastics, synthetic fabrics
+5 Hyperspace Age - Transparent ceramics, faster-than-light technology
+6+ Hypothetical future or alien technologies
+
+So what does it all mean? This chart outlines a technology level system which will help simplify things for your inhabited planets. Take a look at your pressure, toxicity, radiation and temperature numbers. The greatest deviation from 0 (meaning -4 is 'bigger' than 3) determines which technology level is required for a climate to be habitable by humans. This does not mean that it is not inhabited by something which is suited perfectly to this climate, if you want to put something there (in fact, some indigenous plant and animal life is always a nice touch).
+
+Habitability level means what level of technology a planet needs to be suitable for humans, but technology level is used to denote how advanced a civilization is. Most stories involving interstellar travel are written in the Hyperspace age, though a fair number are simply Space Age. If your characters have access to equipment not yet invented by NASA, they're probably in the Hyperspace Age. A planet they travel to might have a race whose technology is Iron Age and the inhabitants consider everything they do to be magic, or it might be home to a pacifist society with a technology level of 7 which closely guards its secrets from 'ignorant' aliens.
+
+To randomly determine whether a planet is inhabited, roll a ten-sided die (1d10) and subtract one, using the result as your planet's maximum technology level. For a galaxy favoring uninhabited planets, you could roll a ten-sided die (1d10) and subtract 4 from your result. Negative numbers are rounded up to zero, and a roll of 6 indicates an advanced civilization with a technology rating of your choice.
+
+Even an inhabited planet might have empty regions where no intelligent life lives. Some might have multiple civilizations of different technology levels, and some might even be home to two or more colonies of non-indigenous aliens, living together peacefully or otherwise. Feel free to add as much detail as you need, but try not to put too much effort into cultures and worlds your characters may never visit. For your planets well outside the human habitability range, you can still roll a technology level, but if your characters are going to interact with its denizens at all, it might be wise to fudge the numbers a little higher and have them be colonists on those planets.
+
+Now that you've got your numbers, say you've got a planet with an indigenous Space Age population and which has a human habitability level of 3. For that indigenous population, Earth would be a habitability level of 3 for them, and they would need the same sort of equipment to live there as a human would to live on their planet. If you need to determine habitability for more than one race, simply use their home planet as the baseline instead of Earth.
+Fluff and Feathers
+Right now you've got yourself a pretty handsome solar system, but say you want to go further. Here are some tips to help you give your planets some real individualism.
+
+Geography and Climate
+
+A planet's geography is influenced by 3 major elements: its age, the number of its moons, and it's proportion of open water. A younger planet is more likely to be subject to constant geological disturbances as its inner materials move about and try to find equilibrium. The same is true for planets with moons (or for moons orbiting planets); the tidal forces exerted upon a planet bend and twist it, causing volcanic activity and earthquakes. In both of these cases, there are new mountains and valleys constantly being formed, counteracting the effects of the third element; surface water.
+
+Water, or any other liquid present in large enough quantities on a planet's surface, will wear down jagged mountains and fill deep canyons with runoff. It can pool, evaporate, condense, and freeze, creating oceans, ice caps, and severe weather patterns which will wear away at the jagged landscapes formed by geologic turmoil. These are the major factors to consider when deciding the physical appearance of your planet.
+
+To randomly determine what percentage of a planet is covered with liquid, roll two ten-sided dice (2d10), using the first one as the tens column (convert a 10 to 0) and the second as the ones column. Alternately, you could base your water coverage on your atmosphere - a thin atmosphere will let water or other liquids evaporate, while a moderate or thick atmosphere will preserve them. The actual nature of the liquid depends upon the planet's base temperature, and is typically only water within the solar system's habitable zone.
+
+Weather patterns are influenced by a planet's rotation, including its tilt. The greater the rotation, the less time a day takes on that planet, and the more turbulent its weather patterns will be. The greater the angle of tilt (this can measure anywhere from 0° to 90°), the more dramatic the seasons will be. The Earth's axial tilt is 23.44°, a fairly moderate tilt which still puts part of the planet in darkness for part of the year (and makes parts of it require a technology level of 3 to explore - our own planet!). An extremely elliptical orbit will also increase the severity of your seasons, sometimes to the point that it is incapable of sustaining life at all. On the other hand, the greater your liquid coverage, the milder your seasons will be, especially if the liquid is water, which resists changes in state and distributes heat extremely well.
+
+Another thing to consider is the frequency with which the planet is bombarded by outside objects. A planet with a thick atmosphere will have almost no visible pockmarks from asteroids or collided moons, whereas a smaller planet or moon without an atmosphere may have almost no visible features which are not impact craters. There are also planets which once had an atmosphere and no longer do; these will be somewhere in between the two extremes. A planet near an asteroid belt or which has rings will receive more bombardment than others.
+
+Plant and Animal Life
+
+Now turn to the planets which you have deemed to be inhabitable. These need not be restricted to those habitable by humans, but try not to overdo it - you're unlikely to need a full ecosystem for more than a handful of your planets.
+
+Whether ground-based, water-dwelling or airborne, plants - that is, unintelligent organisms with little or no locomotive ability - should be omnipresent in any self-sustaining ecosystem. Plants get their nourishment directly from their environment, often changing it in some way or another as they do so, and are a major source of food energy to more mobile creatures. Making a few notes about the plant life of your worlds can make them more memorable. Even the most utilitarian of spaceports might keep a few of the local plants around for air filtration purposes. Points to consider are color, height, foliage traits, response to stimuli (light, movement) and anything else that might seem alien about them to the reader.
+
+The second concern in populating a planet is its animal life. Especially on a low-technology planet, animals - organisms capable of movement, which may feed on plants or upon other animals - may be the greatest obstacle an exploring party faces. Animals can have interesting traits which make them somehow noteworthy in a story. They might be prized as hunting trophies, or have some unique defense mechanisms with which to cause a party grief. Some points to consider are diet, temperament, habits, physical appearance and whether they are typically domesticated.
+
+The final thing to consider is the indigenous population. Are they human, or alien? You may have already determined their technology level, but what do they look like, what do they wear, and how do they react to outsiders or even to each other? If your characters are going to interact with them for any extended period, you should determine an outline of their cultural beliefs, agriculture or science, and possibly religion. If you have trouble getting ideas for your plants, animals or alien races, do a little research - there are thousands of opinions on what an alien world might look like. Pick some of your favorite ideas from the examples you find, invent or borrow some names for your races, and you're done. Congratulations on a finely designed solar system!
+
+
+
+
