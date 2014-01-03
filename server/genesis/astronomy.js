@@ -43,11 +43,12 @@
   };
 
   distance_of_planet = function(planet) {
-    var index;
+    var index, ret_val;
     index = 0;
     if ((planet._index != null)) {
       index = planet._index;
     }
+    ret_val = _.random(0.1 * AU, 0.3 * AU) * Math.pow(2, index);
     return ret_val / AU;
   };
 

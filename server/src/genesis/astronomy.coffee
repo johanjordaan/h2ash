@@ -49,7 +49,7 @@ distance_of_planet = (planet) ->
   if(planet._index?)
     index = planet._index 
 
-  #ret_val = _.random(0.1*AU,0.3*AU)*Math.pow(2,index) 
+  ret_val = _.random(0.1*AU,0.3*AU)*Math.pow(2,index) 
   return ret_val/AU
 
 # Result is in AU

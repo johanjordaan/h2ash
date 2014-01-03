@@ -25,6 +25,59 @@ DWARF_PLANET_LIST = [
   { probability : 8/10, type : planet_types.ASTEROID }
 ]
 
+###
+KELVIN =
+  name : 'Kelvin'
+  description : ''
+  units : ''
+  symbol : 'K'
+  value : 1  
+
+SUN_LUMINOSITY = 
+  name : ''
+  decription : ''
+  units : ''
+  symbol : 'Lsun'
+  value : 1111
+
+Km = 
+  name : 'Kilometer'
+  description :
+
+SUN_RADIUS = 
+  name : ''
+  decription : ''
+  units : ''
+  symbol : 'Rsun'
+  value : 1111
+
+StarTemplete = new Template
+  name : nox.fixed
+  color : nox.select_one
+  temperature : 
+    selector : nox.range
+    units : KELVIN
+  luminosity : 
+    selector : nox.range
+    units : SUN_LUMINOSITY 
+  radius :
+    selector : nox.method
+    units : SUN_RADIUS 
+
+
+DWARF = new StarTemplete
+  name :
+    value : 'White Dwarf'
+  color : 
+    selection : ['White']
+  temperature :
+    from  : 6000
+    to    : 30000
+  luminosity :
+    from  : 10e-4 
+    to    : 10e-2 
+###
+
 # Star types
 #
 DWARF = 
