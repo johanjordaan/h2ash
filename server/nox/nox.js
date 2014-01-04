@@ -50,6 +50,15 @@
     }
   };
 
+  nox.probability = function(probability, item) {
+    var ret_val;
+    ret_val = {
+      probability: probability,
+      item: item
+    };
+    return ret_val;
+  };
+
   nox.is_method_valid = function(method) {
     var key, _i, _len, _ref;
     console.log('xxxx', method);
@@ -134,22 +143,25 @@
     return ret_val;
   };
 
-  nox.extend_template = function(source_template, name, properties) {
-    var key, property_key, ret_val, _i, _j, _len, _len1, _ref, _ref1;
-    ret_val = nox.deep_clone(source_template);
+  nox.extend_fields = function(fields, properties) {
+    var key, _i, _len, _ref, _results;
     _ref = _.keys(properties);
+    _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       key = _ref[_i];
-      if ((ret_val[key] == null) || !_.isObject(properties[key]) || !_.isObject(ret_val[key])) {
-        ret_val[key] = nox.deep_clone(properties[key]);
+      if ((fields[key] == null) || !_.isObject(properties[key]) || !_.isObject(fields[key]) || nox.is_method(properties[key])) {
+        _results.push(fields[key] = nox.deep_clone(properties[key]));
       } else {
-        _ref1 = _.keys(properties[key]);
-        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-          property_key = _ref1[_j];
-          ret_val[key][property_key] = nox.deep_clone(properties[key][property_key]);
-        }
+        _results.push(nox.extend_fields(fields[key], properties[key]));
       }
     }
+    return _results;
+  };
+
+  nox.extend_template = function(source_template, name, properties) {
+    var ret_val;
+    ret_val = nox.deep_clone(source_template);
+    nox.extend_fields(ret_val, properties);
     return nox.create_template(name, ret_val);
   };
 
@@ -220,33 +232,47 @@
     if (input.normal == null) {
       input.normal = false;
     }
+    if (input.integer == null) {
+      input.integer = false;
+    }
     ret_val = {
       _nox_method: true,
       _nox_errors: [],
       min: input.min,
       max: input.max,
       normal: input.normal,
+      integer: input.integer,
       run: function(target_object) {
-        var diff, i, itterations, max, min, normal, _i, _len, _ref;
-        if (nox.check_fields(this, ['min', 'max', 'normal'])) {
+        var diff, i, integer, itterations, max, min, normal, _i, _len, _ref;
+        if (nox.check_fields(this, ['min', 'max', 'normal', 'integer'])) {
           return this._nox_errors;
         }
         min = nox.resolve(this.min, target_object);
         max = nox.resolve(this.max, target_object);
         normal = nox.resolve(this.normal, target_object);
+        integer = nox.resolve(this.integer, target_object);
         itterations = normal ? 3 : 1;
         ret_val = 0;
         diff = max - min;
         _ref = _.range(itterations);
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           i = _ref[_i];
-          ret_val += min + diff * Math.random();
+          if (integer) {
+            ret_val = _.random(min, max);
+          } else {
+            ret_val += min + diff * Math.random();
+          }
         }
         ret_val = ret_val / itterations;
         return ret_val;
       }
     };
     return ret_val;
+  };
+
+  nox.rnd_int = function(input) {
+    input.integer = true;
+    return nox.rnd(input);
   };
 
   nox.rnd_normal = function(input) {

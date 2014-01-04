@@ -120,7 +120,7 @@
   });
 
   describe('nox.extend_template', function() {
-    return describe('- basic usage (using the actual template class as input) : ', function() {
+    describe('- basic usage (using the actual template class as input) : ', function() {
       var base_template, child, child_template;
       base_template = nox.create_template('base_template', {
         name: nox["const"]({
@@ -188,6 +188,31 @@
         child.type.should.equal('child_type');
         child.child_field.should.equal('child specific field');
         return child.age.should.equal(80);
+      });
+    });
+    return describe('- complex usage : testing multiple levels : ', function() {
+      var m_template, star_template;
+      star_template = nox.create_template('star_template', {
+        planets: nox.select({
+          count: nox.rnd({
+            max: 10
+          }),
+          values: ['a']
+        })
+      });
+      m_template = nox.extend_template(star_template, 'm_template', {
+        planets: {
+          count: {
+            min: 1,
+            max: 2
+          },
+          valuse: ['x']
+        }
+      });
+      return it('should assign the overrideen values at the correct level of the child template', function() {
+        expect(m_template.planets.count.min).to.exist;
+        m_template.planets.count.min.should.equal(1);
+        return m_template.planets.count.max.should.equal(2);
       });
     });
   });

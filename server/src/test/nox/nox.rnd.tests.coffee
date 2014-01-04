@@ -117,3 +117,4 @@ describe 'nox.rnd', ()->
       r = c.run()
       r.should.equal -3.5 + (99+3.5)/2
 
+

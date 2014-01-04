@@ -32,6 +32,12 @@ nox.deep_clone = (source) ->
       ret_val[key] = nox.deep_clone(source[key])
     return ret_val
 
+nox.probability = (probability,item) ->
+  ret_val = 
+    probability : probability
+    item : item
+  return ret_val  
+
 nox.is_method_valid = (method) ->
   console.log 'xxxx',method
   if method._nox_errors.length > 0 
@@ -97,15 +103,24 @@ nox.construct_template = (template,parent,index) ->
   return ret_val  
 
 
-nox.extend_template = (source_template,name,properties) ->
-  ret_val = nox.deep_clone(source_template)
+nox.extend_fields = (fields,properties) ->
   for key in _.keys(properties)
-    if !ret_val[key]? || !_.isObject(properties[key]) || !_.isObject(ret_val[key])
-      ret_val[key] = nox.deep_clone properties[key]
+    # If the key does not exist in the source or (allows for new keys to be aded)
+    # the properties value is not an object (allows methods to be overwritten by direct assignemnts)
+    # the ret_val is not an object (allows overriding of direct value assignements)
+    #   then simply deep_clone key from the parameters
+    #  
+    if !fields[key]? || !_.isObject(properties[key]) || !_.isObject(fields[key]) || nox.is_method(properties[key]) 
+      fields[key] = nox.deep_clone properties[key]
     else
-      for property_key in _.keys(properties[key])
-        ret_val[key][property_key] = nox.deep_clone properties[key][property_key]  
-            
+      nox.extend_fields fields[key],properties[key]
+
+nox.extend_template = (source_template,name,properties) ->
+  # First copy the source_teplate as is
+  #
+  ret_val = nox.deep_clone(source_template)
+  nox.extend_fields ret_val,properties
+          
   return nox.create_template name,ret_val  
 
 nox.resolve = (parameter,target_object) ->
@@ -150,6 +165,7 @@ nox.method = (input) ->
 nox.rnd = (input) ->
   if !input.min? then input.min = 0
   if !input.normal? then input.normal = false  
+  if !input.integer? then input.integer = false  
 
   ret_val = 
     _nox_method : true
@@ -157,23 +173,32 @@ nox.rnd = (input) ->
     min : input.min
     max : input.max
     normal : input.normal
+    integer : input.integer
     run : (target_object) ->
-      if nox.check_fields @,['min','max','normal']
+      if nox.check_fields @,['min','max','normal','integer']
         return @_nox_errors
 
       min = nox.resolve @min, target_object
       max = nox.resolve @max, target_object
       normal = nox.resolve @normal, target_object
+      integer = nox.resolve @integer, target_object
 
       itterations = if normal then 3 else 1
 
       ret_val = 0
       diff = max-min 
       for i in _.range(itterations)
-        ret_val += min + diff*Math.random()
+        if integer 
+          ret_val = _.random(min,max)
+        else 
+          ret_val += min + diff*Math.random()
       ret_val = ret_val/itterations
       return ret_val
   return ret_val     
+
+nox.rnd_int = (input) ->
+  input.integer = true
+  return nox.rnd input
 
 nox.rnd_normal = (input) ->
   input.normal = true

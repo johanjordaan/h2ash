@@ -13,6 +13,9 @@ moon_types = require './moon_types'
 planet_types = require './planet_types'
 star_types = require './star_types'
 
+return
+
+
 atmosphere_types = require './atmosphere_types'
 
 # Start probability chart

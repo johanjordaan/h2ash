@@ -177,3 +177,22 @@ describe 'nox.extend_template', () ->
       child.type.should.equal 'child_type'
       child.child_field.should.equal 'child specific field'
       child.age.should.equal 80
+  
+  describe '- complex usage : testing multiple levels : ', () ->
+    star_template = nox.create_template 'star_template',
+      planets : nox.select
+        count : nox.rnd
+          max : 10
+        values : ['a']
+
+    m_template = nox.extend_template star_template,'m_template',
+      planets : 
+        count :
+          min : 1
+          max : 2   
+        valuse : ['x'] 
+
+    it 'should assign the overrideen values at the correct level of the child template', () ->
+      expect(m_template.planets.count.min).to.exist
+      m_template.planets.count.min.should.equal 1  
+      m_template.planets.count.max.should.equal 2      

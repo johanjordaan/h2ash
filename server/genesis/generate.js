@@ -12,6 +12,8 @@
 
   star_types = require('./star_types');
 
+  return;
+
   atmosphere_types = require('./atmosphere_types');
 
   STAR_TYPE_DISTRIBUTION = [
