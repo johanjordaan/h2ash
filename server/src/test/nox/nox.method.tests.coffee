@@ -1,9 +1,10 @@
+_ = require 'underscore'
 should = require('chai').should()
 expect = require('chai').expect
 
 nox = require '../../nox/nox'
 
-test_method = () ->
+test_method = (o) ->
   return 'Hallo'
 
 describe 'nox.method', ()->

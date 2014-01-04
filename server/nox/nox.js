@@ -7,12 +7,28 @@
   nox = {};
 
   nox.is_template = function(object) {
+    if (object == null) {
+      return false;
+    }
+    if (!_.isObject(object)) {
+      return false;
+    }
     return object._nox_template;
+  };
+
+  nox.is_method = function(object) {
+    if (object == null) {
+      return false;
+    }
+    if (_.isObject(object)) {
+      return false;
+    }
+    return object._nox_method;
   };
 
   nox.deep_clone = function(source) {
     var i, key, ret_val, _i, _j, _len, _len1, _ref;
-    if (_.isFunction(source) || _.isNumber(source) || _.isString(source)) {
+    if (_.isFunction(source) || _.isNumber(source) || _.isString(source) || _.isBoolean(source)) {
       return source;
     }
     if (_.isArray(source)) {
@@ -32,6 +48,44 @@
       }
       return ret_val;
     }
+  };
+
+  nox.is_method_valid = function(method) {
+    var key, _i, _len, _ref;
+    if (method._nox.errors.length > 0) {
+      return false;
+    }
+    _ref = _.keys(method);
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      key = _ref[_i];
+      if (nox.is_method(method[key])) {
+        if (!nox.is_method_valid(method[key])) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  nox.is_template_valid = function(template) {
+    var key, _i, _len, _ref;
+    if (template == null) {
+      return false;
+    }
+    if (!_.isObject(template)) {
+      return false;
+    }
+    if (!nox.is_template()) {
+      return false;
+    }
+    _ref = _.keys(template);
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      key = _ref[_i];
+      if (!nox.is_method(template[key])) {
+        return false;
+      }
+    }
+    return true;
   };
 
   nox.templates = {};
@@ -65,6 +119,9 @@
     _ref = _.keys(template);
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       key = _ref[_i];
+      if (key === '_nox_template') {
+        continue;
+      }
       if (template[key]._nox_method === true) {
         ret_val[key] = template[key].run(ret_val);
       } else {
@@ -80,10 +137,14 @@
     _ref = _.keys(properties);
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       key = _ref[_i];
-      _ref1 = _.keys(properties[key]);
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        property_key = _ref1[_j];
-        ret_val[key][property_key] = properties[key][property_key];
+      if ((ret_val[key] == null) || !_.isObject(properties[key]) || !_.isObject(ret_val[key])) {
+        ret_val[key] = nox.deep_clone(properties[key]);
+      } else {
+        _ref1 = _.keys(properties[key]);
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          property_key = _ref1[_j];
+          ret_val[key][property_key] = nox.deep_clone(properties[key][property_key]);
+        }
       }
     }
     return nox.create_template(name, ret_val);
@@ -200,11 +261,15 @@
     }
     ret_val = {
       _nox_method: true,
+      _nox_errors: [],
       count: input.count,
       values: input.values,
       return_one: input.return_one,
       run: function(target_object) {
         var count, default_probability, i, item, probability, r, return_one, total_probability, values, _i, _j, _len, _len1, _ref;
+        if (nox.check_fields(this, ['values'])) {
+          return this._nox_errors;
+        }
         count = Math.floor(nox.resolve(this.count, target_object));
         values = nox.resolve(this.values, target_object);
         return_one = nox.resolve(this.return_one, target_object);
@@ -223,18 +288,26 @@
               if ((item.item != null) && (item.probability != null)) {
                 if (nox.is_template(item.item)) {
                   ret_val.push(nox.construct_template(item.item));
+                  break;
                 } else {
                   if (_.isString(item.item) && _.contains(_.keys(nox.templates), item.item)) {
                     ret_val.push(nox.construct_template(nox.templates[item.item]));
+                    break;
                   } else {
                     ret_val.push(item.item);
+                    break;
                   }
                 }
               } else {
-                if (_.isString(item) && _.contains(_.keys(nox.templates), item)) {
+                if (nox.is_template(item)) {
+                  ret_val.push(nox.construct_template(item));
+                  break;
+                } else if (_.isString(item) && _.contains(_.keys(nox.templates), item)) {
                   ret_val.push(nox.construct_template(nox.templates[item]));
+                  break;
                 } else {
                   ret_val.push(item);
+                  break;
                 }
               }
             }

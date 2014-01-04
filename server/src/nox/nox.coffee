@@ -3,10 +3,23 @@ _ = require 'underscore'
 nox = {}
 
 nox.is_template = (object) ->
+  if !object? 
+    return false
+  if !_.isObject(object) 
+    return false
+
   return object._nox_template
 
+nox.is_method = (object) ->
+  if !object? 
+    return false
+  if _.isObject(object) 
+    return false
+
+  return object._nox_method
+
 nox.deep_clone = (source) ->
-  if(_.isFunction(source) || _.isNumber(source) || _.isString(source))
+  if(_.isFunction(source) || _.isNumber(source) || _.isString(source) || _.isBoolean(source))
     return source
   if(_.isArray(source))
     ret_val = []
@@ -19,6 +32,28 @@ nox.deep_clone = (source) ->
       ret_val[key] = nox.deep_clone(source[key])
     return ret_val
 
+nox.is_method_valid = (method) ->
+  if method._nox.errors.length > 0 
+    return false
+  
+  for key in _.keys(method)
+    if nox.is_method(method[key])
+      if !nox.is_method_valid(method[key])
+        return false
+  return true
+
+nox.is_template_valid = (template) ->
+  if !template? 
+    return false
+  if !_.isObject(template) 
+    return false
+  if !nox.is_template() 
+    return false
+
+  for key in _.keys(template)
+    if !nox.is_method(template[key])
+      return false
+  return true    
 
 nox.templates = {}
 
@@ -48,6 +83,11 @@ nox.construct_template = (template,parent,index) ->
 
 
   for key in _.keys(template)
+    # Excluse some of the internal fields
+    #
+    if key in ['_nox_template'] 
+      continue
+
     if template[key]._nox_method == true
       ret_val[key] = template[key].run(ret_val)
     else 
@@ -58,9 +98,12 @@ nox.construct_template = (template,parent,index) ->
 nox.extend_template = (source_template,name,properties) ->
   ret_val = nox.deep_clone(source_template)
   for key in _.keys(properties)
-    for property_key in _.keys(properties[key])
-      ret_val[key][property_key] = properties[key][property_key]  
-      
+    if !ret_val[key]? || !_.isObject(properties[key]) || !_.isObject(ret_val[key])
+      ret_val[key] = nox.deep_clone properties[key]
+    else
+      for property_key in _.keys(properties[key])
+        ret_val[key][property_key] = nox.deep_clone properties[key][property_key]  
+            
   return nox.create_template name,ret_val  
 
 nox.resolve = (parameter,target_object) ->
@@ -140,14 +183,18 @@ nox.select = (input) ->
 
   ret_val = 
     _nox_method : true
+    _nox_errors : []
     count : input.count
     values : input.values
     return_one : input.return_one
-    run : (target_object) ->
+    run : (target_object) -> 
+      if nox.check_fields @,['values']
+        return @_nox_errors
+
       count = Math.floor nox.resolve @count, target_object
       values = nox.resolve @values, target_object
       return_one = nox.resolve @return_one, target_object
-      
+
       default_probability = 1/_.size(values)
 
       ret_val = []
@@ -161,16 +208,24 @@ nox.select = (input) ->
             if item.item? && item.probability?
               if nox.is_template(item.item) 
                 ret_val.push nox.construct_template item.item
+                break
               else
                 if _.isString(item.item) && _.contains(_.keys(nox.templates),item.item)
                   ret_val.push nox.construct_template nox.templates[item.item]
+                  break
                 else
                   ret_val.push item.item
+                  break
             else 
-              if _.isString(item) && _.contains(_.keys(nox.templates),item)
+              if nox.is_template item
+                ret_val.push nox.construct_template item
+                break
+              else if _.isString(item) && _.contains(_.keys(nox.templates),item)
                 ret_val.push nox.construct_template nox.templates[item]
+                break
               else
                 ret_val.push item 
+                break
       if return_one
         return ret_val[0]     
       else 
