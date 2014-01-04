@@ -20,10 +20,10 @@
     if (object == null) {
       return false;
     }
-    if (_.isObject(object)) {
+    if (!_.isObject(object)) {
       return false;
     }
-    return object._nox_method;
+    return object._nox_method === true;
   };
 
   nox.deep_clone = function(source) {
@@ -52,7 +52,8 @@
 
   nox.is_method_valid = function(method) {
     var key, _i, _len, _ref;
-    if (method._nox.errors.length > 0) {
+    console.log('xxxx', method);
+    if (method._nox_errors.length > 0) {
       return false;
     }
     _ref = _.keys(method);
@@ -75,14 +76,16 @@
     if (!_.isObject(template)) {
       return false;
     }
-    if (!nox.is_template()) {
+    if (!nox.is_template(template)) {
       return false;
     }
     _ref = _.keys(template);
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       key = _ref[_i];
-      if (!nox.is_method(template[key])) {
-        return false;
+      if (nox.is_method(template[key])) {
+        if (!nox.is_method_valid(template[key])) {
+          return false;
+        }
       }
     }
     return true;

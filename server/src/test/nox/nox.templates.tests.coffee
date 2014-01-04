@@ -29,6 +29,26 @@ describe 'nox.create_template', () ->
     it 'should add the template to the list of templates', () ->
       ('test_template' in _.keys(nox.templates)).should.equal true  
 
+#describe 'nox.is_template_validate', () ->
+#  describe '- basic usage : ', () ->
+#    x_template = nox.create_template 'x_template',
+#      name : nox.const
+#        value : nox.const
+#          xxx : "What is this"
+#      surname : nox.rnd
+#        no_max : 10
+#
+#    it 'should detect errors on any level of the template', () ->
+#      nox.is_template_valid(x_template).should.equal false
+#
+    #it 'should detect a valid template', () ->
+    #  valid_template  = nox.create_template 'valid',
+    #    name : "hallo"
+    #
+    #  nox.is_template_valid(valid_template).should.equal true
+
+
+
 describe 'nox.construct_template', () ->
   describe '- basic usage : ', () ->
     

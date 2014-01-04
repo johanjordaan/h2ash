@@ -13,10 +13,10 @@ nox.is_template = (object) ->
 nox.is_method = (object) ->
   if !object? 
     return false
-  if _.isObject(object) 
+  if !_.isObject(object) 
     return false
 
-  return object._nox_method
+  return object._nox_method == true
 
 nox.deep_clone = (source) ->
   if(_.isFunction(source) || _.isNumber(source) || _.isString(source) || _.isBoolean(source))
@@ -33,7 +33,8 @@ nox.deep_clone = (source) ->
     return ret_val
 
 nox.is_method_valid = (method) ->
-  if method._nox.errors.length > 0 
+  console.log 'xxxx',method
+  if method._nox_errors.length > 0 
     return false
   
   for key in _.keys(method)
@@ -47,12 +48,13 @@ nox.is_template_valid = (template) ->
     return false
   if !_.isObject(template) 
     return false
-  if !nox.is_template() 
+  if !nox.is_template(template)
     return false
 
   for key in _.keys(template)
-    if !nox.is_method(template[key])
-      return false
+    if nox.is_method(template[key])
+      if !nox.is_method_valid(template[key])
+        return false
   return true    
 
 nox.templates = {}
