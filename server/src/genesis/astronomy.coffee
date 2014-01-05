@@ -15,6 +15,8 @@ g_Earth = -9.81                              # Acc fo gravity : m/s^2
 
 SecondsPerYear = 31556926
 
+Wiens_Constant = 0.0029                   # in m * K   
+
 #WaterFreezingPoint:273.15
 #WaterBoilingPoint:373.15
 
@@ -111,6 +113,9 @@ orbital_period_of_planet = (planet) ->
   T = (2*PI*Math.sqrt(Math.pow(a,3)/(G*Ms) ))  
   return T/SecondsPerYear
 
+orbital_period_of_moon = (moon) ->
+  return 0
+
 mass_of_planet = (planet) ->
   density = planet.density # in g/cm3
   radius = planet.radius * Rp_Earth * 1000 * 100 # in cm
@@ -136,6 +141,8 @@ mass_of_moon = (moon) ->
 
 
 gravity_of_moon = (moon) ->
+  
+
   M = moon.mass * Mp_Earth
   r = moon.radius * Rp_Earth * 1000
 
@@ -143,6 +150,54 @@ gravity_of_moon = (moon) ->
   return g/g_Earth    #Result relative to earth gravity 
 
 
+# This implements Wien's law
+# Peak Intensity (lambda_max ) in m = 0.0029 m*K / T in Kelvin
+# result in nm
+wavelength_from_temperature = (star) ->
+  Ts = star.temperature
+  return (Wiens_Constant / Ts) * 1e9
+
+# Input wavelength in nm
+# base on : astro.unl.edu
+# Blue        : 72.5
+# Light-Blue  : 145
+# White       : 290
+# Yellow-White: 387
+# Yellow      : 527
+# Orange      : 725
+# Red         : 966 
+color_from_wavelength = (star) ->
+  wl = star.wavelength
+
+  between = (value,lower,mid,upper) ->
+    if lower
+      lower = mid - (mid - lower)/2
+    if upper
+      upper = mid + (upper - mid)/2
+
+    if lower? && upper?
+      return value >= lower && value <= upper  
+    else if lower? && !upper?
+      return value >= lower
+    else if !lower? && upper
+      return value <= upper
+    else 
+      return false
+
+  if between(wl,null,72.5,145) 
+    return "Blue"
+  if between(wl,72.5,145,290) 
+    return "Light-Blue"
+  if between(wl,145,290,387) 
+    return "White"
+  if between(wl,290,387,527) 
+    return "Yellow-White"
+  if between(wl,387,527,725) 
+    return "Yellow"
+  if between(wl,527,725,966) 
+    return "Orange"
+  if between(wl,725,966) 
+    return "Red"    
 
 
 module.exports =
@@ -158,10 +213,13 @@ module.exports =
   temperature_of_planet : temperature_of_planet
   temperature_of_moon : temperature_of_moon
   orbital_period_of_planet : orbital_period_of_planet
+  orbital_period_of_moon : orbital_period_of_moon
   mass_of_planet : mass_of_planet
   gravity_of_planet : gravity_of_planet
   mass_of_moon : mass_of_moon
   gravity_of_moon : gravity_of_moon
+  wavelength_from_temperature : wavelength_from_temperature
+  color_from_wavelength : color_from_wavelength
 
 
 

@@ -195,4 +195,24 @@ describe 'nox.extend_template', () ->
     it 'should assign the overrideen values at the correct level of the child template', () ->
       expect(m_template.planets.count.min).to.exist
       m_template.planets.count.min.should.equal 1  
-      m_template.planets.count.max.should.equal 2      
+      m_template.planets.count.max.should.equal 2    
+
+
+  describe 'extending an using directives', () ->
+    base = nox.create_template 'base',
+      name : "name"
+      surname : "surname"
+
+    child = nox.extend_template base,'child',
+      name : "child_name"
+      ,
+      { remove : ['surname'] }
+
+    it 'should leave the base template unmodified', () ->
+      base.name.should.equal "name"
+      expect(base.surname).to.exist
+
+
+
+
+

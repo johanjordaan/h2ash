@@ -1,45 +1,41 @@
-types = require './types'
+nox = require '../nox/nox'
 
+atmosphere_template = nox.create_template 'atmosphere_template',
+  name : "name"
+  pressure : nox.rnd
+    min : 0
+    max : 0 
+  temperature_modifier : 0
 
-NO_ATMOSPHERE = 
-  name : types.fixed { value : 'No Atmosphere' }
-  pressure : types.fixed { value : -4}
-  temperature_modifier : types.fixed { value : 1 }
+NO_ATMOSPHERE = nox.extend_template atmosphere_template,'NO_ATMOSPHERE', 
+  name : 'No Atmosphere'
+  pressure : -4
+  temperature_modifier : 1
 
-VERY_THIN_ATMOSPHERE =
-  name : types.fixed { value : 'Very Thin Atmosphere' }
-  pressure : types.range
-    from       : -3
-    to         : -2
-  temperature_modifier : types.fixed { value : 1.2}
+VERY_THIN_ATMOSPHERE = nox.extend_template atmosphere_template,'VERY_THIN_ATMOSPHERE', 
+  name : 'Very Thin Atmosphere'
+  pressure : { min : -3 , max : -2}
+  temperature_modifier : 1.2
 
-THIN_ATMOSPHERE =
-  name : types.fixed { value : 'Thin Atmosphere' }
-  pressure : types.range
-    from       : -2
-    to         : -1
-  temperature_modifier : types.fixed { value : 1.5}
+THIN_ATMOSPHERE = nox.extend_template atmosphere_template,'THIN_ATMOSPHERE', 
+  name : 'Thin Atmosphere'
+  pressure : { min : -2 , max : -1}
+  temperature_modifier : 1.5
 
-NORMAL_ATMOSPHERE =
-  name : types.fixed { value : 'Earth Standard Atmosphere' }
-  pressure : types.range
-    from       : -1
-    to         : 2
-  temperature_modifier : types.fixed { value : 3}
+NORMAL_ATMOSPHERE = nox.extend_template atmosphere_template,'NORMAL_ATMOSPHERE', 
+  name : 'Earth Standard Atmosphere'
+  pressure : { min : -1 , max : 2}
+  temperature_modifier : 3
 
-THICK_ATMOSPHERE =
-  name : types.fixed { value : 'Thick Atmosphere' }
-  pressure : types.range
-    from       : 2
-    to         : 4
-  temperature_modifier : types.fixed { value : 4}
+THICK_ATMOSPHERE = nox.extend_template atmosphere_template,'THICK_ATMOSPHERE', 
+  name : 'Thick Atmosphere'
+  pressure : { min : 2 , max : 4}
+  temperature_modifier : 4
 
-VERY_THICK_ATMOSPHERE =
-  name : types.fixed { value : 'Very Thick Atmosphere' }
-  pressure : types.range
-    from       : 4
-    to         : 7
-  temperature_modifier : types.fixed { value : 8}
+VERY_THICK_ATMOSPHERE = nox.extend_template atmosphere_template,'VERY_THICK_ATMOSPHERE', 
+  name : 'Very Thick Atmosphere'
+  pressure : { min : 4 , max : 7}
+  temperature_modifier : 8
 
 module.exports = 
   NO_ATMOSPHERE : NO_ATMOSPHERE

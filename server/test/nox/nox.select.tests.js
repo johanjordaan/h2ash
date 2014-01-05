@@ -134,15 +134,24 @@
       });
     });
     return describe('- error conditions :', function() {
-      var c, c_result;
+      var c, c_result, d, d_result;
       c = nox.select({});
       c_result = c.run();
       it('should return an error list if the required fields (values) is not specified', function() {
         c_result.should.be.a('Array');
         return c_result.length.should.equal(1);
       });
-      return it('should return a usable error message', function() {
+      it('should return a usable error message', function() {
         return c_result[0].should.equal("Required field [values] is missing.");
+      });
+      d = nox.select({
+        values: []
+      });
+      d_result = d.run();
+      return it('should not allow empty list as values parameter ie a list of values must have at least one value', function() {
+        d_result.should.be.a('Array');
+        d_result.length.should.equal(1);
+        return d_result[0].should.equal("Values list should contain at least one value.");
       });
     });
   });

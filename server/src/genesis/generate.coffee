@@ -4,39 +4,33 @@
 # Prety printing
 
 _ = require 'underscore'
+nox = require '../nox/nox'
 
-types = require './types'
-
-# Planet types
-#
 moon_types = require './moon_types'
 planet_types = require './planet_types'
 star_types = require './star_types'
-
-return
-
-
 atmosphere_types = require './atmosphere_types'
 
 # Start probability chart
 #
 STAR_TYPE_DISTRIBUTION = [
-  { probability : 0.01, type : star_types.DWARF }
-  { probability : 0.70, type : star_types.M_CLASS }
-  { probability : 0.13, type : star_types.K_CLASS }
-  { probability : 0.09, type : star_types.G_CLASS }
-  { probability : 0.01, type : star_types.F_CLASS }
-  { probability : 0.01, type : star_types.A_CLASS } 
-  { probability : 0.01, type : star_types.B_CLASS }
-  { probability : 0.01, type : star_types.O_CLASS }
-  { probability : 0.01, type : star_types.RED_GIANT } 
-  { probability : 0.01, type : star_types.RED_SUPER_GIANT }
-  { probability : 0.01, type : star_types.BLUE_SUPER_GIANT }
+  nox.probability 0.01, star_types.DWARF
+  nox.probability 0.70, star_types.M_CLASS
+  nox.probability 0.13, star_types.K_CLASS
+  nox.probability 0.09, star_types.G_CLASS
+  nox.probability 0.01, star_types.F_CLASS
+  nox.probability 0.01, star_types.A_CLASS 
+  nox.probability 0.01, star_types.B_CLASS
+  nox.probability 0.01, star_types.O_CLASS
+  nox.probability 0.01, star_types.RED_GIANT 
+  nox.probability 0.01, star_types.RED_SUPER_GIANT
+  nox.probability 0.01, star_types.BLUE_SUPER_GIANT
 ]
 
-DEFAULT_SOLAR_SYSTEM =
-  name : types.fixed { value : 'Default' }
-  star : types.select_type_create_instance STAR_TYPE_DISTRIBUTION
+DEFAULT_SOLAR_SYSTEM = nox.create_template 'DEFAULT_SOLAR_SYSTEM',
+  name : 'Default'
+  star : nox.select_one
+    values : STAR_TYPE_DISTRIBUTION
 
 
 #console.log types.construct(atmosphere_types.NORMAL_ATMOSPHERE)
@@ -48,9 +42,29 @@ DEFAULT_SOLAR_SYSTEM =
 #console.log types.construct(moon_types.ASTEROID)
 #console.log types.construct(star_types.DWARF)
 
-#console.log types.construct DEFAULT_SOLAR_SYSTEM
+#ss = nox.construct_template DEFAULT_SOLAR_SYSTEM
+#console.log ss.star.planets
 
+#console.log nox.construct_template moon_types.LUNAR_MOON
+#console.log nox.construct_template moon_types.ASTEROID_MOON
+
+#_.random = (min,max) ->
+#  return max
+#console.log star_types.M_CLASS.planets.count  
+#console.log star_types.M_CLASS.planets.count.run()
+
+#x = nox.construct_template star_types.M_CLASS
+#console.log x
+#console.log star_types.M_CLASS.planets.count.max,x.luminosity
+#for planet in x.planets
+#  console.log planet._index,planet.name,planet.atmosphere.name,planet.temperature   
+#  for moon in planet.moons
+#    console.log '   ',moon._index,moon.atmosphere.name,moon.temperature,moon._parent._parent.luminosity 
+#    if !moon._parent._parent.luminosity?
+#      console.log moon
+#
 #return
+
 total_planets = 0
 total_solar_systems = 0
 habitable_planets = 0
@@ -68,13 +82,13 @@ habitable = (o) ->
           return true
   return false
 
-
-for i in _.range(100000)
-  ss = types.construct DEFAULT_SOLAR_SYSTEM
+ss_count = 10000
+for i in _.range(ss_count)
+  ss = nox.construct_template DEFAULT_SOLAR_SYSTEM
   total_habitable_count = 0
   h_count = 0
   total_solar_systems += 1
-  
+
   for planet in ss.star.planets
     total_planets++
     if(habitable(planet))
@@ -100,7 +114,11 @@ for i in _.range(100000)
 habitable_planet_perc = (habitable_planets/total_planets)*100
 habitable_moon_perc = (habitable_moons/total_moons)*100
 
-console.log most_habitable_ss
+moons_per_planet = total_moons/total_planets
+planets_per_ss = total_planets/ss_count
+
+#console.log most_habitable_ss
+console.log "------------------ Stats [start] -----------------------"
 console.log "Higest number of habitable places : #{higest_habitable_count}"
 console.log "Total Solar Systems : #{total_solar_systems}"
 console.log "Habitable Solar Systems : #{habitable_solar_systems}"
@@ -111,39 +129,9 @@ console.log "Habitable Moons : #{habitable_moons}"
 console.log "---"
 console.log "Habitable Planet % : #{habitable_planet_perc}"
 console.log "Habitable Moons % : #{habitable_moon_perc}"
-
-
-
-### Table 6
-Pressure
--4 Vacuum of space
--2 Aircraft altitudes
--1 Top of Mount Everest
-0 0 to 8000 ft above sea level
-2 2000 ft below sea level
-4 Mariana Trench
-6 Surface of Jupiter
-10 Black hole
-###
-
-### Table 7
-Size 1 or 2: -4
-Size 3: -4 to -2
-Size 4: -4 to -1
-Size 5: -2 to 1
-Size 6: -1 to 2
-Size 7: 1 to 4
-Size 8: 2 to 5
-Size 9: 4 to 7
-Size 10: 5 to 8
-### 
-
-### Table 8 - 1d6 -3
--2 Inert gasses
-0 Earth's atmosphere
-2 Volcanic Ash
-3 Chemical weapons
-###
+console.log "Avg Moons per Planet : #{moons_per_planet}"
+console.log "Avg Planets per Solar System : #{planets_per_ss}"
+console.log "------------------ Stats [end]  -----------------------"
 
 
 

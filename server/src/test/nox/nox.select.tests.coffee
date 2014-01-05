@@ -119,3 +119,11 @@ describe 'nox.select', ()->
 
     it 'should return a usable error message', () ->
       c_result[0].should.equal "Required field [values] is missing."    
+
+    d = nox.select { values : []}
+    d_result = d.run()
+
+    it 'should not allow empty list as values parameter ie a list of values must have at least one value', () ->  
+      d_result.should.be.a 'Array'
+      d_result.length.should.equal 1 # All the other vaues are defaulted 
+      d_result[0].should.equal "Values list should contain at least one value."

@@ -190,7 +190,7 @@
         return child.age.should.equal(80);
       });
     });
-    return describe('- complex usage : testing multiple levels : ', function() {
+    describe('- complex usage : testing multiple levels : ', function() {
       var m_template, star_template;
       star_template = nox.create_template('star_template', {
         planets: nox.select({
@@ -213,6 +213,22 @@
         expect(m_template.planets.count.min).to.exist;
         m_template.planets.count.min.should.equal(1);
         return m_template.planets.count.max.should.equal(2);
+      });
+    });
+    return describe('extending an using directives', function() {
+      var base, child;
+      base = nox.create_template('base', {
+        name: "name",
+        surname: "surname"
+      });
+      child = nox.extend_template(base, 'child', {
+        name: "child_name"
+      }, {
+        remove: ['surname']
+      });
+      return it('should leave the base template unmodified', function() {
+        base.name.should.equal("name");
+        return expect(base.surname).to.exist;
       });
     });
   });

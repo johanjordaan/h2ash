@@ -10,15 +10,19 @@ astronomy = require './astronomy'
 
 StarTemplate = nox.create_template 'StarTemplate',
   name : "name"
-  color : "color"
+  color_x : "color"
   temperature : nox.rnd {}
+  wavelength : nox.method
+    method : astronomy.wavelength_from_temperature
+  color : nox.method
+    method : astronomy.color_from_wavelength
   luminosity : nox.rnd {}
   radius : nox.method
     method : astronomy.radius_of_star
   mass : nox.method
     method : astronomy.mass_of_star 
   planets : nox.select
-    count : nox.rnd_int { min : 0 , max : 10 , normal : true }
+    count : nox.rnd_int { min : 0 , max : 12 , normal : true }
     values : [ 
       nox.probability .1 , planet_types.ASTEROID_BELT
       nox.probability .1 , planet_types.SUB_LUNAR
@@ -34,7 +38,7 @@ StarTemplate = nox.create_template 'StarTemplate',
 
 DWARF = nox.extend_template StarTemplate,'DWARF',
   name : 'White Dwarf'
-  color : 'White'
+  color_x : 'White'
   temperature : { min : 6000   ,max : 30000 }
   luminosity :  { min : 10e-4  ,max : 10e-2 }
   planets :
@@ -46,7 +50,7 @@ DWARF = nox.extend_template StarTemplate,'DWARF',
 
 M_CLASS = nox.extend_template StarTemplate,'M_CLASS',
   name : 'M Class'
-  color : 'Red'
+  color_x : 'Red'
   temperature : { min : 2000   ,max : 4000 }
   luminosity :  { min : 10e-4  ,max : 10e-2 }
   planets :
@@ -54,7 +58,7 @@ M_CLASS = nox.extend_template StarTemplate,'M_CLASS',
 
 K_CLASS = nox.extend_template StarTemplate,'K_CLASS',
   name : 'K Class'
-  color : 'Orange'
+  color_x : 'Orange'
   temperature : { min : 4000   ,max : 5000 }
   luminosity :  { min : 10e-2  ,max : 0.1 }
   planets :
@@ -62,7 +66,7 @@ K_CLASS = nox.extend_template StarTemplate,'K_CLASS',
 
 G_CLASS = nox.extend_template StarTemplate,'G_CLASS',
   name : 'G Class'
-  color : 'Yellow'
+  color_x : 'Yellow'
   temperature : { min : 5000   ,max : 6000 }
   luminosity :  { min : 0.1    ,max : 4 }
   planets :
@@ -70,7 +74,7 @@ G_CLASS = nox.extend_template StarTemplate,'G_CLASS',
 
 F_CLASS = nox.extend_template StarTemplate,'F_CLASS',
   name : 'F Class'
-  color : 'White'
+  color_x : 'White'
   temperature : { min : 6000   ,max : 7000 }
   luminosity :  { min : 4      ,max : 12 }
   planets :
@@ -78,7 +82,7 @@ F_CLASS = nox.extend_template StarTemplate,'F_CLASS',
 
 A_CLASS = nox.extend_template StarTemplate,'A_CLASS',
   name : 'A Class'
-  color : 'Blue-White'
+  color_x : 'Blue-White'
   temperature : { min : 7000   ,max : 15000 }
   luminosity :  { min : 12     ,max : 10e3 }
   planets :
@@ -86,7 +90,7 @@ A_CLASS = nox.extend_template StarTemplate,'A_CLASS',
 
 B_CLASS = nox.extend_template StarTemplate,'B_CLASS',
   name : 'B Class'
-  color : 'Blue'
+  color_x : 'Blue'
   temperature : { min : 15000   ,max : 25000 }
   luminosity :  { min : 10e3    ,max : 10e4 }
   planets :
@@ -94,7 +98,7 @@ B_CLASS = nox.extend_template StarTemplate,'B_CLASS',
 
 O_CLASS = nox.extend_template StarTemplate,'O_CLASS',
   name : 'O Class'
-  color : 'Blue'
+  color_x : 'Blue'
   temperature : { min : 25000   ,max : 40000 }
   luminosity :  { min : 10e4    ,max : 10e6 }
   planets :
@@ -102,7 +106,7 @@ O_CLASS = nox.extend_template StarTemplate,'O_CLASS',
 
 RED_GIANT = nox.extend_template StarTemplate,'RED_GIANT',
   name : 'Red Giant'
-  color : 'Red'
+  color_x : 'Red'
   temperature : { min : 3000    ,max : 4000 }
   luminosity :  { min : 1       ,max : 10e3 }
   planets :
@@ -110,7 +114,7 @@ RED_GIANT = nox.extend_template StarTemplate,'RED_GIANT',
 
 RED_SUPER_GIANT = nox.extend_template StarTemplate,'RED_SUPER_GIANT',
   name : 'Red Super Giant'
-  color : 'Red'
+  color_x : 'Red'
   temperature : { min : 2500    ,max : 3500 }
   luminosity :  { min : 10e4    ,max : 10e5 }
   planets :
@@ -118,7 +122,7 @@ RED_SUPER_GIANT = nox.extend_template StarTemplate,'RED_SUPER_GIANT',
 
 BLUE_SUPER_GIANT = nox.extend_template StarTemplate,'BLUE_SUPER_GIANT',
   name : 'Blue Super Giant'
-  color : 'Blue'
+  color_x : 'Blue'
   temperature : { min : 8000    ,max : 10000 }
   luminosity :  { min : 10e4    ,max : 10e6 }
   planets :

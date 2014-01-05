@@ -18,7 +18,7 @@ nox.is_method = (object) ->
 
   return object._nox_method == true
 
-nox.deep_clone = (source) ->
+nox.deep_clone = (source,directives) ->
   if(_.isFunction(source) || _.isNumber(source) || _.isString(source) || _.isBoolean(source))
     return source
   if(_.isArray(source))
@@ -29,7 +29,9 @@ nox.deep_clone = (source) ->
   if(_.isObject(source))  
     ret_val = {}
     for key in _.keys(source)
-      ret_val[key] = nox.deep_clone(source[key])
+      if directives? && directives.remove? && key in directives.remove
+      else
+        ret_val[key] = nox.deep_clone source[key],directives
     return ret_val
 
 nox.probability = (probability,item) ->
@@ -103,23 +105,26 @@ nox.construct_template = (template,parent,index) ->
   return ret_val  
 
 
-nox.extend_fields = (fields,properties) ->
+nox.extend_fields = (fields,properties,directives) ->
   for key in _.keys(properties)
     # If the key does not exist in the source or (allows for new keys to be aded)
     # the properties value is not an object (allows methods to be overwritten by direct assignemnts)
     # the ret_val is not an object (allows overriding of direct value assignements)
     #   then simply deep_clone key from the parameters
     #  
-    if !fields[key]? || !_.isObject(properties[key]) || !_.isObject(fields[key]) || nox.is_method(properties[key]) 
-      fields[key] = nox.deep_clone properties[key]
-    else
-      nox.extend_fields fields[key],properties[key]
+    if directives? && directives.remove? && key in directives.remove
+      delete fields[key]
+    else  
+      if !fields[key]? || !_.isObject(properties[key]) || !_.isObject(fields[key]) || nox.is_method(properties[key]) 
+        fields[key] = nox.deep_clone properties[key]
+      else
+        nox.extend_fields fields[key],properties[key]
 
-nox.extend_template = (source_template,name,properties) ->
+nox.extend_template = (source_template,name,properties,directives) ->
   # First copy the source_teplate as is
   #
-  ret_val = nox.deep_clone(source_template)
-  nox.extend_fields ret_val,properties
+  ret_val = nox.deep_clone(source_template,directives)
+  nox.extend_fields ret_val,properties,directives
           
   return nox.create_template name,ret_val  
 
@@ -189,7 +194,7 @@ nox.rnd = (input) ->
       diff = max-min 
       for i in _.range(itterations)
         if integer 
-          ret_val = _.random(min,max)
+          ret_val += _.random(min,max)
         else 
           ret_val += min + diff*Math.random()
       ret_val = ret_val/itterations
@@ -218,9 +223,23 @@ nox.select = (input) ->
       if nox.check_fields @,['values']
         return @_nox_errors
 
-      count = Math.floor nox.resolve @count, target_object
+      count = nox.resolve @count, target_object
       values = nox.resolve @values, target_object
       return_one = nox.resolve @return_one, target_object
+
+
+      # If the size of the list is 0 and we donr require only one then return an empty list
+      #
+      if count == 0 && !return_one
+        return []
+
+      if count !=1 && return_one
+        @_nox_errors.push "To select one a count of exactly 1 is required."
+        return @_nox_errors
+
+      if _.size(values) == 0
+        @_nox_errors.push "Values list should contain at least one value."
+        return @_nox_errors
 
       default_probability = 1/_.size(values)
 
@@ -234,21 +253,21 @@ nox.select = (input) ->
           if r<=total_probability
             if item.item? && item.probability?
               if nox.is_template(item.item) 
-                ret_val.push nox.construct_template item.item
+                ret_val.push nox.construct_template item.item,target_object,i
                 break
               else
                 if _.isString(item.item) && _.contains(_.keys(nox.templates),item.item)
-                  ret_val.push nox.construct_template nox.templates[item.item]
+                  ret_val.push nox.construct_template nox.templates[item.item],target_object,i
                   break
                 else
                   ret_val.push item.item
                   break
             else 
               if nox.is_template item
-                ret_val.push nox.construct_template item
+                ret_val.push nox.construct_template item,target_object,i
                 break
               else if _.isString(item) && _.contains(_.keys(nox.templates),item)
-                ret_val.push nox.construct_template nox.templates[item]
+                ret_val.push nox.construct_template nox.templates[item],target_object,i
                 break
               else
                 ret_val.push item 
@@ -263,6 +282,7 @@ nox.select_one = (input) ->
   input.count = 1
   input.return_one = true
   return nox.select input 
+
   
 
 module.exports = nox
