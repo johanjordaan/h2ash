@@ -160,7 +160,7 @@ SUPER_TERRAN = nox.extend_template planet_template,'SUPER_TERRAN',
       'ASTEROID_MOON'  
       'SUB_LUNAR_MOON' 
       'LUNAR_MOON'  
-      'SUPER_LUNAR'    
+      'SUPER_LUNAR_MOON'    
     ]
 
 jovian_template = nox.extend_template planet_template,'jovian_template',

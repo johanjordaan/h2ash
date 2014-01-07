@@ -212,7 +212,7 @@
       count: {
         max: 5
       },
-      values: ['ASTEROID_MOON', 'SUB_LUNAR_MOON', 'LUNAR_MOON', 'SUPER_LUNAR']
+      values: ['ASTEROID_MOON', 'SUB_LUNAR_MOON', 'LUNAR_MOON', 'SUPER_LUNAR_MOON']
     }
   });
 

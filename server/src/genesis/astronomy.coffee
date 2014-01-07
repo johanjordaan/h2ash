@@ -92,7 +92,12 @@ temperature_of_moon = (moon) ->
 
   Ls = Lse * Ls_Sun
   Tp = Math.pow((Ls*(1-alpha)/(16*PI*Math.pow(d*1000,2)*sigma)),0.25);
-  return Tp * atmospheric_modifier
+  Tp = Tp * atmospheric_modifier
+
+  #if _.isNaN(Tp)
+  #  console.log moon._parent._parent.name,moon._parent._parent.luminosity
+  return Tp
+
 
 
 # Relative to eart year ie 1 is 1 eart year

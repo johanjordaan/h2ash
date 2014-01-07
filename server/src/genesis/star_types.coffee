@@ -3,6 +3,7 @@ nox = require '../nox/nox'
 planet_types = require './planet_types'
 astronomy = require './astronomy'
 
+
 # Add lifetime and age
 # Add position : Solar systems are globular clusters with stars concentrated 
 #  in center of cluster

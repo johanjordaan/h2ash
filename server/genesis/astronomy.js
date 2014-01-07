@@ -92,7 +92,8 @@
     d = moon._parent.distance * AU;
     Ls = Lse * Ls_Sun;
     Tp = Math.pow(Ls * (1 - alpha) / (16 * PI * Math.pow(d * 1000, 2) * sigma), 0.25);
-    return Tp * atmospheric_modifier;
+    Tp = Tp * atmospheric_modifier;
+    return Tp;
   };
 
   orbital_period_of_planet = function(planet) {
