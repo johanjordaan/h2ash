@@ -128,6 +128,19 @@ nox.extend_template = (source_template,name,properties,directives) ->
           
   return nox.create_template name,ret_val  
 
+nox.de_nox = (o)->
+  if _.isArray(o)
+    for i in o
+      nox.de_nox(i)
+  else if _.isObject(o)
+    delete o._parent
+    delete o._nox_errors
+    delete o._index
+    delete o._nox_template_name
+    for key in _.keys(o)
+      nox.de_nox o[key]
+
+
 nox.resolve = (parameter,target_object) ->
   return if parameter._nox_method then parameter.run target_object else parameter
 

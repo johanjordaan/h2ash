@@ -174,6 +174,30 @@
     return nox.create_template(name, ret_val);
   };
 
+  nox.de_nox = function(o) {
+    var i, key, _i, _j, _len, _len1, _ref, _results, _results1;
+    if (_.isArray(o)) {
+      _results = [];
+      for (_i = 0, _len = o.length; _i < _len; _i++) {
+        i = o[_i];
+        _results.push(nox.de_nox(i));
+      }
+      return _results;
+    } else if (_.isObject(o)) {
+      delete o._parent;
+      delete o._nox_errors;
+      delete o._index;
+      delete o._nox_template_name;
+      _ref = _.keys(o);
+      _results1 = [];
+      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+        key = _ref[_j];
+        _results1.push(nox.de_nox(o[key]));
+      }
+      return _results1;
+    }
+  };
+
   nox.resolve = function(parameter, target_object) {
     if (parameter._nox_method) {
       return parameter.run(target_object);
