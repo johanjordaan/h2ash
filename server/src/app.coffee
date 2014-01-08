@@ -1,13 +1,22 @@
 express = require 'express'
 http = require 'http' 
 #path = require 'path'
+
+_ = require 'underscore'
+async = require 'async'
 mongoose = require 'mongoose'
 
-__ = require 'underscore'
+mem = require './utils/memory'
 
 errors = require './support/errors'
+db_utils = require './support/db_utils'
 
-User = require './domain/user'
+UserSchema = require './domain/user'
+StarSchema = require './domain/star'
+PlanetSchema = require './domain/planet'
+MoonSchema = require './domain/moon'
+
+
 
 app = express()
 
@@ -30,14 +39,28 @@ if ('development' == app.get('env'))
 
 # Connect to the database
 #
-mongoose.connect 'mongodb://localhost/h2ash'
-db = mongoose.connection
-db.on 'error', console.error.bind(console, 'connection error:')
-db.once 'open', () ->
-  console.log 'DB Open...'  
-
 test_mode = false;  
-
+h2ash_auth = {}
+h2ash_stars = {}
+async.parallel [
+  (cb) ->
+    h2ash_stars = db_utils.open_db "mongodb://localhost/h2ash_stars", 
+      'Star' : StarSchema
+      'Planet' : PlanetSchema
+      'Moon' : MoonSchema
+      , (db_context) ->
+        console.log 'Database opened...'
+        cb(null,'')
+  ,(cb) ->
+    h2ash_auth = db_utils.open_db "mongodb://localhost/h2ash", 
+      'User' : UserSchema
+      , (db_context) ->
+        console.log 'Database opened...'
+        cb(null,'')
+],() ->
+  console.log 'All databases open ...'
+  http.createServer(app).listen app.get('port'), () ->
+    console.log('Express(h2ash) server listening on port ' + app.get('port'))
 
 # This is my auth filter. It checks the current token and validates
 # it. It further creates a new token for the next request. If the token 
@@ -57,7 +80,7 @@ do_auth = (req,res,next,admin) ->
     res.json errors.NOT_AUTHED
     return
 
-  User.findOne
+  h2ash_auth.User.findOne
     email : req.body.auth_email
     token : req.body.auth_token 
   .exec (err,user) ->
@@ -88,14 +111,15 @@ admin_auth = (req, res, next) ->
 # as well as the tokens etc
 #
 reply_with = (req,res,error,data) ->
-  reply = __.extend {},error
+  reply = _.extend {},error
   if data?
-    reply = __.extend reply,data
+    reply = _.extend reply,data
     
   if req.auth_user?
     reply.auth_token = req.auth_user.token
   
-  console.log reply
+  #console.log mem.rough_size_of_object reply
+  
   res.json reply 
 
 # Admin Actions
@@ -113,7 +137,7 @@ app.post '/start_testing_session', admin_auth, (req,res) ->
         
         # Create a new admin user for the test session
         #
-        admin_user = new User
+        admin_user = new h2ash_auth.User
           email : 'admin@h2ash.com'
           password : '123'
           admin : true
@@ -141,7 +165,7 @@ app.post '/end_testing_session', (req,res) ->
 # Actions
 #
 app.post '/login', (req,res) ->
-  User.findOne 
+  h2ash_auth.User.findOne 
     email : req.body.email
   .exec (err,user) ->
     if (!err) and (user?)
@@ -172,7 +196,7 @@ app.post '/overview', auth, (req, res) ->
 
 
 app.post '/register', (req,res) ->
-  User.findOne
+  h2ash_auth.User.findOne
     email : req.body.email
   .exec (err,user) ->
     # If the user exists and has been validated then return an error
@@ -199,7 +223,7 @@ app.post '/register', (req,res) ->
       # The user does not exist so create it
       #
       console.log 'creating new user'
-      new_user = new User
+      new_user = new h2ash_auth.User
         email : req.body.email
         password : req.body.password
         validated : false
@@ -214,7 +238,7 @@ app.post '/register', (req,res) ->
 # This has to be a get in order for the user to able to simply click on a link
 # 
 app.get '/validate/:registration_token', (req,res) ->
-  User.findOne
+  h2ash_auth.User.findOne
     registration_token : req.params.registration_token
   .exec (err,user) ->
     if(!err) and (user?)
@@ -233,10 +257,24 @@ app.get '/validate/:registration_token', (req,res) ->
 #require('./routes/registration_routes') app,auth
 require('./routes/corporation_routes') app,auth
 
-
 app.post '/status', (req,res) ->
   reply_with req,res,errors.OK,
     status : 'OK'
+
+app.get '/get_stars', (req,res) ->
+  starDB = mongoose.createConnection 'mongodb://localhost/authors'
+
+
+  h2ash_stars.Star.find()
+  .select('name wavelength position.cc.x position.cc.y position.cc.z')
+  .exec (err,loaded) ->
+    reply_with req,res,errors.OK,
+      err : err
+      status : 'OK'
+      stars : loaded
+
+
+
 
 
 
@@ -277,6 +315,4 @@ app.delete '/models', (req,res) ->
 ###    
 
 
-http.createServer(app).listen app.get('port'), () ->
-  console.log('Express(h2ash) server listening on port ' + app.get('port'))
 

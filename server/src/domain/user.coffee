@@ -38,6 +38,4 @@ UserSchema.methods.generate_registration_token = (cb) ->
     console.log "New registration token generated [#{that.registration_token}]"
     cb()
 
-User = mongoose.model 'User', UserSchema
-
-module.exports = User
+module.exports = UserSchema

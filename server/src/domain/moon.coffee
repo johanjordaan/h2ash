@@ -21,6 +21,5 @@ MoonSchema = mongoose.Schema
   mass : Number
   gravity : Number
 
-Moon = mongoose.model 'Moon', MoonSchema
 
-module.exports = Moon
+module.exports = MoonSchema

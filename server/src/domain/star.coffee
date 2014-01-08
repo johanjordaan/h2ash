@@ -1,7 +1,5 @@
 mongoose = require 'mongoose'
 
-Planet = require './planet'
-
 StarSchema = mongoose.Schema
   _id :
     type : String
@@ -27,6 +25,4 @@ StarSchema = mongoose.Schema
     ref: 'Planet'
   ]
 
-Star = mongoose.model 'Star', StarSchema
-
-module.exports = Star
+module.exports = StarSchema

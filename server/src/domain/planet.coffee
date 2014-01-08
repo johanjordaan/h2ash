@@ -25,7 +25,4 @@ PlanetSchema = mongoose.Schema
     ref: 'Moon'
   ]
 
-
-Planet = mongoose.model 'Planet', PlanetSchema
-
-module.exports = Planet
+module.exports = PlanetSchema
