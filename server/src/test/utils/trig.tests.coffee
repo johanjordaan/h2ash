@@ -2,6 +2,7 @@ _ = require 'underscore'
 should = require('chai').should()
 expect = require('chai').expect
 
+rnd = require '../../utils/rnd'
 trig = require '../../utils/trig'
 
 describe 'utils.trig', () ->
@@ -219,7 +220,7 @@ describe 'utils.trig', () ->
   describe 'sc2cc', () ->
     it 'should be able to do a round trib cc -> sc -> cc', () ->
       for i in _.range(100)
-        cc = trig.make_cc _.random(-1000,1000),_.random(-1000,1000),_.random(-1000,1000)
+        cc = trig.make_cc rnd.rnd_float_between(-1000,1000),rnd.rnd_float_between(-1000,1000),rnd.rnd_float_between(-1000,1000)
         sc = trig.cc2sc cc
         ccr = trig.sc2cc sc
 
