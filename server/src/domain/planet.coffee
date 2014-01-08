@@ -1,13 +1,19 @@
 mongoose = require 'mongoose'
 
 PlanetSchema = mongoose.Schema
+  _id :
+    type : String
+    required : true
+
   star :
-    type: mongoose.Schema.ObjectId 
+    type: String 
     ref: 'Star'
 
   name : String
   radius : Number
-  #atmospehere:
+  atmosphere:
+    name : String
+    pressure : Number
   distance : Number
   temperature : Number
   orbital_period : Number
@@ -15,7 +21,7 @@ PlanetSchema = mongoose.Schema
   mass : Number
   gravity : Number
   moons : [
-    type: mongoose.Schema.ObjectId 
+    type : String
     ref: 'Moon'
   ]
 

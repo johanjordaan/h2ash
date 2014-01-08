@@ -3,12 +3,6 @@ nox = require '../nox/nox'
 planet_types = require './planet_types'
 astronomy = require './astronomy'
 
-
-# Add lifetime and age
-# Add position : Solar systems are globular clusters with stars concentrated 
-#  in center of cluster
-# Add check for stars in the instability sector of the HR graph
-
 StarTemplate = nox.create_template 'StarTemplate',
   name : "name"
   color_x : "color"

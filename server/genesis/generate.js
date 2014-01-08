@@ -20,7 +20,7 @@
 
   db.once('open', function() {
     return mongoose.connection.db.dropDatabase(function() {
-      var DEFAULT_SOLAR_SYSTEM, Moon, Planet, STAR_TYPE_DISTRIBUTION, Star, atmosphere_types, batch, batch_size, current_count, de_nox, generate, habitable, habitable_moons, habitable_planets, habitable_solar_systems, higest_habitable_count, i, last_batch, last_batch_saved, mem_used, moon_types, most_habitable_ss, planet_types, save_stars, star, star_types, stars, start, target_count, total_moons, total_planets, total_solar_systems, _i, _len, _ref;
+      var DEFAULT_SOLAR_SYSTEM, Moon, Planet, STAR_TYPE_DISTRIBUTION, Star, atmosphere_types, batch, batch_size, current_count, generate, habitable, habitable_moons, habitable_planets, habitable_solar_systems, higest_habitable_count, last_batch, last_batch_saved, mem_used, moon_types, most_habitable_ss, planet_types, save_stars, star_types, stars, start, target_count, total_moons, total_planets, total_solar_systems;
       Star = require('../domain/star');
       Planet = require('../domain/planet');
       Moon = require('../domain/moon');
@@ -58,14 +58,58 @@
       start = new Date;
       stars = [];
       mem_used = 0;
-      target_count = 100000;
+      target_count = 100;
       current_count = 0;
       batch = [];
-      batch_size = 10000;
+      batch_size = 10;
       last_batch_saved = true;
       last_batch = false;
+      save_stars = function(offset, stars, cb) {
+        var i, ii, iii, moons, planets, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
+        planets = [];
+        moons = [];
+        _ref = _.range(stars.length);
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          i = _ref[_i];
+          nox.de_nox(stars[i]);
+          stars[i]._id = i + offset;
+          _ref1 = _.range(stars[i].planets.length);
+          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+            ii = _ref1[_j];
+            stars[i].planets[ii]._id = i + offset + '_' + ii;
+            stars[i].planets[ii].star = i + offset;
+            planets.push(stars[i].planets[ii]);
+            _ref2 = _.range(stars[i].planets[ii].moons.length);
+            for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+              iii = _ref2[_k];
+              stars[i].planets[ii].moons[iii]._id = i + offset + '_' + ii + '_' + iii;
+              stars[i].planets[ii].moons[iii].planet = i + offset + '_' + ii;
+              moons.push(stars[i].planets[ii].moons[iii]);
+            }
+          }
+        }
+        return Star.create(stars, function(err) {
+          if (err) {
+            return cb(err, null);
+          } else {
+            return Planet.create(planets, function(err) {
+              if (err) {
+                return cb(err, null);
+              } else {
+                return Moon.create(moons, function(err) {
+                  if (err) {
+                    return cb(err, null);
+                  } else {
+                    return cb(null, arguments);
+                  }
+                });
+              }
+            });
+          }
+        });
+      };
       generate = function() {
-        var current_batch_size, i, ss, star, _i, _j, _len, _len1, _ref;
+        var current_batch_size, i, ss, _i, _len, _ref;
         if (last_batch_saved) {
           last_batch = current_count >= (target_count - batch_size);
           current_batch_size = batch_size;
@@ -80,23 +124,19 @@
             batch.push(ss.star);
           }
           console.log("Batch generating finished");
-          current_count += current_batch_size;
           last_batch_saved = false;
           console.log("Saving batch ... " + current_count + " (" + batch.length + ") ");
-          for (_j = 0, _len1 = batch.length; _j < _len1; _j++) {
-            star = batch[_j];
-            delete star._parent;
-            delete star.planets;
-          }
-          Star.create(batch, function(err, res) {
+          save_stars(current_count, batch, function(err, res) {
             if (err) {
               return console.log(err);
             } else {
               last_batch_saved = true;
               console.log("Batch saved ...");
               batch = [];
+              current_count += current_batch_size;
               if (last_batch) {
-                return db.close();
+                db.close();
+                return console.log("End : ", new Date());
               }
             }
           });
@@ -109,125 +149,63 @@
           }, 100);
         }
       };
-      de_nox = function(o) {
-        var i, key, _i, _j, _len, _len1, _ref, _results, _results1;
-        if (_.isArray(o)) {
-          _results = [];
-          for (_i = 0, _len = o.length; _i < _len; _i++) {
-            i = o[_i];
-            _results.push(de_nox(i));
-          }
-          return _results;
-        } else if (_.isObject(o)) {
-          delete o._parent;
-          delete o._nox_errors;
-          delete o._index;
-          delete o._nox_template_name;
-          _ref = _.keys(o);
-          _results1 = [];
-          for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-            key = _ref[_j];
-            _results1.push(de_nox(o[key]));
-          }
-          return _results1;
-        }
-      };
-      stars = [];
-      _ref = _.range(1000);
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        i = _ref[_i];
-        star = nox.construct_template(star_types.M_CLASS);
-        de_nox(star);
-        stars.push(star);
-      }
-      console.log("Created [" + stars.length + " stars]");
-      save_stars = function(stars) {
-        var create_children_for_parent, create_moons_for_planet, create_planets_for_star, create_star;
-        create_children_for_parent = function(children_key, db_class, parent, index) {
-          return function(cb) {
-            var list;
-            if (children_key != null) {
-              list = parent[children_key];
-            } else {
-              list = parent;
-            }
-            return db_class.create(list, function(err) {
-              var key, saved_items, _j, _len1, _ref1;
-              if (err) {
-                console.log('----->', children_key, err, arguments);
-              } else {
-                saved_items = [];
-                _ref1 = _.keys(arguments).slice(1);
-                for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-                  key = _ref1[_j];
-                  saved_items.push(arguments[key]);
-                }
-                if (children_key != null) {
-                  parent[children_key] = saved_items;
-                }
-              }
-              return cb(null, 1);
-            });
-          };
-        };
-        create_moons_for_planet = _.partial(create_children_for_parent, 'moons', Moon);
-        create_planets_for_star = _.partial(create_children_for_parent, 'planets', Planet);
-        create_star = _.partial(create_children_for_parent, null, Star);
-        return async.series([
-          function(cb) {
-            var create_moons, _j, _len1;
-            create_moons = [];
-            for (_j = 0, _len1 = stars.length; _j < _len1; _j++) {
-              star = stars[_j];
-              create_moons = create_moons.concat(_.map(star.planets, create_moons_for_planet));
-            }
-            return async.series(create_moons, function() {
-              var create_planets;
-              console.log("Saved moons from [" + create_moons.length + "] planets");
-              create_planets = _.map(stars, create_planets_for_star);
-              return async.series(create_planets, function() {
-                var create_stars;
-                console.log("Saved planets from [" + create_planets.length + "] stars");
-                create_stars = _.map(stars, create_star);
-                return async.series(create_stars, function() {
-                  console.log("Saved [" + create_stars.length + "] stars");
-                  return cb(null, 1);
-                });
-              });
-            });
-          }, function(cb) {
-            var moon, planet, _j, _k, _l, _len1, _len2, _len3, _ref1, _ref2;
-            for (_j = 0, _len1 = stars.length; _j < _len1; _j++) {
-              star = stars[_j];
-              _ref1 = star.planets;
-              for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
-                planet = _ref1[_k];
-                planet.star = star;
-                planet.Save(function(err, res) {
-                  var x;
-                  return x = 1;
-                });
-                _ref2 = planet.moons;
-                for (_l = 0, _len3 = _ref2.length; _l < _len3; _l++) {
-                  moon = _ref2[_l];
-                  moon.planet = planet;
-                  moon.Save(function(err, res) {
-                    var x;
-                    return x = 2;
-                  });
-                }
-              }
-            }
-            return cb(null, 1);
-          }, function(cb) {
-            db.close();
-            return cb(null, '');
-          }
-        ]);
-      };
-      save_stars(stars);
+      console.log("Start : ", new Date());
+      return generate();
     });
   });
+
+  /*    
+      save_stars = (stars) ->    
+        create_children_for_parent = (children_key,db_class,parent,index) ->
+          return (cb) ->
+            list = if children_key? then parent[children_key] else parent
+            db_class.create list, (err) ->
+              if err
+                console.log '----->',children_key,err,arguments
+              else
+                saved_items = []
+                for key in _.keys(arguments)[1..]
+                  saved_items.push arguments[key] 
+                if children_key?
+                  parent[children_key] = saved_items
+              cb(null,1)
+         
+        create_moons_for_planet = _.partial(create_children_for_parent,'moons',Moon)
+        create_planets_for_star = _.partial(create_children_for_parent,'planets',Planet)
+        create_star = _.partial(create_children_for_parent,null,Star) 
+  
+        async.series [
+          # 1) Save all the moons, planets and stars
+          #
+          (cb) ->  
+            create_moons = []    
+            for star in stars
+              create_moons  = create_moons.concat _.map(star.planets,create_moons_for_planet) 
+  
+            async.series create_moons, () ->
+              console.log "Saved moons from [#{create_moons.length}] planets"
+  
+              create_planets = _.map(stars,create_planets_for_star) 
+              
+              async.series create_planets, () ->   
+                console.log "Saved planets from [#{create_planets.length}] stars"
+  
+                create_stars = _.map(stars,create_star)
+  
+                async.series create_stars, () ->
+                  console.log "Saved [#{create_stars.length}] stars"
+  
+                  cb null,1
+          ,(cb) ->
+            db.close()
+            cb(null,'')
+        ]          
+  
+      save_stars stars           
+  
+      return
+  */
+
 
   /*
   

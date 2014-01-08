@@ -4,9 +4,6 @@ astronomy = require './astronomy'
 moon_types = require './moon_types'
 atmosphere_types = require './atmosphere_types'
 
-# Add geology - stabe / unstable
-#  
-
 planet_template = nox.create_template 'planet_template',
   name : "name"
   type : "type"

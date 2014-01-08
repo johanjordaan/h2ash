@@ -3,6 +3,9 @@ mongoose = require 'mongoose'
 Planet = require './planet'
 
 StarSchema = mongoose.Schema
+  _id :
+    type : String
+    required : true
   name : String
   temperature : Number
   wavelength : Number
@@ -11,7 +14,7 @@ StarSchema = mongoose.Schema
   radius : Number
   mass : Number
   planets : [
-    type: mongoose.Schema.ObjectId 
+    type : String
     ref: 'Planet'
   ]
 

@@ -1,8 +1,3 @@
-# TODO : 
-# Rings
-# Giant clasification
-# Prety printing
-
 _ = require 'underscore'
 async = require 'async'
 
@@ -106,12 +101,41 @@ db.once 'open', () ->
     mem_used = 0
 
 
-    target_count = 100000
+    target_count = 100
     current_count = 0
     batch = []
-    batch_size = 10000
+    batch_size = 10
     last_batch_saved = true
     last_batch = false
+
+    save_stars = (offset,stars,cb) ->  
+      planets = []
+      moons = []
+      for i in _.range(stars.length)
+        nox.de_nox stars[i]
+        stars[i]._id = i+offset
+        for ii in _.range(stars[i].planets.length)
+          stars[i].planets[ii]._id = i+offset+'_'+ii
+          stars[i].planets[ii].star = i+offset
+          planets.push stars[i].planets[ii]
+          for iii in _.range(stars[i].planets[ii].moons.length)
+            stars[i].planets[ii].moons[iii]._id = i+offset+'_'+ii+'_'+iii
+            stars[i].planets[ii].moons[iii].planet = i+offset+'_'+ii
+            moons.push stars[i].planets[ii].moons[iii]
+
+      Star.create stars, (err) ->
+        if err
+          cb err,null
+        else
+          Planet.create planets, (err) ->  
+            if err
+              cb err,null
+            else
+              Moon.create moons, (err) ->
+                if err
+                  cb err,null
+                else            
+                  cb null,arguments
 
     generate = () ->
       if last_batch_saved
@@ -126,22 +150,20 @@ db.once 'open', () ->
             batch.push ss.star
         console.log "Batch generating finished"
 
-        current_count += current_batch_size
 
         last_batch_saved = false
         console.log "Saving batch ... #{current_count} (#{batch.length}) "
-        for star in batch
-          delete star._parent
-          delete star.planets          
-        Star.create batch, (err,res) ->
+        save_stars current_count,batch,(err,res) ->
           if(err)
             console.log err
           else
             last_batch_saved = true
             console.log "Batch saved ..."
             batch = []
+            current_count += current_batch_size
             if last_batch
               db.close()
+              console.log "End : ",new Date() 
         if !last_batch      
           generate()
       else    
@@ -150,37 +172,21 @@ db.once 'open', () ->
         ,100      
 
 
-    #generate()
+    console.log "Start : ",new Date()
+    generate()
 
 
-    de_nox = (o)->
-      if _.isArray(o)
-        for i in o
-          de_nox(i)
-      else if _.isObject(o)
-        delete o._parent
-        delete o._nox_errors
-        delete o._index
-        delete o._nox_template_name
-        for key in _.keys(o)
-          de_nox o[key]
 
-    stars = []
-    for i in _.range(1000)
-      star = nox.construct_template star_types.M_CLASS
-      de_nox star
-      stars.push star
-    console.log "Created [#{stars.length} stars]"
-    
+
+
+
+
+
+###    
     save_stars = (stars) ->    
       create_children_for_parent = (children_key,db_class,parent,index) ->
         return (cb) ->
-          if children_key?
-            list = parent[children_key]
-          else
-            list = parent
-
-
+          list = if children_key? then parent[children_key] else parent
           db_class.create list, (err) ->
             if err
               console.log '----->',children_key,err,arguments
@@ -219,18 +225,6 @@ db.once 'open', () ->
 
                 cb null,1
         ,(cb) ->
-          for star in stars
-            for planet in star.planets
-              planet.star = star
-              planet.Save (err,res) ->
-                x = 1
-              for moon in planet.moons
-                moon.planet = planet
-                moon.Save (err,res) ->
-                  x=2
-
-          cb null,1        
-        ,(cb) ->
           db.close()
           cb(null,'')
       ]          
@@ -238,7 +232,7 @@ db.once 'open', () ->
     save_stars stars           
 
     return
-
+###
 
     #asyn.series [
     #  (cb) ->
