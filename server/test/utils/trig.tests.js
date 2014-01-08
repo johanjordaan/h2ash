@@ -11,6 +11,7 @@
   trig = require('../../utils/trig');
 
   describe('utils.trig', function() {
+    var assert_sc;
     describe('deg2rad - convert degrees to radian', function() {
       it('should convert 0 deg to 0 radians', function() {
         return trig.deg2rad(0).should.equal(0);
@@ -84,7 +85,7 @@
         return cc.z.should.equal(-0.0001);
       });
     });
-    return describe('make_sc -  construct a spherical coordinate object (r,theta,phi)', function() {
+    describe('make_sc - construct a spherical coordinate object (r,theta,phi)', function() {
       var sc;
       sc = trig.make_sc(1002.3, Math.PI / 3, Math.PI);
       it('should return an object with r to the suplied value', function() {
@@ -95,6 +96,221 @@
       });
       return it('should return an object with y to the suplied value', function() {
         return sc.phi.should.equal(Math.PI);
+      });
+    });
+    assert_sc = function(sc, r, theta, phi) {
+      sc.r.should.be.within(r - 0.0001, r + 0.0001);
+      sc.theta.should.be.within(theta - 0.0001, theta + 0.0001);
+      return sc.phi.should.be.within(phi - 0.0001, phi + 0.0001);
+    };
+    describe('cc2sc - convert cartesian ccordinates to spherical cordinates', function() {
+      describe('quadrant 1 xyz', function() {
+        it('should convert 0,0,0 to 0,0,0', function() {
+          var sc;
+          sc = trig.cc2sc(trig.make_cc(0, 0, 0));
+          return assert_sc(sc, 0, 0, 0);
+        });
+        it('should convert 50,0,0 to 50,90,0', function() {
+          var sc;
+          sc = trig.cc2sc(trig.make_cc(50, 0, 0));
+          return assert_sc(sc, 50, trig.deg2rad(90), 0);
+        });
+        it('should convert 0,50,0 to 50,90,90', function() {
+          var cc, sc;
+          cc = trig.make_cc(0, 50, 0);
+          sc = trig.cc2sc(cc);
+          return assert_sc(sc, 50, trig.deg2rad(90), trig.deg2rad(90));
+        });
+        it('should convert 0,0,50 to 50,0,0', function() {
+          var cc, sc;
+          cc = trig.make_cc(0, 0, 50);
+          sc = trig.cc2sc(cc);
+          return assert_sc(sc, 50, 0, 0);
+        });
+        it('should convert 50,50,0 to sqrt(50^2+50^2),90,45', function() {
+          var cc, sc;
+          cc = trig.make_cc(50, 50, 0);
+          sc = trig.cc2sc(cc);
+          return assert_sc(sc, trig.cc_length(cc), trig.deg2rad(90), trig.deg2rad(45));
+        });
+        it('should convert 50,0,50 to sqrt(50^2+50^2),45,0', function() {
+          var cc, sc;
+          cc = trig.make_cc(50, 0, 50);
+          sc = trig.cc2sc(cc);
+          return assert_sc(sc, trig.cc_length(cc), trig.deg2rad(45), 0);
+        });
+        it('should convert 0,50,50 to sqrt(50^2+50^2),45,90', function() {
+          var cc, sc;
+          cc = trig.make_cc(0, 50, 50);
+          sc = trig.cc2sc(cc);
+          return assert_sc(sc, trig.cc_length(cc), trig.deg2rad(45), trig.deg2rad(90));
+        });
+        return it('should convert 50,50,50 to sqrt(3*50^2),Math.acos(50/l),45', function() {
+          var cc, l, sc, theta;
+          cc = trig.make_cc(50, 50, 50);
+          sc = trig.cc2sc(cc);
+          l = Math.sqrt(3 * (50 * 50));
+          theta = Math.acos(cc.z / l);
+          return assert_sc(sc, l, theta, trig.deg2rad(45));
+        });
+      });
+      describe('quadrant 2 -xyz', function() {
+        it('should convert -50,0,0 to 50,90,180', function() {
+          var sc;
+          sc = trig.cc2sc(trig.make_cc(-50, 0, 0));
+          return assert_sc(sc, 50, trig.deg2rad(90), trig.deg2rad(180));
+        });
+        it('should convert -50,50,0 to sqrt(50^2+50^2),90,90+45', function() {
+          var cc, sc;
+          cc = trig.make_cc(-50, 50, 0);
+          sc = trig.cc2sc(cc);
+          return assert_sc(sc, trig.cc_length(cc), trig.deg2rad(90), trig.deg2rad(90 + 45));
+        });
+        it('should convert -50,0,50 to sqrt(50^2+50^2),45,0', function() {
+          var cc, sc;
+          cc = trig.make_cc(50, 0, 50);
+          sc = trig.cc2sc(cc);
+          return assert_sc(sc, trig.cc_length(cc), trig.deg2rad(45), trig.deg2rad(0));
+        });
+        return it('should convert -50,50,50 to sqrt(3*50^),Math.acos(50/l),90+45', function() {
+          var cc, l, sc, theta;
+          cc = trig.make_cc(-50, 50, 50);
+          sc = trig.cc2sc(cc);
+          l = Math.sqrt(3 * (50 * 50));
+          theta = Math.acos(cc.z / l);
+          return assert_sc(sc, l, theta, trig.deg2rad(90 + 45));
+        });
+      });
+      describe('quadrant 3 x-yz', function() {
+        it('should convert 0,-50,0 to 50,90,270', function() {
+          var cc, sc;
+          cc = trig.make_cc(0, -50, 0);
+          sc = trig.cc2sc(cc);
+          return assert_sc(sc, 50, trig.deg2rad(90), trig.deg2rad(270));
+        });
+        it('should convert 50,-50,0 to sqrt(50^2+50^2),90,270+45', function() {
+          var cc, sc;
+          cc = trig.make_cc(50, -50, 0);
+          sc = trig.cc2sc(cc);
+          return assert_sc(sc, trig.cc_length(cc), trig.deg2rad(90), trig.deg2rad(270 + 45));
+        });
+        it('should convert 0,-50,50 to sqrt(50^2+50^2),45,270', function() {
+          var cc, sc;
+          cc = trig.make_cc(0, -50, 50);
+          sc = trig.cc2sc(cc);
+          return assert_sc(sc, trig.cc_length(cc), trig.deg2rad(45), trig.deg2rad(270));
+        });
+        return it('should convert 50,-50,50 to sqrt(3*50^2),Math.acos(50/l),270+45', function() {
+          var cc, l, sc, theta;
+          cc = trig.make_cc(50, -50, 50);
+          sc = trig.cc2sc(cc);
+          l = Math.sqrt(3 * (50 * 50));
+          theta = Math.acos(50 / l);
+          return assert_sc(sc, l, theta, trig.deg2rad(270 + 45));
+        });
+      });
+      describe('quadrant 4 xy-z', function() {
+        it('should convert 0,0,-50 to 50,180,0', function() {
+          var cc, sc;
+          cc = trig.make_cc(0, 0, -50);
+          sc = trig.cc2sc(cc);
+          return assert_sc(sc, 50, trig.deg2rad(180), 0);
+        });
+        it('should convert 50,0,-50 to sqrt(50^2+50^2),90+45,0', function() {
+          var cc, sc;
+          cc = trig.make_cc(50, 0, -50);
+          sc = trig.cc2sc(cc);
+          return assert_sc(sc, trig.cc_length(cc), trig.deg2rad(90 + 45), 0);
+        });
+        it('should convert 0,50,-50 to sqrt(50^2+50^2),45,90', function() {
+          var cc, sc;
+          cc = trig.make_cc(0, 50, -50);
+          sc = trig.cc2sc(cc);
+          return assert_sc(sc, trig.cc_length(cc), trig.deg2rad(90 + 45), trig.deg2rad(90));
+        });
+        return it('should convert 50,50,-50 to sqrt(3*50^2),Math.acos(50/l),45', function() {
+          var cc, l, sc, theta;
+          cc = trig.make_cc(50, 50, -50);
+          sc = trig.cc2sc(cc);
+          l = Math.sqrt(3 * (50 * 50));
+          theta = Math.acos(cc.z / l);
+          return assert_sc(sc, l, theta, trig.deg2rad(45));
+        });
+      });
+      describe('quadrant 5 -x-yz', function() {
+        it('should convert -50,-50,0 to sqrt(50^2+50^2),90,180+45', function() {
+          var cc, sc;
+          cc = trig.make_cc(-50, -50, 0);
+          sc = trig.cc2sc(cc);
+          return assert_sc(sc, trig.cc_length(cc), trig.deg2rad(90), trig.deg2rad(180 + 45));
+        });
+        return it('should convert -50,-50,50 to sqrt(3*50^2),Math.acos(50/l),180+45', function() {
+          var cc, l, sc, theta;
+          cc = trig.make_cc(-50, -50, 50);
+          sc = trig.cc2sc(cc);
+          l = Math.sqrt(3 * (50 * 50));
+          theta = Math.acos(cc.z / l);
+          return assert_sc(sc, l, theta, trig.deg2rad(180 + 45));
+        });
+      });
+      describe('quadrant 6 -xy-z', function() {
+        it('should convert -50,0,-50 to sqrt(50^2+50^2),90+45,180', function() {
+          var cc, sc;
+          cc = trig.make_cc(-50, 0, -50);
+          sc = trig.cc2sc(cc);
+          return assert_sc(sc, trig.cc_length(cc), trig.deg2rad(90 + 45), trig.deg2rad(180));
+        });
+        return it('should convert -50,50,-50 to sqrt(3*50^2),Math.acos(50/l),90+45', function() {
+          var cc, l, sc, theta;
+          cc = trig.make_cc(-50, 50, -50);
+          sc = trig.cc2sc(cc);
+          l = Math.sqrt(3 * (50 * 50));
+          theta = Math.acos(cc.z / l);
+          return assert_sc(sc, l, theta, trig.deg2rad(90 + 45));
+        });
+      });
+      describe('quadrant 7 x-y-z', function() {
+        it('should convert 0,-50,-50 to sqrt(50^2+50^2),90+45,270', function() {
+          var cc, sc;
+          cc = trig.make_cc(0, -50, -50);
+          sc = trig.cc2sc(cc);
+          return assert_sc(sc, trig.cc_length(cc), trig.deg2rad(90 + 45), trig.deg2rad(270));
+        });
+        return it('should convert 50,-50,-50 to sqrt(3*50^2),Math.acos(50/l),180+45', function() {
+          var cc, l, sc, theta;
+          cc = trig.make_cc(50, -50, -50);
+          sc = trig.cc2sc(cc);
+          l = Math.sqrt(3 * (50 * 50));
+          theta = Math.acos(cc.z / l);
+          return assert_sc(sc, l, theta, trig.deg2rad(270 + 45));
+        });
+      });
+      return describe('quadrant 7 x-y-z', function() {
+        return it('should convert -50,-50,-50 to sqrt(3*50^2),Math.acos(50/l),180+45', function() {
+          var cc, l, sc, theta;
+          cc = trig.make_cc(-50, -50, -50);
+          sc = trig.cc2sc(cc);
+          l = Math.sqrt(3 * (50 * 50));
+          theta = Math.acos(cc.z / l);
+          return assert_sc(sc, l, theta, trig.deg2rad(180 + 45));
+        });
+      });
+    });
+    return describe('sc2cc', function() {
+      return it('should be able to do a round trib cc -> sc -> cc', function() {
+        var cc, ccr, i, sc, _i, _len, _ref, _results;
+        _ref = _.range(100);
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          i = _ref[_i];
+          cc = trig.make_cc(_.random(-1000, 1000), _.random(-1000, 1000), _.random(-1000, 1000));
+          sc = trig.cc2sc(cc);
+          ccr = trig.sc2cc(sc);
+          ccr.x.should.be.within(cc.x - 0.0001, cc.x + 0.0001);
+          ccr.y.should.be.within(cc.y - 0.0001, cc.y + 0.0001);
+          _results.push(ccr.z.should.be.within(cc.z - 0.0001, cc.z + 0.0001));
+        }
+        return _results;
       });
     });
   });

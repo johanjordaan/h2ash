@@ -10,6 +10,10 @@ fix_random_value = (value) ->
     return value
 
 describe 'nox.rnd', ()->
+  afterEach (done) -> 
+    Math.random = saved_random
+    done()
+    
   describe '- basic uasge : ', () ->
     c = nox.rnd
       min : 1

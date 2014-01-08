@@ -4,6 +4,8 @@ _ = require 'underscore'
 
 nox = require '../../nox/nox'
 
+saved_random = Math.random
+
 fix_random_value = (value) ->
   fix_random_values [value]
 
@@ -12,6 +14,8 @@ fix_random_values = (values) ->
   Math.random = () ->
     value = values.pop()
     fix_random_values values.reverse()
+    if values.length==0
+      Math.random = saved_random
     return value
 
 describe 'nox.create_template', () ->

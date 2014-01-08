@@ -17,6 +17,10 @@
   };
 
   describe('nox.rnd', function() {
+    afterEach(function(done) {
+      Math.random = saved_random;
+      return done();
+    });
     describe('- basic uasge : ', function() {
       var c, d;
       c = nox.rnd({

@@ -22,6 +22,9 @@
       var value;
       value = values.pop();
       fix_random_values(values.reverse());
+      if (values.length === 0) {
+        Math.random = saved_random;
+      }
       return value;
     };
   };
