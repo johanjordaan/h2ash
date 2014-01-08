@@ -11,7 +11,18 @@
       type: String,
       required: true
     },
+    position: {
+      r: Number,
+      theta: Number,
+      phi: Number,
+      cc: {
+        x: Number,
+        y: Number,
+        z: Number
+      }
+    },
     name: String,
+    "class": String,
     temperature: Number,
     wavelength: Number,
     color: String,

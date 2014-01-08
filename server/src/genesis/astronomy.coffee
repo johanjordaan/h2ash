@@ -3,6 +3,7 @@ _ = require 'underscore'
 PI = Math.PI
 G = 6.67e-11                               # Gravitational constant : N*(m.kg)^2 
 AU = 149597871                             # Astronomical Unit : Km
+LY = 9.4605284e12                 # Lightyear defined in km     
 sigma = 5.670373e-8                        # Stefan-Boltzmann Konstant : W/(m^2*K^4)
 
 Ls_Sun = 3.839e26                          # Luminosity of the Sun        
@@ -16,6 +17,7 @@ g_Earth = -9.81                              # Acc fo gravity : m/s^2
 SecondsPerYear = 31556926
 
 Wiens_Constant = 0.0029                   # in m * K   
+
 
 #WaterFreezingPoint:273.15
 #WaterBoilingPoint:373.15
@@ -207,9 +209,12 @@ color_from_wavelength = (star) ->
 
 module.exports =
   AU : AU
+  LY : LY
   SOLAR_MASS : Ms_Sun
   SOLAR_RADIUS : Rs_Sun
   EARTH_RADIUS : Rp_Earth
+
+
 
   radius_of_star : radius_of_star
   mass_of_star : mass_of_star

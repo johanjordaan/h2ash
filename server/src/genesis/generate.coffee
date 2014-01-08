@@ -4,7 +4,17 @@ async = require 'async'
 nox = require '../nox/nox'
 mem = require '../utils/memory'
 
+Star = require '../domain/star'
+Planet = require '../domain/planet'
+Moon = require '../domain/moon'
 
+astronomy = require './astronomy'
+
+
+moon_types = require './moon_types'
+planet_types = require './planet_types'
+star_types = require './star_types'
+atmosphere_types = require './atmosphere_types'
 
 mongoose = require 'mongoose'
 mongoose.connect 'mongodb://localhost/h2ash_stars'
@@ -13,17 +23,7 @@ db.on 'error', console.error.bind(console, 'connection error:')
 db.once 'open', () ->
   mongoose.connection.db.dropDatabase () ->
 
-    Star = require '../domain/star'
-    Planet = require '../domain/planet'
-    Moon = require '../domain/moon'
 
-
-
-
-    moon_types = require './moon_types'
-    planet_types = require './planet_types'
-    star_types = require './star_types'
-    atmosphere_types = require './atmosphere_types'
 
     # Start probability chart
     #
@@ -46,18 +46,13 @@ db.once 'open', () ->
       star : nox.select_one
         values : STAR_TYPE_DISTRIBUTION
 
-
-    #console.log types.construct(atmosphere_types.NORMAL_ATMOSPHERE)
-    #console.log types.construct(star_types.M_CLASS)
-    #console.log types.construct(planet_types.ASTEROID_BELT)
-    #console.log types.construct(planet_types.TERRAN)
-
-    #console.log types.construct(star_types.RED_SUPER_GIANT)
-    #console.log types.construct(moon_types.ASTEROID)
-    #console.log types.construct(star_types.DWARF)
-
     #ss = nox.construct_template DEFAULT_SOLAR_SYSTEM
     #console.log ss.star.planets
+
+    #for i in _.range(1000)
+    #  console.log nox.construct_template(star_types.DWARF).position.r/astronomy.LY
+    #console.log '------'
+    #db.close()
 
     #console.log nox.construct_template moon_types.LUNAR_MOON
     #console.log nox.construct_template moon_types.ASTEROID_MOON

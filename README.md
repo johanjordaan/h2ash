@@ -12,18 +12,19 @@ Planets/Moons
 * Add rotational period of planet
 * Add orbital speed 
 * Add rings to some gas giants
+* Add position in orbit
 
 Stars
 * Add coordinates 
 * Add age
 * Add binary star systems
 * Add check fo stars in the instability region of the HR diagram
-* Add absolute magnitude
 * Devise a naming convention
 
 General
 * Change astronomy module to be more generic and then update the nox models use the new general astronomy
-* Build a complete hbitability check based on dole/azimov into astronomy
+* Build a complete habitability check based on dole/azimov into astronomy
+* Build simple routine to move planet in ellipse around planet based on some update frequency no update by batch process. Updated only when somebodu reuires the planet and thenits updated. Base on the last update?
 
 nox
 * Change nox to generate only one level deep based on directives

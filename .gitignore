@@ -1,3 +1,5 @@
 server/node_modules/*
 server/src/temp/*
 server/temp/*
+
+RAND_*
