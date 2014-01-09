@@ -125,42 +125,41 @@ reply_with = (req,res,error,data) ->
 # Admin Actions
 #
 app.post '/start_testing_session', admin_auth, (req,res) ->
-  db.close () ->
-    mongoose.connect 'mongodb://localhost/h2ash_test'
-    db = mongoose.connection
-    db.on 'error', console.error.bind(console, 'connection error:')
-    db.once 'open', () ->
-      mongoose.connection.db.dropDatabase () ->
-        console.log 'Test DB Open'
-        console.log 'Creating test admin'
-        test_mode = true;
-        
-        # Create a new admin user for the test session
-        #
-        admin_user = new h2ash_auth.User
-          email : 'admin@h2ash.com'
-          password : '123'
-          admin : true
-          validated : true
-          registration_token : ""
-          token : ""
-        admin_user.save (err,saved) ->
-          console.log 'Admin user saved'  
-          delete req.auth_user
-          reply_with req,res,errors.OK
+  h2ash_auth.conn.close () ->
+    h2ash_auth = db_utils.open_db "mongodb://localhost/h2ash_test", 
+      'User' : UserSchema
+      , (db_context) ->
+        console.log 'Test Database opened...'
+        db_context.conn.db.dropDatabase () ->
+          console.log 'Test Database dropped...'
+          test_mode = true;
 
+          console.log 'Creating test admin'
+          
+          # Create a new admin user for the test session
+          #
+          admin_user = new db_context.User
+            email : 'admin@h2ash.com'
+            password : '123'
+            admin : true
+            validated : true
+            registration_token : ""
+            token : ""
+          admin_user.save (err,saved) ->
+            console.log 'Admin user saved'  
+            delete req.auth_user
+            reply_with req,res,errors.OK
             
 
 app.post '/end_testing_session', (req,res) ->
-  db.close  () ->
-    mongoose.connect 'mongodb://localhost/h2ash'
-    db = mongoose.connection
-    db.on 'error', console.error.bind(console, 'connection error:')
-    db.once 'open', () ->
-      console.log 'Live DB Open'
-      test_mode = false
-      delete req.auth_user
-      reply_with req,res,errors.OK
+  h2ash_auth.conn.close () ->
+    h2ash_auth = db_utils.open_db "mongodb://localhost/h2ash", 
+      'User' : UserSchema
+      , (db_context) ->
+        console.log 'Database opened...'
+        test_mode = false
+        delete req.auth_user
+        reply_with req,res,errors.OK
 
 # Actions
 #

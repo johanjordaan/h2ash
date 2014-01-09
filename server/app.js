@@ -134,18 +134,17 @@
   };
 
   app.post('/start_testing_session', admin_auth, function(req, res) {
-    return db.close(function() {
-      var db;
-      mongoose.connect('mongodb://localhost/h2ash_test');
-      db = mongoose.connection;
-      db.on('error', console.error.bind(console, 'connection error:'));
-      return db.once('open', function() {
-        return mongoose.connection.db.dropDatabase(function() {
+    return h2ash_auth.conn.close(function() {
+      return h2ash_auth = db_utils.open_db("mongodb://localhost/h2ash_test", {
+        'User': UserSchema
+      }, function(db_context) {
+        console.log('Test Database opened...');
+        return db_context.conn.db.dropDatabase(function() {
           var admin_user;
-          console.log('Test DB Open');
-          console.log('Creating test admin');
+          console.log('Test Database dropped...');
           test_mode = true;
-          admin_user = new h2ash_auth.User({
+          console.log('Creating test admin');
+          admin_user = new db_context.User({
             email: 'admin@h2ash.com',
             password: '123',
             admin: true,
@@ -164,13 +163,11 @@
   });
 
   app.post('/end_testing_session', function(req, res) {
-    return db.close(function() {
-      var db;
-      mongoose.connect('mongodb://localhost/h2ash');
-      db = mongoose.connection;
-      db.on('error', console.error.bind(console, 'connection error:'));
-      return db.once('open', function() {
-        console.log('Live DB Open');
+    return h2ash_auth.conn.close(function() {
+      return h2ash_auth = db_utils.open_db("mongodb://localhost/h2ash", {
+        'User': UserSchema
+      }, function(db_context) {
+        console.log('Database opened...');
         test_mode = false;
         delete req.auth_user;
         return reply_with(req, res, errors.OK);

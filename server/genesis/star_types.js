@@ -31,7 +31,10 @@
         sc = trig.make_sc(p.r, trig.deg2rad(p.theta), trig.deg2rad(p.phi));
         return trig.sc2cc(sc);
       }
-    })
+    }),
+    quadrant: "Gamma",
+    sector: "Delta",
+    region: ""
   });
 
   StarTemplate = nox.create_template('StarTemplate', {
@@ -39,6 +42,7 @@
       method: star_name_gen.generate_name
     }),
     "class": "star class",
+    age: 10,
     position: nox.select_one({
       values: [PositionTemplate]
     }),
