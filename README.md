@@ -15,11 +15,12 @@ Planets/Moons
 * Add position in orbit
 
 Stars
-* Add coordinates 
 * Add age
 * Add binary star systems
 * Add check fo stars in the instability region of the HR diagram
-* Devise a naming convention
+* Devise a naming convention ?  Quadrant (Along the z azis-phi),Sector (along the r), Region (along thxy plane, theta, 0 is on the plane , 6 regions above and 6 below)
+  Delta Quadrant, Alpha Sector, Reqion 2, M18 - Further out Sectors will be more spacely populated and bigger?
+
 
 General
 * Change astronomy module to be more generic and then update the nox models use the new general astronomy
@@ -28,6 +29,7 @@ General
 
 nox
 * Change nox to generate only one level deep based on directives
+* Change nox to allow 'perpping' of a template on construction - ie all fields passed into the construct is used insetad of the ones in the model
 * Change nox to continue generation after loading a class into a module instead of constructing
 * Add more tests to nox
 
