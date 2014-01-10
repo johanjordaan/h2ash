@@ -79,10 +79,10 @@ async.parallel [
   mem_used = 0
 
 
-  target_count = 10000
+  target_count = 1000
   current_count = 0
   batch = []
-  batch_size = 1000
+  batch_size = 100
   last_batch_saved = true
   last_batch = false
 

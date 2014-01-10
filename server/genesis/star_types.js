@@ -15,7 +15,7 @@
   PositionTemplate = nox.create_template('PositionTemplate', {
     r: nox.rnd({
       min: 0,
-      max: 100 * astronomy.LY
+      max: 10 * astronomy.LY
     }),
     theta: nox.rnd({
       min: 0,
@@ -77,8 +77,8 @@
       max: 30000
     },
     luminosity: {
-      min: 10e-4,
-      max: 10e-2
+      min: 1e-4,
+      max: 1e-2
     },
     planets: {
       count: {
@@ -95,8 +95,8 @@
       max: 4000
     },
     luminosity: {
-      min: 10e-4,
-      max: 10e-2
+      min: 1e-4,
+      max: 1e-2
     },
     planets: {
       count: {
@@ -112,7 +112,7 @@
       max: 5000
     },
     luminosity: {
-      min: 10e-2,
+      min: 1e-2,
       max: 0.1
     },
     planets: {
@@ -164,7 +164,7 @@
     },
     luminosity: {
       min: 12,
-      max: 10e3
+      max: 1e3
     },
     planets: {
       count: {
@@ -180,8 +180,8 @@
       max: 25000
     },
     luminosity: {
-      min: 10e3,
-      max: 10e4
+      min: 1e3,
+      max: 1e4
     },
     planets: {
       count: {
@@ -197,8 +197,8 @@
       max: 40000
     },
     luminosity: {
-      min: 10e4,
-      max: 10e6
+      min: 1e4,
+      max: 1e6
     },
     planets: {
       count: {
@@ -215,7 +215,7 @@
     },
     luminosity: {
       min: 1,
-      max: 10e3
+      max: 1e3
     },
     planets: {
       count: {
@@ -231,8 +231,8 @@
       max: 3500
     },
     luminosity: {
-      min: 10e4,
-      max: 10e5
+      min: 1e4,
+      max: 1e5
     },
     planets: {
       count: {
@@ -248,8 +248,8 @@
       max: 10000
     },
     luminosity: {
-      min: 10e4,
-      max: 10e6
+      min: 1e4,
+      max: 1e6
     },
     planets: {
       count: {
