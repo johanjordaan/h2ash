@@ -20,6 +20,7 @@ StarSchema = mongoose.Schema
   luminosity : Number
   radius : Number
   mass : Number
+  lifetime : Number
   planets : [
     type : String
     ref: 'Planet'

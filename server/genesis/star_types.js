@@ -42,6 +42,7 @@
       method: star_name_gen.generate_name
     }),
     "class": "star class",
+    lifetime: nox.rnd({}),
     age: 10,
     position: nox.select_one({
       values: [PositionTemplate]
@@ -80,6 +81,10 @@
       min: 1e-4,
       max: 1e-2
     },
+    lifetime: {
+      min: 1e19,
+      max: 1e20
+    },
     planets: {
       count: {
         max: 2
@@ -98,6 +103,10 @@
       min: 1e-4,
       max: 1e-2
     },
+    lifetime: {
+      min: 1e11,
+      max: 1e12
+    },
     planets: {
       count: {
         max: 12
@@ -114,6 +123,10 @@
     luminosity: {
       min: 1e-2,
       max: 0.1
+    },
+    lifetime: {
+      min: 1e11,
+      max: 1e12
     },
     planets: {
       count: {
@@ -132,6 +145,10 @@
       min: 0.1,
       max: 4
     },
+    lifetime: {
+      min: 1e11,
+      max: 1e12
+    },
     planets: {
       count: {
         max: 12
@@ -148,6 +165,10 @@
     luminosity: {
       min: 4,
       max: 12
+    },
+    lifetime: {
+      min: 1e10,
+      max: 1e11
     },
     planets: {
       count: {
@@ -166,6 +187,10 @@
       min: 12,
       max: 1e3
     },
+    lifetime: {
+      min: 1e9,
+      max: 1e10
+    },
     planets: {
       count: {
         max: 18
@@ -182,6 +207,10 @@
     luminosity: {
       min: 1e3,
       max: 1e4
+    },
+    lifetime: {
+      min: 1e8,
+      max: 1e9
     },
     planets: {
       count: {
@@ -200,6 +229,10 @@
       min: 1e4,
       max: 1e6
     },
+    lifetime: {
+      min: 1e7,
+      max: 1e8
+    },
     planets: {
       count: {
         max: 18
@@ -216,6 +249,10 @@
     luminosity: {
       min: 1,
       max: 1e3
+    },
+    lifetime: {
+      min: 1e6,
+      max: 1e9
     },
     planets: {
       count: {
@@ -234,6 +271,10 @@
       min: 1e4,
       max: 1e5
     },
+    lifetime: {
+      min: 1e6,
+      max: 1e9
+    },
     planets: {
       count: {
         max: 18
@@ -250,6 +291,10 @@
     luminosity: {
       min: 1e4,
       max: 1e6
+    },
+    lifetime: {
+      min: 1e6,
+      max: 1e9
     },
     planets: {
       count: {

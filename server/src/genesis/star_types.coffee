@@ -24,6 +24,7 @@ StarTemplate = nox.create_template 'StarTemplate',
   name : nox.method
     method : star_name_gen.generate_name
   class : "star class" 
+  lifetime : nox.rnd {}
   age : 10  
   position : nox.select_one 
     values : [PositionTemplate]
@@ -54,8 +55,9 @@ StarTemplate = nox.create_template 'StarTemplate',
 
 DWARF = nox.extend_template StarTemplate,'DWARF',
   class : 'White Dwarf'
-  temperature : { min : 6000   ,max : 30000 }
+  temperature : { min : 6000  ,max : 30000 }
   luminosity :  { min : 1e-4  ,max : 1e-2 }
+  lifetime :    { min : 1e19  ,max : 1e20 }
   planets :
     count : { max : 2 }
     values : [
@@ -67,6 +69,7 @@ M_CLASS = nox.extend_template StarTemplate,'M_CLASS',
   class : 'M Class'
   temperature : { min : 2000   ,max : 4000 }
   luminosity :  { min : 1e-4  ,max : 1e-2 }
+  lifetime :    { min : 1e11  ,max : 1e12 }
   planets :
     count : { max : 12 }
 
@@ -74,6 +77,7 @@ K_CLASS = nox.extend_template StarTemplate,'K_CLASS',
   class : 'K Class'
   temperature : { min : 4000   ,max : 5000 }
   luminosity :  { min : 1e-2  ,max : 0.1 }
+  lifetime :    { min : 1e11  ,max : 1e12 }
   planets :
     count : { max : 12 }
 
@@ -81,6 +85,7 @@ G_CLASS = nox.extend_template StarTemplate,'G_CLASS',
   class : 'G Class'
   temperature : { min : 5000   ,max : 6000 }
   luminosity :  { min : 0.1    ,max : 4 }
+  lifetime :    { min : 1e11  ,max : 1e12 }
   planets :
     count : { max : 12 }
 
@@ -88,6 +93,7 @@ F_CLASS = nox.extend_template StarTemplate,'F_CLASS',
   class : 'F Class'
   temperature : { min : 6000   ,max : 7000 }
   luminosity :  { min : 4      ,max : 12 }
+  lifetime :    { min : 1e10  ,max : 1e11 }
   planets :
     count : { max : 18 }
 
@@ -95,20 +101,23 @@ A_CLASS = nox.extend_template StarTemplate,'A_CLASS',
   class : 'A Class'
   temperature : { min : 7000   ,max : 15000 }
   luminosity :  { min : 12     ,max : 1e3 }
+  lifetime :    { min : 1e9  ,max : 1e10 }
   planets :
     count : { max : 18 }
 
 B_CLASS = nox.extend_template StarTemplate,'B_CLASS',
   class : 'B Class'
   temperature : { min : 15000   ,max : 25000 }
-  luminosity :  { min : 1e3    ,max : 1e4 }
+  luminosity :  { min : 1e3     ,max : 1e4 }
+  lifetime :    { min : 1e8     ,max : 1e9 }
   planets :
     count : { max : 18 }
 
 O_CLASS = nox.extend_template StarTemplate,'O_CLASS',
   class : 'O Class'
   temperature : { min : 25000   ,max : 40000 }
-  luminosity :  { min : 1e4    ,max : 1e6 }
+  luminosity :  { min : 1e4     ,max : 1e6 }
+  lifetime :    { min : 1e7     ,max : 1e8 }
   planets :
     count : { max : 18 }
 
@@ -116,6 +125,7 @@ RED_GIANT = nox.extend_template StarTemplate,'RED_GIANT',
   class : 'Red Giant'
   temperature : { min : 3000    ,max : 4000 }
   luminosity :  { min : 1       ,max : 1e3 }
+  lifetime :    { min : 1e6     ,max : 1e9 }
   planets :
     count : { max : 18 }
 
@@ -123,6 +133,7 @@ RED_SUPER_GIANT = nox.extend_template StarTemplate,'RED_SUPER_GIANT',
   class : 'Red Super Giant'
   temperature : { min : 2500    ,max : 3500 }
   luminosity :  { min : 1e4    ,max : 1e5 }
+  lifetime :    { min : 1e6     ,max : 1e9 }
   planets :
     count : { max : 18 }
 
@@ -130,6 +141,7 @@ BLUE_SUPER_GIANT = nox.extend_template StarTemplate,'BLUE_SUPER_GIANT',
   class : 'Blue Super Giant'
   temperature : { min : 8000    ,max : 10000 }
   luminosity :  { min : 1e4    ,max : 1e6 }
+  lifetime :    { min : 1e6     ,max : 1e9 }
   planets :
     count : { max : 18 }
 

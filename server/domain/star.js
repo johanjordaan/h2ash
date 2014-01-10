@@ -27,6 +27,7 @@
     luminosity: Number,
     radius: Number,
     mass: Number,
+    lifetime: Number,
     planets: [
       {
         type: String,
