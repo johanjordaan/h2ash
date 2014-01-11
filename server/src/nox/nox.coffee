@@ -225,6 +225,9 @@ nox.rnd_normal = (input) ->
 nox.select = (input) ->
   if !input.count? then input.count = 1
   if !input.return_one? then input.return_one = false
+  if !input.enable_batching? then input.enable_batching = false
+  if !input.batch_size? then input.batch_size = 0
+  if !input.batch_cb? then input.batch_cb = () ->
 
   ret_val = 
     _nox_method : true
@@ -232,6 +235,9 @@ nox.select = (input) ->
     count : input.count
     values : input.values
     return_one : input.return_one
+    enable_batching : input.enable_batching
+    batch_size : input.batch_size
+    batch_cb : input.batch_cb
     run : (target_object) -> 
       if nox.check_fields @,['values']
         return @_nox_errors
@@ -239,7 +245,9 @@ nox.select = (input) ->
       count = nox.resolve @count, target_object
       values = nox.resolve @values, target_object
       return_one = nox.resolve @return_one, target_object
-
+      enable_batching = nox.resolve @enable_batching, target_object
+      batch_size = nox.resolve @batch_size, target_object
+      batch_cb = nox.resolve @batch_cb, target_object
 
       # If the size of the list is 0 and we donr require only one then return an empty list
       #
@@ -255,6 +263,8 @@ nox.select = (input) ->
         return @_nox_errors
 
       default_probability = 1/_.size(values)
+
+      batch_count = 0
 
       ret_val = []
       for i in _.range(count)
@@ -285,6 +295,14 @@ nox.select = (input) ->
               else
                 ret_val.push item 
                 break
+        
+        # Batching code. The batch callback is called.
+        #
+        if(enable_batching)
+          last_batch = i == (count-1)
+          if i%batch_size == 0 || last_batch
+            batch_cb i,batch_count,last_batch,ret_val
+
       if return_one
         return ret_val[0]     
       else 
@@ -296,6 +314,9 @@ nox.select_one = (input) ->
   input.return_one = true
   return nox.select input 
 
+nox.select_batched = (input) ->
+  input.enable_batching = true
+  return nox.select input
   
 
 module.exports = nox
