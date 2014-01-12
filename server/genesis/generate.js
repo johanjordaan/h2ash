@@ -47,15 +47,79 @@
       });
     }
   ], function() {
-    var DEFAULT_SOLAR_SYSTEM, STAR_TYPE_DISTRIBUTION, batch, batch_size, current_count, generate, habitable, habitable_moons, habitable_planets, habitable_solar_systems, higest_habitable_count, last_batch, last_batch_saved, mem_used, most_habitable_ss, save_stars, stars, start, target_count, total_moons, total_planets, total_solar_systems;
+    var GALAXY, SOLAR_SYSTEM, STAR_TYPE_DISTRIBUTION, batch, batch_size, current_count, g, generate, habitable, habitable_moons, habitable_planets, habitable_solar_systems, higest_habitable_count, last_batch, last_batch_saved, mem_used, most_habitable_ss, save_stars, stars, start, target_count, total_moons, total_planets, total_solar_systems;
     console.log('All databases open ...');
     STAR_TYPE_DISTRIBUTION = [nox.probability(0.01, star_types.DWARF), nox.probability(0.70, star_types.M_CLASS), nox.probability(0.13, star_types.K_CLASS), nox.probability(0.09, star_types.G_CLASS), nox.probability(0.01, star_types.F_CLASS), nox.probability(0.01, star_types.A_CLASS), nox.probability(0.01, star_types.B_CLASS), nox.probability(0.01, star_types.O_CLASS), nox.probability(0.01, star_types.RED_GIANT), nox.probability(0.01, star_types.RED_SUPER_GIANT), nox.probability(0.01, star_types.BLUE_SUPER_GIANT)];
-    DEFAULT_SOLAR_SYSTEM = nox.create_template('DEFAULT_SOLAR_SYSTEM', {
-      name: 'Default',
+    SOLAR_SYSTEM = nox.create_template('SOLAR_SYSTEM', {
+      name: 'some arb solar system',
       star: nox.select_one({
         values: STAR_TYPE_DISTRIBUTION
       })
     });
+    save_stars = function(offset, stars, last_batch, cb) {
+      var i, ii, iii, moons, planets, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
+      planets = [];
+      moons = [];
+      _ref = _.range(stars.length);
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        i = _ref[_i];
+        nox.de_nox(stars[i]);
+        stars[i]._id = i + offset;
+        _ref1 = _.range(stars[i].planets.length);
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          ii = _ref1[_j];
+          stars[i].planets[ii]._id = i + offset + '_' + ii;
+          stars[i].planets[ii].star = i + offset;
+          planets.push(stars[i].planets[ii]);
+          _ref2 = _.range(stars[i].planets[ii].moons.length);
+          for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+            iii = _ref2[_k];
+            stars[i].planets[ii].moons[iii]._id = i + offset + '_' + ii + '_' + iii;
+            stars[i].planets[ii].moons[iii].planet = i + offset + '_' + ii;
+            moons.push(stars[i].planets[ii].moons[iii]);
+          }
+        }
+      }
+      return h2ash_stars.Star.create(stars, function(err) {
+        if (err) {
+          return cb(err, null);
+        } else {
+          return h2ash_stars.Planet.create(planets, function(err) {
+            if (err) {
+              return cb(err, null);
+            } else {
+              return h2ash_stars.Moon.create(moons, function(err) {
+                if (err) {
+                  return cb(err, null);
+                } else {
+                  if (last_batch) {
+                    console.log('closing db');
+                    h2ash_stars.conn.close();
+                  }
+                  return cb(null, arguments);
+                }
+              });
+            }
+          });
+        }
+      });
+    };
+    GALAXY = nox.create_template('GALAXY', {
+      name: 'a galaxy (it might be far far away)',
+      stars: nox.select_batched({
+        count: 1000000,
+        values: STAR_TYPE_DISTRIBUTION,
+        batch_size: 10000,
+        batch_cb: function(batch_size, batch_number, last_batch, current_batch, cb) {
+          console.log(batch_size, batch_number, last_batch, current_batch.length);
+          console.log("Saving batch ... " + batch_number);
+          return cb();
+        }
+      })
+    });
+    g = nox.construct_template(GALAXY);
+    console.log(g.stars.length);
+    return;
     total_planets = 0;
     total_solar_systems = 0;
     habitable_planets = 0;
@@ -79,10 +143,10 @@
     start = new Date;
     stars = [];
     mem_used = 0;
-    target_count = 1000;
+    target_count = 100;
     current_count = 0;
     batch = [];
-    batch_size = 100;
+    batch_size = 10;
     last_batch_saved = true;
     last_batch = false;
     save_stars = function(offset, stars, cb) {

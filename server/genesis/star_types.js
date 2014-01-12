@@ -14,8 +14,8 @@
 
   PositionTemplate = nox.create_template('PositionTemplate', {
     r: nox.rnd({
-      min: 0,
-      max: 10 * astronomy.LY
+      min: 10 * astronomy.LY,
+      max: 1000 * astronomy.LY
     }),
     theta: nox.rnd({
       min: 0,

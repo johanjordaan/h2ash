@@ -249,7 +249,7 @@ nox.select = (input) ->
       batch_size = nox.resolve @batch_size, target_object
       batch_cb = nox.resolve @batch_cb, target_object
 
-      # If the size of the list is 0 and we donr require only one then return an empty list
+      # If the size of the list is 0 and we dont require only one then return an empty list
       #
       if count == 0 && !return_one
         return []
@@ -263,45 +263,77 @@ nox.select = (input) ->
         return @_nox_errors
 
       default_probability = 1/_.size(values)
-
       batch_count = 0
 
+      batch_stack = []
+
       ret_val = []
-      for i in _.range(count)
-        r = Math.random()
-        total_probability = 0
-        for item in values
-          probability = if item.probability? then item.probability else default_probability
-          total_probability += probability
-          if r<=total_probability
-            if item.item? && item.probability?
-              if nox.is_template(item.item) 
-                ret_val.push nox.construct_template item.item,target_object,i
-                break
-              else
-                if _.isString(item.item) && _.contains(_.keys(nox.templates),item.item)
-                  ret_val.push nox.construct_template nox.templates[item.item],target_object,i
+      generate = () -> 
+        ret_arr = []
+
+        start = 0
+        stop  = count
+        if enable_batching
+          start = batch_count*batch_size
+          stop = (batch_count+1)*batch_size
+          last_batch = false
+          if stop>count
+            stop = count
+            last_batch = true
+
+
+        for i in _.range(start,stop)
+          r = Math.random()
+          total_probability = 0
+          for item in values
+            probability = if item.probability? then item.probability else default_probability
+            total_probability += probability
+            if r<=total_probability
+              if item.item? && item.probability?
+                if nox.is_template(item.item) 
+                  ret_arr.push nox.construct_template item.item,target_object,i
                   break
                 else
-                  ret_val.push item.item
+                  if _.isString(item.item) && _.contains(_.keys(nox.templates),item.item)
+                    ret_arr.push nox.construct_template nox.templates[item.item],target_object,i
+                    break
+                  else
+                    ret_arr.push item.item
+                    break
+              else 
+                if nox.is_template item
+                  ret_arr.push nox.construct_template item,target_object,i
                   break
-            else 
-              if nox.is_template item
-                ret_val.push nox.construct_template item,target_object,i
-                break
-              else if _.isString(item) && _.contains(_.keys(nox.templates),item)
-                ret_val.push nox.construct_template nox.templates[item],target_object,i
-                break
-              else
-                ret_val.push item 
-                break
-        
-        # Batching code. The batch callback is called.
-        #
-        if(enable_batching)
-          last_batch = i == (count-1)
-          if i%batch_size == 0 || last_batch
-            batch_cb i,batch_count,last_batch,ret_val
+                else if _.isString(item) && _.contains(_.keys(nox.templates),item)
+                  ret_arr.push nox.construct_template nox.templates[item],target_object,i
+                  break
+                else
+                  ret_arr.push item 
+                  break
+
+        if enable_batching
+          batch_cb batch_size,batch_count,last_batch,ret_arr, () ->
+            console.log 'Here....'
+            batch_count += 1
+            ret_arr = []
+            if !last_batch
+              batch_stack.push generate
+
+        return ret_arr
+
+      ret_val = generate()  
+
+      if enable_batching
+        f = () ->
+          if batch_stack.length > 0
+            batch_stack.shift()()
+            setTimeout f,100
+
+        setTimeout f,100  
+          
+
+
+
 
       if return_one
         return ret_val[0]     

@@ -51,10 +51,66 @@ async.parallel [
     nox.probability 0.01, star_types.BLUE_SUPER_GIANT
   ]
 
-  DEFAULT_SOLAR_SYSTEM = nox.create_template 'DEFAULT_SOLAR_SYSTEM',
-    name : 'Default'
+
+  SOLAR_SYSTEM = nox.create_template 'SOLAR_SYSTEM',
+    name : 'some arb solar system'
     star : nox.select_one
       values : STAR_TYPE_DISTRIBUTION
+
+  save_stars = (offset,stars,last_batch,cb) ->  
+    planets = []
+    moons = []
+    for i in _.range(stars.length)
+      nox.de_nox stars[i]
+      stars[i]._id = i+offset
+      for ii in _.range(stars[i].planets.length)
+        stars[i].planets[ii]._id = i+offset+'_'+ii
+        stars[i].planets[ii].star = i+offset
+        planets.push stars[i].planets[ii]
+        for iii in _.range(stars[i].planets[ii].moons.length)
+          stars[i].planets[ii].moons[iii]._id = i+offset+'_'+ii+'_'+iii
+          stars[i].planets[ii].moons[iii].planet = i+offset+'_'+ii
+          moons.push stars[i].planets[ii].moons[iii]
+
+    h2ash_stars.Star.create stars, (err) ->
+      if err
+        cb err,null
+      else
+        h2ash_stars.Planet.create planets, (err) ->  
+          if err
+            cb err,null
+          else
+            h2ash_stars.Moon.create moons, (err) ->
+              if err
+                cb err,null
+              else            
+                if last_batch
+                  console.log 'closing db'
+                  h2ash_stars.conn.close()
+                cb null,arguments
+
+  GALAXY = nox.create_template 'GALAXY',
+    name : 'a galaxy (it might be far far away)'
+    stars : nox.select_batched
+      count : 1000000
+      values : STAR_TYPE_DISTRIBUTION
+      batch_size : 10000
+      batch_cb : (batch_size,batch_number,last_batch,current_batch,cb) ->
+        console.log batch_size,batch_number,last_batch,current_batch.length
+
+        console.log "Saving batch ... #{batch_number}"
+        #save_stars batch_size*(batch_number-1),current_batch,last_batch,(err,res) ->
+        #  if(err)
+        #    console.log err
+        #  else
+        #    console.log "Batch saved ...#{batch_number}"
+        #  cb()
+        cb()
+
+  g = nox.construct_template GALAXY      
+
+  console.log g.stars.length
+  return
 
 
   total_planets = 0
@@ -78,11 +134,10 @@ async.parallel [
   stars = []
   mem_used = 0
 
-
-  target_count = 1000
+  target_count = 100
   current_count = 0
   batch = []
-  batch_size = 100
+  batch_size = 10
   last_batch_saved = true
   last_batch = false
 

@@ -7,7 +7,7 @@ star_name_gen = require './star_name_gen'
 
 
 PositionTemplate = nox.create_template 'PositionTemplate',
-  r : nox.rnd { min : 0, max : 10 * astronomy.LY }
+  r : nox.rnd { min : 10*astronomy.LY, max : 1000 * astronomy.LY }
   theta : nox.rnd { min : 0, max : 180 }
   phi : nox.rnd { min : 0, max : 360 }
   cc : nox.method

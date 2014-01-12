@@ -340,7 +340,7 @@
       batch_size: input.batch_size,
       batch_cb: input.batch_cb,
       run: function(target_object) {
-        var batch_cb, batch_count, batch_size, count, default_probability, enable_batching, i, item, last_batch, probability, r, return_one, total_probability, values, _i, _j, _len, _len1, _ref;
+        var batch_cb, batch_count, batch_size, batch_stack, count, default_probability, enable_batching, f, generate, return_one, values;
         if (nox.check_fields(this, ['values'])) {
           return this._nox_errors;
         }
@@ -363,50 +363,81 @@
         }
         default_probability = 1 / _.size(values);
         batch_count = 0;
+        batch_stack = [];
         ret_val = [];
-        _ref = _.range(count);
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          i = _ref[_i];
-          r = Math.random();
-          total_probability = 0;
-          for (_j = 0, _len1 = values.length; _j < _len1; _j++) {
-            item = values[_j];
-            probability = item.probability != null ? item.probability : default_probability;
-            total_probability += probability;
-            if (r <= total_probability) {
-              if ((item.item != null) && (item.probability != null)) {
-                if (nox.is_template(item.item)) {
-                  ret_val.push(nox.construct_template(item.item, target_object, i));
-                  break;
-                } else {
-                  if (_.isString(item.item) && _.contains(_.keys(nox.templates), item.item)) {
-                    ret_val.push(nox.construct_template(nox.templates[item.item], target_object, i));
+        generate = function() {
+          var i, item, last_batch, probability, r, ret_arr, start, stop, total_probability, _i, _j, _len, _len1, _ref;
+          ret_arr = [];
+          start = 0;
+          stop = count;
+          if (enable_batching) {
+            start = batch_count * batch_size;
+            stop = (batch_count + 1) * batch_size;
+            last_batch = false;
+            if (stop > count) {
+              stop = count;
+              last_batch = true;
+            }
+          }
+          _ref = _.range(start, stop);
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            i = _ref[_i];
+            r = Math.random();
+            total_probability = 0;
+            for (_j = 0, _len1 = values.length; _j < _len1; _j++) {
+              item = values[_j];
+              probability = item.probability != null ? item.probability : default_probability;
+              total_probability += probability;
+              if (r <= total_probability) {
+                if ((item.item != null) && (item.probability != null)) {
+                  if (nox.is_template(item.item)) {
+                    ret_arr.push(nox.construct_template(item.item, target_object, i));
                     break;
                   } else {
-                    ret_val.push(item.item);
+                    if (_.isString(item.item) && _.contains(_.keys(nox.templates), item.item)) {
+                      ret_arr.push(nox.construct_template(nox.templates[item.item], target_object, i));
+                      break;
+                    } else {
+                      ret_arr.push(item.item);
+                      break;
+                    }
+                  }
+                } else {
+                  if (nox.is_template(item)) {
+                    ret_arr.push(nox.construct_template(item, target_object, i));
+                    break;
+                  } else if (_.isString(item) && _.contains(_.keys(nox.templates), item)) {
+                    ret_arr.push(nox.construct_template(nox.templates[item], target_object, i));
+                    break;
+                  } else {
+                    ret_arr.push(item);
                     break;
                   }
-                }
-              } else {
-                if (nox.is_template(item)) {
-                  ret_val.push(nox.construct_template(item, target_object, i));
-                  break;
-                } else if (_.isString(item) && _.contains(_.keys(nox.templates), item)) {
-                  ret_val.push(nox.construct_template(nox.templates[item], target_object, i));
-                  break;
-                } else {
-                  ret_val.push(item);
-                  break;
                 }
               }
             }
           }
           if (enable_batching) {
-            last_batch = i === (count - 1);
-            if (i % batch_size === 0 || last_batch) {
-              batch_cb(i, batch_count, last_batch, ret_val);
-            }
+            batch_cb(batch_size, batch_count, last_batch, ret_arr, function() {
+              console.log('Here....');
+              batch_count += 1;
+              ret_arr = [];
+              if (!last_batch) {
+                return batch_stack.push(generate);
+              }
+            });
           }
+          return ret_arr;
+        };
+        ret_val = generate();
+        if (enable_batching) {
+          f = function() {
+            if (batch_stack.length > 0) {
+              batch_stack.shift()();
+              return setTimeout(f, 100);
+            }
+          };
+          setTimeout(f, 100);
         }
         if (return_one) {
           return ret_val[0];
