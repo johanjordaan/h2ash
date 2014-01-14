@@ -16,9 +16,17 @@ StarSchema = require './domain/star'
 PlanetSchema = require './domain/planet'
 MoonSchema = require './domain/moon'
 
-
-
 app = express()
+
+handleCORS = (req,res,next) ->
+  res.header 'Access-Control-Allow-Origin','*'
+  res.header 'Access-Control-Allow-Methods','GET,POST,PUT,DELETE,OPTIONS'
+  res.header 'Access-Control-Allow-Headers','Content-Type, Authorization, Content-Length, X-Requested-With'
+
+  if 'OPTIONS' == req.method
+    res.send 200
+
+  next()
 
 app.set 'port', process.env.PORT || 3000
 #app.set 'views', __dirname + '/views'
@@ -29,10 +37,10 @@ app.use express.bodyParser()
 app.use express.methodOverride()
 app.use express.cookieParser('someVerySecretSecret123%%%4')
 app.use express.session()
+app.use handleCORS
 app.use app.router
 #app.use express.static(path.join(__dirname, 'public'))
 #app.use express.static(path.join(__dirname, 'bower_components'))
-
 
 if ('development' == app.get('env'))
   app.use(express.errorHandler())  
