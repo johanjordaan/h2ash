@@ -10,11 +10,17 @@ mem = require './utils/memory'
 
 errors = require './support/errors'
 db_utils = require './support/db_utils'
+reply_with = require './support/reply_with'
+
+
 
 UserSchema = require './domain/user'
+LeadSchema = require './domain/admin/lead'
+
 StarSchema = require './domain/star'
 PlanetSchema = require './domain/planet'
 MoonSchema = require './domain/moon'
+
 
 app = express()
 
@@ -48,22 +54,29 @@ if ('development' == app.get('env'))
 # Connect to the database
 #
 test_mode = false;  
-h2ash_auth = {}
+h2ash_auth = {}     # TODO : Factor these out ...
 h2ash_stars = {}
+dbs = {}
 async.parallel [
   (cb) ->
-    h2ash_stars = db_utils.open_db "mongodb://localhost/h2ash_stars", 
+    h2ash_stars = dbs.h2ash_stars = db_utils.open_db "mongodb://localhost/h2ash_stars", 
       'Star' : StarSchema
       'Planet' : PlanetSchema
       'Moon' : MoonSchema
       , (db_context) ->
-        console.log 'Database opened...'
+        console.log 'Database opened...[h2ash_stars]' 
         cb(null,'')
   ,(cb) ->
-    h2ash_auth = db_utils.open_db "mongodb://localhost/h2ash", 
+    h2ash_auth = dbs.h2ash_auth = db_utils.open_db "mongodb://localhost/h2ash", 
       'User' : UserSchema
       , (db_context) ->
-        console.log 'Database opened...'
+        console.log 'Database opened...[h2ash_auth]'
+        cb(null,'')
+  ,(cb) ->
+    dbs.h2ash_admin = db_utils.open_db "mongodb://localhost/h2ash_admin", 
+      'Lead' : LeadSchema
+      , (db_context) ->
+        console.log 'Database opened...[h2ash_admin]'
         cb(null,'')
 ],() ->
   console.log 'All databases open ...'
@@ -115,20 +128,6 @@ auth = (req, res, next) ->
 admin_auth = (req, res, next) ->
   do_auth req,res,next,true
 
-# This method handles the construction of return messages. It handles the errors codes
-# as well as the tokens etc
-#
-reply_with = (req,res,error,data) ->
-  reply = _.extend {},error
-  if data?
-    reply = _.extend reply,data
-    
-  if req.auth_user?
-    reply.auth_token = req.auth_user.token
-  
-  #console.log mem.rough_size_of_object reply
-  
-  res.json reply 
 
 # Admin Actions
 #
@@ -262,6 +261,7 @@ app.get '/validate/:registration_token', (req,res) ->
 
 #require('./routes/authentication_routes') app,auth
 #require('./routes/registration_routes') app,auth
+require('./routes/pre_registration_routes') app,auth,dbs,'/pre_registration'
 require('./routes/corporation_routes') app,auth
 
 app.post '/status', (req,res) ->
