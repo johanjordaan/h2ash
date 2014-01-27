@@ -15,8 +15,10 @@
       hash.update(buff);
       token = hash.digest('hex');
       console.log("New token generated [" + token + "]");
-      return cb(err, token);
+      return cb(null, token);
     });
   };
+
+  module.exports = generate_token;
 
 }).call(this);

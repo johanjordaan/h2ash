@@ -1,3 +1,5 @@
+"use strict"
+
 express = require 'express'
 
 handle_CORS = require './support/handle_CORS'

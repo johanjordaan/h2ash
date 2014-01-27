@@ -1,27 +1,46 @@
-Lead = require '../domain/admin/lead'
-
 errors = require '../support/errors'
 reply_with = require '../support/reply_with'
 generate_token = require '../support/generate_token'
 
-
-module.exports = (app,auth,dbs,route_name) ->
-
-  app.get route_name+'/register', (req,res) ->
+Lead = require '../domain/admin/lead'
 
 
-    generate_token [req.body.email],(ex,token) -> 
-      lead = new Lead
+module.exports = (app,dbs,route_name) ->
+
+  app.post route_name+'/register', (req,res) ->
+
+    email = req.body.email
+
+    dbs.h2ash_admin.Lead.findOne 
+      email : email
+    .exec (err,lead) ->
+      if err
+        console.log '------------',err
+
+      if (!err) and (lead)
+        if lead.validated
+          # User has already validated and is on the list
+          console.log '------ Validated user'
+        else
+          # User has not been validated, generate a new token and resend
+          console.log '------ UnValidated user'
+      else 
+        # The user does not exist 
+        console.log '------ User does not exist'       
+
+
+
+    generate_token ['req.body.email'],(ex,token) -> 
+      lead = new dbs.h2ash_admin.Lead
         email : req.body.email
         motivation : req.body.motivation
         validated : false
         validation_token : token 
       
-      lead.Save (err,saved) ->  
+      lead.save (err,saved) ->  
       
         # Send the registration email
         #
-
 
         reply_with req,res,errors.OK
 
@@ -40,5 +59,7 @@ module.exports = (app,auth,dbs,route_name) ->
       else
         console.log "Token not found. Returning OK to client."
         reply_with req, res, errors.OK
+
+  console.log "pre-registration routes loaded to [#{route_name}]"
 
 

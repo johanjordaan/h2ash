@@ -2,30 +2,48 @@
 (function() {
   var Lead, errors, generate_token, reply_with;
 
-  Lead = require('../domain/admin/lead');
-
   errors = require('../support/errors');
 
   reply_with = require('../support/reply_with');
 
   generate_token = require('../support/generate_token');
 
-  module.exports = function(app, auth, dbs, route_name) {
-    app.get(route_name + '/register', function(req, res) {
-      return generate_token([req.body.email], function(ex, token) {
+  Lead = require('../domain/admin/lead');
+
+  module.exports = function(app, dbs, route_name) {
+    app.post(route_name + '/register', function(req, res) {
+      var email;
+      email = req.body.email;
+      dbs.h2ash_admin.Lead.findOne({
+        email: email
+      }).exec(function(err, lead) {
+        if (err) {
+          console.log('------------', err);
+        }
+        if ((!err) && lead) {
+          if (lead.validated) {
+            return console.log('------ Validated user');
+          } else {
+            return console.log('------ UnValidated user');
+          }
+        } else {
+          return console.log('------ User does not exist');
+        }
+      });
+      return generate_token(['req.body.email'], function(ex, token) {
         var lead;
-        lead = new Lead({
+        lead = new dbs.h2ash_admin.Lead({
           email: req.body.email,
           motivation: req.body.motivation,
           validated: false,
           validation_token: token
         });
-        return lead.Save(function(err, saved) {
+        return lead.save(function(err, saved) {
           return reply_with(req, res, errors.OK);
         });
       });
     });
-    return app.get(route_name + '/validate/:validation_token', function(req, res) {
+    app.get(route_name + '/validate/:validation_token', function(req, res) {
       return dbs.h2ash_admin.Lead.findOne({
         validated: false,
         validation_token: req.params.validation_token
@@ -43,6 +61,7 @@
         }
       });
     });
+    return console.log("pre-registration routes loaded to [" + route_name + "]");
   };
 
 }).call(this);
