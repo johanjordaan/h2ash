@@ -12,35 +12,38 @@
 
   module.exports = function(app, dbs, route_name) {
     app.post(route_name + '/register', function(req, res) {
-      var email;
+      var email, motivation;
       email = req.body.email;
-      dbs.h2ash_admin.Lead.findOne({
+      motivation = req.body.motivation;
+      return dbs.h2ash_admin.Lead.findOne({
         email: email
       }).exec(function(err, lead) {
+        var lead_existed;
         if (err) {
           console.log('------------', err);
         }
-        if ((!err) && lead) {
-          if (lead.validated) {
-            return console.log('------ Validated user');
-          } else {
-            return console.log('------ UnValidated user');
-          }
+        if ((!err) && lead && lead.validated) {
+          return reply_with(req, res, errors.LEAD_EXISTS);
         } else {
-          return console.log('------ User does not exist');
+          lead_existed = lead != null;
+          if (!lead_existed) {
+            lead = new dbs.h2ash_admin.Lead({
+              email: email,
+              motivation: motivation,
+              validated: false
+            });
+          }
+          return generate_token([email], function(ex, token) {
+            lead.validation_token = token;
+            return lead.save(function(err, saved) {
+              if (lead_existed) {
+                return reply_with(req, res, errors.LEAD_NOT_VALIDATED);
+              } else {
+                return reply_with(req, res, errors.OK);
+              }
+            });
+          });
         }
-      });
-      return generate_token(['req.body.email'], function(ex, token) {
-        var lead;
-        lead = new dbs.h2ash_admin.Lead({
-          email: req.body.email,
-          motivation: req.body.motivation,
-          validated: false,
-          validation_token: token
-        });
-        return lead.save(function(err, saved) {
-          return reply_with(req, res, errors.OK);
-        });
       });
     });
     app.get(route_name + '/validate/:validation_token', function(req, res) {

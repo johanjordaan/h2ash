@@ -19,4 +19,12 @@ error_list =
     error_code : 4
     error_message : 'This user has not been validated'
 
+  LEAD_EXISTS : 
+    error_code : 5
+    error_message : 'This email address has already been registered and validated.'
+
+  LEAD_NOT_VALIDATED :
+    error_code : 6
+    error_message : 'This email address has already been registered. A new validation token has been sent.'  
+
 module.exports = error_list

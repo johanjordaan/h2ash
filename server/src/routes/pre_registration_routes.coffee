@@ -10,6 +10,7 @@ module.exports = (app,dbs,route_name) ->
   app.post route_name+'/register', (req,res) ->
 
     email = req.body.email
+    motivation = req.body.motivation
 
     dbs.h2ash_admin.Lead.findOne 
       email : email
@@ -17,32 +18,23 @@ module.exports = (app,dbs,route_name) ->
       if err
         console.log '------------',err
 
-      if (!err) and (lead)
-        if lead.validated
-          # User has already validated and is on the list
-          console.log '------ Validated user'
-        else
-          # User has not been validated, generate a new token and resend
-          console.log '------ UnValidated user'
-      else 
-        # The user does not exist 
-        console.log '------ User does not exist'       
+      if (!err) and (lead) and lead.validated
+        reply_with req,res,errors.LEAD_EXISTS
+      else  
+        lead_existed = lead?
+        if !lead_existed 
+          lead = new dbs.h2ash_admin.Lead
+            email : email
+            motivation : motivation
+            validated : false
 
-
-
-    generate_token ['req.body.email'],(ex,token) -> 
-      lead = new dbs.h2ash_admin.Lead
-        email : req.body.email
-        motivation : req.body.motivation
-        validated : false
-        validation_token : token 
-      
-      lead.save (err,saved) ->  
-      
-        # Send the registration email
-        #
-
-        reply_with req,res,errors.OK
+        generate_token [email],(ex,token) -> 
+          lead.validation_token = token
+          lead.save (err,saved) ->  
+            if lead_existed 
+              reply_with req,res,errors.LEAD_NOT_VALIDATED
+            else 
+              reply_with req,res,errors.OK
 
   app.get route_name+'/validate/:validation_token', (req,res) ->
 

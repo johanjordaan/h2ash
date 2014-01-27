@@ -6,6 +6,7 @@ mongoose = require 'mongoose'
 
 
 app_setup = require '../app'
+errors = require '../support/errors'
   
 
 describe 'Pre-Registration', ->
@@ -30,8 +31,8 @@ describe 'Pre-Registration', ->
         .end (err,res) ->
           res.status.should.equal 200
           json = JSON.parse(res.text)
-          json.error_code.should.equal 0
-          json.error_message.should.equal ''
+          json.error_code.should.equal errors.OK.error_code
+          json.error_message.should.equal errors.OK.error_message
           
           dbs.h2ash_admin.Lead.find
             email : 'me@here.com'
@@ -49,17 +50,16 @@ describe 'Pre-Registration', ->
         .end (err,res) ->
           res.status.should.equal 200
           json = JSON.parse(res.text)
-          #json.error_code.should.equal 1
-          #json.error_message.should.equal 'xxx'
+          json.error_code.should.equal errors.LEAD_NOT_VALIDATED.error_code
+          json.error_message.should.equal errors.LEAD_NOT_VALIDATED.error_message
           
           dbs.h2ash_admin.Lead.find
             email : 'me@here.com'
           .exec (err,res) ->
             should.exist res
             res.length.should.equal 1
-            
-            #res.email.should.equal 'me@here.com'
-            #res.should.have.property('validation_token').with.length(256/4)
+            res[0].email.should.equal 'me@here.com'
+            res[0].should.have.property('validation_token').with.length(256/4)
             done()
 
 
