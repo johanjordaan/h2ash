@@ -12,8 +12,6 @@ errors = require './support/errors'
 db_utils = require './support/db_utils'
 reply_with = require './support/reply_with'
 
-
-
 UserSchema = require './domain/user'
 LeadSchema = require './domain/admin/lead'
 
@@ -24,32 +22,9 @@ MoonSchema = require './domain/moon'
 
 app = express()
 
-handleCORS = (req,res,next) ->
-  res.header 'Access-Control-Allow-Origin','*'
-  res.header 'Access-Control-Allow-Methods','GET,POST,PUT,DELETE,OPTIONS'
-  res.header 'Access-Control-Allow-Headers','Content-Type, Authorization, Content-Length, X-Requested-With'
+require('./config') app
 
-  if 'OPTIONS' == req.method
-    res.send 200
 
-  next()
-
-app.set 'port', process.env.PORT || 3000
-#app.set 'views', __dirname + '/views'
-#app.set 'view engine', 'jade'
-#app.use express.favicon()
-app.use express.logger('dev')
-app.use express.bodyParser()
-app.use express.methodOverride()
-app.use express.cookieParser('someVerySecretSecret123%%%4')
-app.use express.session()
-app.use handleCORS
-app.use app.router
-#app.use express.static(path.join(__dirname, 'public'))
-#app.use express.static(path.join(__dirname, 'bower_components'))
-
-if ('development' == app.get('env'))
-  app.use(express.errorHandler())  
 
 # Connect to the database
 #
@@ -279,47 +254,6 @@ app.get '/get_stars', (req,res) ->
       err : err
       status : 'OK'
       stars : loaded
-
-
-
-
-
-
-###
-# REST  
-#
-app.get '/projects', auth, (req,res) ->
-  console.log req.session.user.projects
-  res.json req.session.user.projects
-
-app.get '/categories', (req,res) ->
-  ret_val = [{key:'option_1',value:'option_1_value'},{key:'option_2',value:'option_2_value'}]
-  res.json(ret_val);
-
-app.get '/sub_categories/:category', (req,res) ->
-  console.log req.params.category
-  if req.params.category == 'option_1'
-    ret_val = [{key:'option_1',value:'option_1_value_1'},{key:'option_2',value:'option_1_value_2'}]
-  if req.params.category == 'option_2'
-    ret_val = [{key:'option_1',value:'option_2_value_1'},{key:'option_2',value:'option_2_value_2'}]
-  res.json(ret_val);
-
-
-
-app.post '/models', (req,res) ->
-  new_map = mapper.create mapper_maps.map_map,req.body
-  store.save local_store,js_store,mapper_maps.map_map,new_map,(saved_map)->
-    res.json(saved_map)   
-
-app.get '/models', (req,res) ->
-  store.load_all local_store,js_store,mapper_maps.map_map,(loaded_maps) ->
-    ##console.log loaded_maps
-    res.json(loaded_maps)
-
-app.delete '/models', (req,res) ->
-  console.log req.query.id
-  res.json({})
-###    
 
 
 
