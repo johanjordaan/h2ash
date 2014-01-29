@@ -2,6 +2,9 @@ errors = require '../support/errors'
 reply_with = require '../support/reply_with'
 generate_token = require '../support/generate_token'
 
+mailer = require '../utils/mailer'
+mail_templates = require '../support/mail_templates'
+
 Lead = require '../domain/admin/lead'
 
 
@@ -30,11 +33,21 @@ module.exports = (app,dbs,route_name) ->
 
         generate_token [email],(ex,token) -> 
           lead.validation_token = token
-          lead.save (err,saved) ->  
-            if lead_existed 
+
+          mailer.send_mail 'djjordaan@gmail.com',mail_templates.pre_registration,
+            link : 'http://secure.h2ash.com/api/pre_registration/validate/'
+            token : token
+          ,(err) ->
+            console.log 'mail sent... pre-registration'
+            if err?
+              console.log err
               reply_with req,res,errors.LEAD_NOT_VALIDATED
-            else 
-              reply_with req,res,errors.OK
+            else
+              lead.save (err,saved) ->  
+                if lead_existed 
+                  reply_with req,res,errors.LEAD_NOT_VALIDATED
+                else 
+                  reply_with req,res,errors.OK
 
   app.get route_name+'/validate/:validation_token', (req,res) ->
 

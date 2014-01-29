@@ -38,23 +38,38 @@
       }).when('/pre_registration', {
         controller: 'PreRegistrationController',
         templateUrl: 'partials/client/pre_registration.html'
+      }).when('/pre_registration/validated', {
+        controller: 'DefaultController',
+        templateUrl: 'partials/client/pre_registration_validated.html'
       }).otherwise({
         redirectTo: '/'
       });
+    }).factory('backend', function($http) {
+      return {
+        register: function(data) {
+          return $http.post('/api/pre_registration/register', data).then(function(result) {
+            return result.data;
+          });
+        }
+      };
+    }).controller('DefaultController', function($scope, $location) {
+      return console.log('x');
     }).controller('LoginController', function($scope, $location) {
       return $scope.pre_register = function() {
         return $location.path('/pre_registration');
       };
-    }).controller('PreRegistrationController', function($scope, $location, $timeout) {
+    }).controller('PreRegistrationController', function($scope, $location, $timeout, backend) {
       $scope.finished = false;
       return $scope.submit_pre_registration = function() {
         $scope.error = true;
         $scope.error_message = "Invalid password";
-        return $timeout(function() {
-          alert('Hallo');
-          $scope.finished = true;
-          return $scope.error_message = 'xxx';
-        }, 1000);
+        return backend.register({
+          email: 'djjordaan@gmail.com',
+          motivation: 'bacause'
+        }).then(function(data) {
+          debugger;
+          return $scope.finished = true;
+        });
       };
     });
     return require(['domReady!'], function(document) {

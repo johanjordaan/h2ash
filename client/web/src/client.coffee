@@ -34,24 +34,35 @@ define ['jquery','bootstrap','underscore','require','angular','angular-route','t
       .when '/pre_registration',
         controller : 'PreRegistrationController'
         templateUrl : 'partials/client/pre_registration.html'
+      .when '/pre_registration/validated',
+        controller : 'DefaultController'
+        templateUrl : 'partials/client/pre_registration_validated.html'
       .otherwise
         redirectTo : '/'
+    .factory 'backend',($http) ->
+      register : (data) ->
+        $http
+        .post('/api/pre_registration/register',data)
+        .then (result) ->
+          return result.data    
+    .controller 'DefaultController',($scope,$location) ->
+      console.log 'x'
     .controller 'LoginController',($scope,$location) ->  
       $scope.pre_register = () ->       
         $location.path '/pre_registration'
-    .controller 'PreRegistrationController',($scope,$location,$timeout) ->
+    .controller 'PreRegistrationController',($scope,$location,$timeout,backend) ->
       $scope.finished = false
       $scope.submit_pre_registration = () ->
         
         $scope.error = true
         $scope.error_message = "Invalid password"
 
-        $timeout () ->
-          alert 'Hallo'
+        backend.register
+          email : 'djjordaan@gmail.com'
+          motivation : 'bacause'
+        .then (data) ->
+          debugger
           $scope.finished = true
-          $scope.error_message = 'xxx'
-        ,1000
-        #$location.path '/'  
 
 
   require ['domReady!'], (document) ->
