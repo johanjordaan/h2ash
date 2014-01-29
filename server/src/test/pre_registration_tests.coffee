@@ -58,27 +58,21 @@ describe 'Pre-Registration process', ->
             done()
 
   describe 'validation', ->
-    it 'should respond with an ok if the token cannot be found', (done) ->
+    it 'should respond with an 302 to thankyou if the token cannot be found', (done) ->
       request(app)
       .get("/pre_registration/validate/xxx")
       .end (err,res) ->
-        res.status.should.equal 200  
-        json = JSON.parse res.text
-        json.error_code.should.equal errors.OK.error_code
-        json.error_message.should.equal errors.OK.error_message
+        res.status.should.equal 302  
         done()
 
-    it 'should validate the lead associated with the token', (done) ->
+    it 'should validate the lead associated with the token and resond with a 302 to thankyou', (done) ->
       dbs.h2ash_admin.Lead.findOne
         email : 'me@here.com'
       .exec (err,lead) ->
         request(app)
         .get("/pre_registration/validate/#{lead.validation_token}")
         .end (err,res) ->
-          res.status.should.equal 200  
-          json = JSON.parse res.text
-          json.error_code.should.equal errors.OK.error_code
-          json.error_message.should.equal errors.OK.error_message
+          res.status.should.equal 302  
 
           dbs.h2ash_admin.Lead.findOne
             email : 'me@here.com'
@@ -87,14 +81,11 @@ describe 'Pre-Registration process', ->
             validated_lead.validation_token.should.equal ''
             done()
 
-    it 'should return with ok if en empty validation token is supplied', (done) ->
+    it 'should return with 302 thankyou if en empty validation token is supplied', (done) ->
       request(app)
       .get("/pre_registration/validate/%20")
       .end (err,res) ->
-        res.status.should.equal 200  
-        json = JSON.parse res.text
-        json.error_code.should.equal errors.OK.error_code
-        json.error_message.should.equal errors.OK.error_message
+        res.status.should.equal 302  
         done()
 
 

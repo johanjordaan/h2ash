@@ -57,11 +57,11 @@
           lead.validation_token = '';
           return lead.save(function(err, saved) {
             console.log("Lead validated");
-            return reply_with(req, res, errors.OK);
+            return res.redirect('/#/pre_registration/validated');
           });
         } else {
           console.log("Token not found. Returning OK to client.");
-          return reply_with(req, res, errors.OK);
+          return res.redirect('/#/pre_registration/validated');
         }
       });
     });

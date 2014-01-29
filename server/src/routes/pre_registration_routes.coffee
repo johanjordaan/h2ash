@@ -38,6 +38,8 @@ module.exports = (app,dbs,route_name) ->
 
   app.get route_name+'/validate/:validation_token', (req,res) ->
 
+    ## This needs redirect to /#/pre_registration/validated
+
     dbs.h2ash_admin.Lead.findOne
       validated : false
       validation_token : req.params.validation_token
@@ -48,10 +50,10 @@ module.exports = (app,dbs,route_name) ->
         lead.validation_token = ''
         lead.save (err,saved) ->
           console.log "Lead validated"
-          reply_with req, res, errors.OK
+          res.redirect '/#/pre_registration/validated'
       else
         console.log "Token not found. Returning OK to client."
-        reply_with req, res, errors.OK
+        res.redirect '/#/pre_registration/validated'
 
   console.log "pre-registration routes loaded to [#{route_name}]"
 

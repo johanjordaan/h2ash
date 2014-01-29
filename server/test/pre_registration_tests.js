@@ -72,26 +72,18 @@
       });
     });
     return describe('validation', function() {
-      it('should respond with an ok if the token cannot be found', function(done) {
+      it('should respond with an 302 to thankyou if the token cannot be found', function(done) {
         return request(app).get("/pre_registration/validate/xxx").end(function(err, res) {
-          var json;
-          res.status.should.equal(200);
-          json = JSON.parse(res.text);
-          json.error_code.should.equal(errors.OK.error_code);
-          json.error_message.should.equal(errors.OK.error_message);
+          res.status.should.equal(302);
           return done();
         });
       });
-      it('should validate the lead associated with the token', function(done) {
+      it('should validate the lead associated with the token and resond with a 302 to thankyou', function(done) {
         return dbs.h2ash_admin.Lead.findOne({
           email: 'me@here.com'
         }).exec(function(err, lead) {
           return request(app).get("/pre_registration/validate/" + lead.validation_token).end(function(err, res) {
-            var json;
-            res.status.should.equal(200);
-            json = JSON.parse(res.text);
-            json.error_code.should.equal(errors.OK.error_code);
-            json.error_message.should.equal(errors.OK.error_message);
+            res.status.should.equal(302);
             return dbs.h2ash_admin.Lead.findOne({
               email: 'me@here.com'
             }).exec(function(err, validated_lead) {
@@ -102,13 +94,9 @@
           });
         });
       });
-      return it('should return with ok if en empty validation token is supplied', function(done) {
+      return it('should return with 302 thankyou if en empty validation token is supplied', function(done) {
         return request(app).get("/pre_registration/validate/%20").end(function(err, res) {
-          var json;
-          res.status.should.equal(200);
-          json = JSON.parse(res.text);
-          json.error_code.should.equal(errors.OK.error_code);
-          json.error_message.should.equal(errors.OK.error_message);
+          res.status.should.equal(302);
           return done();
         });
       });
