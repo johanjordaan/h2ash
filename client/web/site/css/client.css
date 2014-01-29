@@ -1,0 +1,11 @@
+body {
+  background-color : black;
+  /*background-image: url('http://www.h2ash.com/wp-content/uploads/2014/01/ClientBackground.jpg');
+*/
+}
+
+.main_box {
+  margin-top : 100px;
+  margin-left : 100px;
+  width : 600px;
+}
