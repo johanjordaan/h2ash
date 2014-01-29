@@ -45,6 +45,7 @@ module.exports = (app,dbs,route_name) ->
       if(!err) and (lead?)
         console.log 'Registration token found'
         lead.validated = true
+        lead.validation_token = ''
         lead.save (err,saved) ->
           console.log "Lead validated"
           reply_with req, res, errors.OK

@@ -54,6 +54,7 @@
         if ((!err) && (lead != null)) {
           console.log('Registration token found');
           lead.validated = true;
+          lead.validation_token = '';
           return lead.save(function(err, saved) {
             console.log("Lead validated");
             return reply_with(req, res, errors.OK);

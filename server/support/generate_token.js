@@ -14,7 +14,6 @@
       }
       hash.update(buff);
       token = hash.digest('hex');
-      console.log("New token generated [" + token + "]");
       return cb(null, token);
     });
   };

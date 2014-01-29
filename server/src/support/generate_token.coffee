@@ -7,7 +7,7 @@ generate_token = (data,cb)->
       hash.update item
     hash.update buff
     token = hash.digest('hex')
-    console.log "New token generated [#{token}]"
+    #console.log "New token generated [#{token}]"
     cb(null,token)
 
 module.exports = generate_token

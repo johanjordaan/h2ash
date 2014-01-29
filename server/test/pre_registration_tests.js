@@ -16,7 +16,7 @@
 
   errors = require('../support/errors');
 
-  describe('Pre-Registration', function() {
+  describe('Pre-Registration process', function() {
     var app, dbs;
     app = {};
     dbs = {};
@@ -27,7 +27,7 @@
         return done();
       });
     });
-    return describe('register', function() {
+    describe('registration', function() {
       it('should create a new lead in the admin database', function(done) {
         return request(app).post("/pre_registration/register").send({
           email: 'me@here.com',
@@ -40,11 +40,11 @@
           json.error_message.should.equal(errors.OK.error_message);
           return dbs.h2ash_admin.Lead.find({
             email: 'me@here.com'
-          }).exec(function(err, res) {
-            should.exist(res);
-            res.length.should.equal(1);
-            res[0].email.should.equal('me@here.com');
-            res[0].should.have.property('validation_token')["with"].length(256 / 4);
+          }).exec(function(err, leads) {
+            should.exist(leads);
+            leads.length.should.equal(1);
+            leads[0].email.should.equal('me@here.com');
+            leads[0].should.have.property('validation_token')["with"].length(256 / 4);
             return done();
           });
         });
@@ -61,13 +61,55 @@
           json.error_message.should.equal(errors.LEAD_NOT_VALIDATED.error_message);
           return dbs.h2ash_admin.Lead.find({
             email: 'me@here.com'
-          }).exec(function(err, res) {
-            should.exist(res);
-            res.length.should.equal(1);
-            res[0].email.should.equal('me@here.com');
-            res[0].should.have.property('validation_token')["with"].length(256 / 4);
+          }).exec(function(err, leads) {
+            should.exist(leads);
+            leads.length.should.equal(1);
+            leads[0].email.should.equal('me@here.com');
+            leads[0].should.have.property('validation_token')["with"].length(256 / 4);
             return done();
           });
+        });
+      });
+    });
+    return describe('validation', function() {
+      it('should respond with an ok if the token cannot be found', function(done) {
+        return request(app).get("/pre_registration/validate/xxx").end(function(err, res) {
+          var json;
+          res.status.should.equal(200);
+          json = JSON.parse(res.text);
+          json.error_code.should.equal(errors.OK.error_code);
+          json.error_message.should.equal(errors.OK.error_message);
+          return done();
+        });
+      });
+      it('should validate the lead associated with the token', function(done) {
+        return dbs.h2ash_admin.Lead.findOne({
+          email: 'me@here.com'
+        }).exec(function(err, lead) {
+          return request(app).get("/pre_registration/validate/" + lead.validation_token).end(function(err, res) {
+            var json;
+            res.status.should.equal(200);
+            json = JSON.parse(res.text);
+            json.error_code.should.equal(errors.OK.error_code);
+            json.error_message.should.equal(errors.OK.error_message);
+            return dbs.h2ash_admin.Lead.findOne({
+              email: 'me@here.com'
+            }).exec(function(err, validated_lead) {
+              validated_lead.validated.should.equal(true);
+              validated_lead.validation_token.should.equal('');
+              return done();
+            });
+          });
+        });
+      });
+      return it('should return with ok if en empty validation token is supplied', function(done) {
+        return request(app).get("/pre_registration/validate/%20").end(function(err, res) {
+          var json;
+          res.status.should.equal(200);
+          json = JSON.parse(res.text);
+          json.error_code.should.equal(errors.OK.error_code);
+          json.error_message.should.equal(errors.OK.error_message);
+          return done();
         });
       });
     });

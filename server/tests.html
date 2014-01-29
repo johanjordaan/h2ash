@@ -1,0 +1,68 @@
+    <section class="suite">
+      <h1>Pre-Registration</h1>
+      <dl>
+Database opened...[h2ash_stars_test]
+Database opened...[h2ash_auth_test]
+Database opened...[h2ash_admin_test]
+Database dropped...[h2ash_auth_test]
+Database dropped...[h2ash_admin_test]
+All databases open ...
+pre-registration routes loaded to [/pre_registration]
+registration routes loaded to [/registration]
+authentication routes loaded to [/authentication]
+test routes loaded to [/test]
+All routes loaded ...
+        <section class="suite">
+          <h1>Pre-Registration process</h1>
+          <dl>
+            <section class="suite">
+              <h1>register</h1>
+              <dl>
+[90mPOST /pre_registration/register [32m200 [90m243ms - 44b[0m
+                <dt>should create a new lead in the admin database</dt>
+                <dd><pre><code>return request(app).post(&quot;/pre_registration/register&quot;).send({
+  email: 'me@here.com',
+  motivation: 'Because I like space games.'
+}).end(function(err, res) {
+  var json;
+  res.status.should.equal(200);
+  json = JSON.parse(res.text);
+  json.error_code.should.equal(errors.OK.error_code);
+  json.error_message.should.equal(errors.OK.error_message);
+  return dbs.h2ash_admin.Lead.find({
+    email: 'me@here.com'
+  }).exec(function(err, res) {
+    should.exist(res);
+    res.length.should.equal(1);
+    res[0].email.should.equal('me@here.com');
+    res[0].should.have.property('validation_token')[&quot;with&quot;].length(256 / 4);
+    return done();
+  });
+});</code></pre></dd>
+[90mPOST /pre_registration/register [32m200 [90m6ms - 129b[0m
+                <dt>should not add duplicates</dt>
+                <dd><pre><code>return request(app).post(&quot;/pre_registration/register&quot;).send({
+  email: 'me@here.com',
+  motivation: 'Because I like space games.'
+}).end(function(err, res) {
+  var json;
+  res.status.should.equal(200);
+  json = JSON.parse(res.text);
+  json.error_code.should.equal(errors.LEAD_NOT_VALIDATED.error_code);
+  json.error_message.should.equal(errors.LEAD_NOT_VALIDATED.error_message);
+  return dbs.h2ash_admin.Lead.find({
+    email: 'me@here.com'
+  }).exec(function(err, res) {
+    should.exist(res);
+    res.length.should.equal(1);
+    res[0].email.should.equal('me@here.com');
+    res[0].should.have.property('validation_token')[&quot;with&quot;].length(256 / 4);
+    return done();
+  });
+});</code></pre></dd>
+              </dl>
+            </section>
+          </dl>
+        </section>
+      </dl>
+    </section>
