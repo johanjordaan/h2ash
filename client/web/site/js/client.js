@@ -30,7 +30,7 @@
     }
   });
 
-  define(['jquery', 'bootstrap', 'underscore', 'require', 'angular', 'angular-route', 'trig'], function($, bootstrap, _, require, angular, angular_route, trig) {
+  define(['jquery', 'bootstrap', 'underscore', 'require', 'angular', 'angular-route', 'trig', './ng-directives/ng-draggable', './ng-directives/ng-window', './ng-directives/ng-workspace'], function($, bootstrap, _, require, angular, angular_route, trig, draggable, window, workspace) {
     angular.module('app', ['ngRoute']).config(function($routeProvider) {
       return $routeProvider.when('/', {
         controller: 'LoginController',
@@ -52,7 +52,7 @@
           });
         }
       };
-    }).controller('DefaultController', function($scope, $location) {
+    }).directive('draggable', draggable).directive('window', window).directive('workspace', workspace).controller('DefaultController', function($scope, $location) {
       return console.log('x');
     }).controller('LoginController', function($scope, $location) {
       return $scope.pre_register = function() {
@@ -61,15 +61,9 @@
     }).controller('PreRegistrationController', function($scope, $location, $timeout, backend) {
       $scope.finished = false;
       return $scope.submit_pre_registration = function() {
+        $scope.$$childHead.add_error('Invalid Password');
         $scope.error = true;
-        $scope.error_message = "Invalid password";
-        return backend.register({
-          email: 'djjordaan@gmail.com',
-          motivation: 'bacause'
-        }).then(function(data) {
-          debugger;
-          return $scope.finished = true;
-        });
+        return $scope.error_message = "Invalid password";
       };
     });
     return require(['domReady!'], function(document) {

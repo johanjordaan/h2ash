@@ -22,8 +22,9 @@ require.config
       exports : 'trig' 
 
 
-define ['jquery','bootstrap','underscore','require','angular','angular-route','trig']
-      , ($,bootstrap,_,require,angular,angular_route,trig) ->
+define ['jquery','bootstrap','underscore','require','angular','angular-route','trig'
+        ,'./ng-directives/ng-draggable','./ng-directives/ng-window','./ng-directives/ng-workspace' ]
+      , ($,bootstrap,_,require,angular,angular_route,trig,draggable,window,workspace) ->
         
   angular.module('app',['ngRoute'])
     .config ($routeProvider) ->
@@ -44,7 +45,10 @@ define ['jquery','bootstrap','underscore','require','angular','angular-route','t
         $http
         .post('/api/pre_registration/register',data)
         .then (result) ->
-          return result.data    
+          return result.data   
+    .directive('draggable',draggable) 
+    .directive('window',window)
+    .directive('workspace',workspace)
     .controller 'DefaultController',($scope,$location) ->
       console.log 'x'
     .controller 'LoginController',($scope,$location) ->  
@@ -53,19 +57,18 @@ define ['jquery','bootstrap','underscore','require','angular','angular-route','t
     .controller 'PreRegistrationController',($scope,$location,$timeout,backend) ->
       $scope.finished = false
       $scope.submit_pre_registration = () ->
-        
+        $scope.$$childHead.add_error 'Invalid Password'
         $scope.error = true
         $scope.error_message = "Invalid password"
 
-        backend.register
-          email : 'djjordaan@gmail.com'
-          motivation : 'bacause'
-        .then (data) ->
-          debugger
-          $scope.finished = true
+        #backend.register
+        #  email : 'djjordaan@gmail.com'
+        #  motivation : 'bacause'
+        #.then (data) ->
+        #  $scope.finished = true
 
 
   require ['domReady!'], (document) ->
     angular.bootstrap document,['app']
-    $('body').css('background-image', "url('http://www.h2ash.com/wp-content/uploads/2014/01/ClientBackground.jpg')");
+    $('body').css('background-image', "url('http://www.h2ash.com/wp-content/uploads/2014/01/ClientBackground.jpg')")
 
