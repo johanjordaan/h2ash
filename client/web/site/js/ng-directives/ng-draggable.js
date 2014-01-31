@@ -3,26 +3,25 @@
   define(['angular'], function(angular) {
     return function($document) {
       return function(scope, element, attr) {
-        var mousemove, mouseup, startX, startY, x, y;
-        startX = 0;
-        startY = 0;
+        var mousemove, mouseup, x, xOffset, y, yOffset;
+        xOffset = yOffset = 0;
         x = 0;
         y = 0;
-        angular.element(element.context.parentNode).css({
+        angular.element(element.context.parentNode.parentNode.parentNode.parentNode).css({
           position: 'relative',
           cursor: 'pointer'
         });
         element.on('mousedown', function(event) {
           event.preventDefault();
-          startX = event.pageX - x;
-          startY = event.pageY - y;
+          xOffset = event.offsetX;
+          yOffset = event.offsetY;
           $document.on('mousemove', mousemove);
           return $document.on('mouseup', mouseup);
         });
         mousemove = function(event) {
-          y = event.pageY - startY;
-          x = event.pageX - startX;
-          return angular.element(element.context.parentNode).css({
+          x = event.pageX - xOffset;
+          y = event.pageY - yOffset;
+          return angular.element(element.context.parentNode.parentNode.parentNode.parentNode).css({
             top: y + 'px',
             left: x + 'px'
           });
