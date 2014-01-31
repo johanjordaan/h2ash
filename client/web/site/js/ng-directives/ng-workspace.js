@@ -5,10 +5,15 @@
       return {
         restrict: 'E',
         transclude: true,
-        controller: function($scope, $http, $compile) {
+        controller: function($scope, $http, $compile, $element) {
           $scope.windows = [];
           this.add_window = function(window) {
             return $scope.windows.push(window);
+          };
+          this.add_window_from_url = function(url) {
+            return $http.get(url).then(function(result) {
+              return angular.element($element).append($compile(result.data)($scope));
+            });
           };
         },
         link: function(scope, element, attrs) {

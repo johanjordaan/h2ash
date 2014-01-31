@@ -23,21 +23,19 @@ require.config
 
 
 define ['jquery','bootstrap','underscore','require','angular','angular-route','trig'
-        ,'./ng-directives/ng-draggable','./ng-directives/ng-window','./ng-directives/ng-workspace' ]
-      , ($,bootstrap,_,require,angular,angular_route,trig,draggable,window,workspace) ->
+        ,'./ng-directives/ng-draggable','./ng-directives/ng-window','./ng-directives/ng-workspace'
+        ,'./ng-directives/ng-widget' ]
+      , ($,bootstrap,_,require,angular,angular_route,trig,draggable,window,workspace,widget) ->
         
   angular.module('app',['ngRoute'])
     .config ($routeProvider) ->
       $routeProvider
       .when '/',
-        controller : 'LoginController'
-        templateUrl : 'partials/client/login.html'
+        templateUrl : 'partials/workspaces/login_workspace.html'
       .when '/pre_registration',
-        controller : 'PreRegistrationController'
-        templateUrl : 'partials/client/pre_registration.html'
+        templateUrl : 'partials/workspaces/pre_registration_workspace.html'
       .when '/pre_registration/validated',
-        controller : 'DefaultController'
-        templateUrl : 'partials/client/pre_registration_validated.html'
+        templateUrl : 'partials/workspaces/pre_registration_validated_workspace.html'
       .otherwise
         redirectTo : '/'
     .factory 'backend',($http) ->
@@ -49,22 +47,23 @@ define ['jquery','bootstrap','underscore','require','angular','angular-route','t
     .directive('draggable',draggable) 
     .directive('window',window)
     .directive('workspace',workspace)
+    .directive('widget',widget)
     .controller 'about_controller',($scope)->
       #alert 'loading about controller'
       $scope.xxx = 'Here'
       $scope.say_it = (what) ->
+        $scope.xxx = what
         alert 'I was told to say -> '+what
-    .controller 'DefaultController',($scope,$location) ->
-      console.log 'x'
-    .controller 'LoginController',($scope,$location) ->  
+    .controller 'login_controller',($scope,$location) ->  
       $scope.pre_register = () ->       
         $location.path '/pre_registration'
-    .controller 'PreRegistrationController',($scope,$location,$timeout,backend) ->
+    .controller 'pre_registration_controller',($scope,$location,$timeout,backend) ->
       $scope.finished = false
-      $scope.submit_pre_registration = () ->
+      $scope.register = () ->
         $scope.$$childHead.add_error 'Invalid Password'
         $scope.error = true
         $scope.error_message = "Invalid password"
+        $scope.finished = true
 
         #backend.register
         #  email : 'djjordaan@gmail.com'

@@ -30,17 +30,14 @@
     }
   });
 
-  define(['jquery', 'bootstrap', 'underscore', 'require', 'angular', 'angular-route', 'trig', './ng-directives/ng-draggable', './ng-directives/ng-window', './ng-directives/ng-workspace'], function($, bootstrap, _, require, angular, angular_route, trig, draggable, window, workspace) {
+  define(['jquery', 'bootstrap', 'underscore', 'require', 'angular', 'angular-route', 'trig', './ng-directives/ng-draggable', './ng-directives/ng-window', './ng-directives/ng-workspace', './ng-directives/ng-widget'], function($, bootstrap, _, require, angular, angular_route, trig, draggable, window, workspace, widget) {
     angular.module('app', ['ngRoute']).config(function($routeProvider) {
       return $routeProvider.when('/', {
-        controller: 'LoginController',
-        templateUrl: 'partials/client/login.html'
+        templateUrl: 'partials/workspaces/login_workspace.html'
       }).when('/pre_registration', {
-        controller: 'PreRegistrationController',
-        templateUrl: 'partials/client/pre_registration.html'
+        templateUrl: 'partials/workspaces/pre_registration_workspace.html'
       }).when('/pre_registration/validated', {
-        controller: 'DefaultController',
-        templateUrl: 'partials/client/pre_registration_validated.html'
+        templateUrl: 'partials/workspaces/pre_registration_validated_workspace.html'
       }).otherwise({
         redirectTo: '/'
       });
@@ -52,23 +49,23 @@
           });
         }
       };
-    }).directive('draggable', draggable).directive('window', window).directive('workspace', workspace).controller('about_controller', function($scope) {
+    }).directive('draggable', draggable).directive('window', window).directive('workspace', workspace).directive('widget', widget).controller('about_controller', function($scope) {
       $scope.xxx = 'Here';
       return $scope.say_it = function(what) {
+        $scope.xxx = what;
         return alert('I was told to say -> ' + what);
       };
-    }).controller('DefaultController', function($scope, $location) {
-      return console.log('x');
-    }).controller('LoginController', function($scope, $location) {
+    }).controller('login_controller', function($scope, $location) {
       return $scope.pre_register = function() {
         return $location.path('/pre_registration');
       };
-    }).controller('PreRegistrationController', function($scope, $location, $timeout, backend) {
+    }).controller('pre_registration_controller', function($scope, $location, $timeout, backend) {
       $scope.finished = false;
-      return $scope.submit_pre_registration = function() {
+      return $scope.register = function() {
         $scope.$$childHead.add_error('Invalid Password');
         $scope.error = true;
-        return $scope.error_message = "Invalid password";
+        $scope.error_message = "Invalid password";
+        return $scope.finished = true;
       };
     });
     return require(['domReady!'], function(document) {
