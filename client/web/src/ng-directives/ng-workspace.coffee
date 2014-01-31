@@ -2,13 +2,13 @@ define ['jquery','angular'],($,angular) ->
   return ($compile,$http) ->
     restrict    : 'E',
     transclude  : true,
-    scope       : {}
+    #scope       : {}
     controller  : ($scope,$http,$compile) ->
       $scope.windows = []
 
       this.add_window = (window) ->
         $scope.windows.push window
-
+    
       return 
 
     link : (scope,element,attrs) ->    

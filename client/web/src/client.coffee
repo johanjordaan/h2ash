@@ -49,6 +49,11 @@ define ['jquery','bootstrap','underscore','require','angular','angular-route','t
     .directive('draggable',draggable) 
     .directive('window',window)
     .directive('workspace',workspace)
+    .controller 'about_controller',($scope)->
+      #alert 'loading about controller'
+      $scope.xxx = 'Here'
+      $scope.say_it = (what) ->
+        alert 'I was told to say -> '+what
     .controller 'DefaultController',($scope,$location) ->
       console.log 'x'
     .controller 'LoginController',($scope,$location) ->  
@@ -70,5 +75,5 @@ define ['jquery','bootstrap','underscore','require','angular','angular-route','t
 
   require ['domReady!'], (document) ->
     angular.bootstrap document,['app']
-    $('body').css('background-image', "url('http://www.h2ash.com/wp-content/uploads/2014/01/ClientBackground.jpg')")
+    #$('body').css('background-image', "url('http://www.h2ash.com/wp-content/uploads/2014/01/ClientBackground.jpg')")
 

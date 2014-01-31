@@ -52,7 +52,12 @@
           });
         }
       };
-    }).directive('draggable', draggable).directive('window', window).directive('workspace', workspace).controller('DefaultController', function($scope, $location) {
+    }).directive('draggable', draggable).directive('window', window).directive('workspace', workspace).controller('about_controller', function($scope) {
+      $scope.xxx = 'Here';
+      return $scope.say_it = function(what) {
+        return alert('I was told to say -> ' + what);
+      };
+    }).controller('DefaultController', function($scope, $location) {
       return console.log('x');
     }).controller('LoginController', function($scope, $location) {
       return $scope.pre_register = function() {
@@ -67,8 +72,7 @@
       };
     });
     return require(['domReady!'], function(document) {
-      angular.bootstrap(document, ['app']);
-      return $('body').css('background-image', "url('http://www.h2ash.com/wp-content/uploads/2014/01/ClientBackground.jpg')");
+      return angular.bootstrap(document, ['app']);
     });
   });
 

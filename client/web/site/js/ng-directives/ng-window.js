@@ -6,21 +6,14 @@
         require: '^workspace',
         restrict: 'A',
         transclude: true,
-        scope: {
-          title: '@',
-          closed: '@',
-          width: '@',
-          left: '@',
-          top: '@',
-          add_error: '&'
-        },
         link: function(scope, element, attrs, parent_controller) {
           parent_controller.add_window(scope);
+          scope.title = attrs.title;
           element.css({
             position: 'absolute',
-            left: scope.left,
-            top: scope.top,
-            width: scope.width
+            left: attrs.left,
+            top: attrs.top,
+            width: attrs.width
           });
           return scope.toggle = function() {
             return scope.closed = !scope.closed;

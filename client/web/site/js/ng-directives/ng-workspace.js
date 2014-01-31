@@ -5,7 +5,6 @@
       return {
         restrict: 'E',
         transclude: true,
-        scope: {},
         controller: function($scope, $http, $compile) {
           $scope.windows = [];
           this.add_window = function(window) {
