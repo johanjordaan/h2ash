@@ -83,12 +83,15 @@ setup = (test_mode,cb) ->
   ],() ->
     console.log 'All databases open ...'
 
-    require('./routes/pre_registration_routes') app,dbs,'/pre_registration'
-    require('./routes/registration_routes') app,dbs,'/registration'
-    require('./routes/authentication_routes') app,dbs,'/authentication'
+    auth_filters = require('./support/auth_filters') dbs 
+
+    require('./routes/pre_registration_routes') app,dbs,auth_filters,'/pre_registration'
+    require('./routes/registration_routes') app,dbs,auth_filters,'/registration'
+    require('./routes/authentication_routes') app,dbs,auth_filters,'/authentication'
+    require('./routes/admin_routes') app,dbs,auth_filters,'/admin'
     
     if test_mode? && test_mode
-      require('./routes/test_routes') app,dbs,'/test'
+      require('./routes/test_routes') app,dbs,auth_filters,'/test'
 
     console.log 'All routes loaded ...'
 

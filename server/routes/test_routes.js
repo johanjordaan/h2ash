@@ -16,7 +16,7 @@
 
   UserSchema = require('../domain/user');
 
-  module.exports = function(app, dbs, route_name) {
+  module.exports = function(app, dbs, auth_filters, route_name) {
     app.post(route_name + '/start_testing_session', auth_filters.admin_auth, function(req, res) {
       return dbs.h2ash_auth.conn.close(function() {
         return dbs.h2ash_auth = db_utils.open_db("mongodb://localhost/h2ash_test", {

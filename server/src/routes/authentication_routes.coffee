@@ -1,9 +1,8 @@
 errors = require '../support/errors'
 reply_with = require '../support/reply_with'
 generate_token = require '../support/generate_token'
-auth_filters = require '../support/auth_filters'
 
-module.exports = (app,dbs,route_name) ->
+module.exports = (app,dbs,auth_filters,route_name) ->
   app.post route_name+'/login', (req,res) ->
     dbs.h2ash_auth.User.findOne 
       email : req.body.email

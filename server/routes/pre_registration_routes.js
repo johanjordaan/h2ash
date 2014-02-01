@@ -14,7 +14,7 @@
 
   Lead = require('../domain/admin/lead');
 
-  module.exports = function(app, dbs, route_name) {
+  module.exports = function(app, dbs, auth_filters, route_name) {
     app.post(route_name + '/register', function(req, res) {
       var email, motivation;
       email = req.body.email;

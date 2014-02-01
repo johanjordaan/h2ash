@@ -8,7 +8,7 @@ auth_filters = require '../support/auth_filters'
 
 UserSchema = require '../domain/user'
 
-module.exports = (app,dbs,route_name) ->
+module.exports = (app,dbs,auth_filters,route_name) ->
   app.post route_name+'/start_testing_session', auth_filters.admin_auth, (req,res) ->
     dbs.h2ash_auth.conn.close () ->
       dbs.h2ash_auth = db_utils.open_db "mongodb://localhost/h2ash_test", 

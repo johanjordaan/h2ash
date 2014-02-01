@@ -8,7 +8,7 @@ mail_templates = require '../support/mail_templates'
 Lead = require '../domain/admin/lead'
 
 
-module.exports = (app,dbs,route_name) ->
+module.exports = (app,dbs,auth_filters,route_name) ->
 
   app.post route_name+'/register', (req,res) ->
 

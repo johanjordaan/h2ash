@@ -8,7 +8,7 @@
 
   generate_token = require('../support/generate_token');
 
-  module.exports = function(app, dbs, route_name) {
+  module.exports = function(app, dbs, auth_filters, route_name) {
     app.post(route_name + '/register', function(req, res) {
       return dbs.h2ash_auth.User.findOne({
         email: req.body.email

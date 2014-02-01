@@ -6,6 +6,8 @@ errors = require './errors'
 # again.
 # If a user has been found it is added to the res object to be used later
 #
+
+dbs = {}
 do_auth = (req,res,next,admin) ->
   console.log "Running auth... [admin=#{admin}] #{req.body.auth_email}"
   if !req.body.auth_token? or req.body.auth_token == ""
@@ -18,7 +20,7 @@ do_auth = (req,res,next,admin) ->
     res.json errors.NOT_AUTHED
     return
 
-  h2ash_auth.User.findOne
+  dbs.h2ash_auth.User.findOne
     email : req.body.auth_email
     token : req.body.auth_token 
   .exec (err,user) ->
@@ -45,7 +47,9 @@ auth = (req, res, next) ->
 admin_auth = (req, res, next) ->
   do_auth req,res,next,true
 
-module.exports = 
-  auth : auth
-  admin_auth : admin_auth
+module.exports = (app_dbs) ->
+  dbs = app_dbs
+  return x =  
+    auth : auth
+    admin_auth : admin_auth
 
