@@ -3,17 +3,31 @@
   define([], function() {
     return function($http, auth) {
       return {
-        pre_register: function(data) {
+        pre_register: function(scope, data, cb) {
+          scope.error = false;
+          scope.error_message = '';
           return $http.post('/api/pre_registration/register', data).error(function(data, status, headers, config) {
-            return data;
+            scope.error = true;
+            scope.error_message = status;
+            return cb(false);
           }).success(function(data, status, headers, config) {
-            return data;
+            if (data.error_code !== 0) {
+              scope.error = true;
+              scope.error_message = data.error_message;
+              return cb(false);
+            } else {
+              return cb(true);
+            }
           });
         },
-        login: function(data, cb) {
+        login: function(scope, data, cb) {
+          scope.error = false;
+          scope.error_message = '';
           return $http.post('/api/authentication/login', data).error(function(data, status, headers, config) {
             auth.authenticated = false;
             auth.token = '';
+            scope.error = true;
+            scope.error_message = status;
             return cb(false);
           }).success(function(data, status, headers, config) {
             auth.authenticated = data.error_code === 0;
@@ -21,6 +35,8 @@
               auth.token = data.auth_token;
             } else {
               auth.token = '';
+              scope.error = true;
+              scope.error_message = data.error_message;
             }
             return cb(auth.authenticated);
           });

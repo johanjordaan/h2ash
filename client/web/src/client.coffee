@@ -123,38 +123,25 @@ define ['jquery','bootstrap','underscore','require','angular','angular-route','t
         $scope.xxx = what
         alert 'I was told to say -> '+what
     .controller 'login_controller',($scope,$location,backend,auth) ->  
-      $scope.error_handler = () ->
-        alert 'Default'
       $scope.login = () ->
-        backend.login
-          email : $scope.$$childHead.email        #??
+        backend.login $scope,
+          email : $scope.$$childHead.email
           password : $scope.$$childHead.password
         ,(authenticated) ->
           if authenticated 
             $location.path '/main'
-          else
-            $scope.error = true
-            $scope.error_message = "Unauthersied"
-            #debugger
-            #if $scope.error_handler?
-            #  $scope.error_handler('Go awaaaay !!!')    
-
 
       $scope.pre_register = () ->       
         $location.path '/pre_registration'
     .controller 'pre_registration_controller',($scope,$location,$timeout,backend) ->
       $scope.finished = false
       $scope.register = () ->
-        $scope.$$childHead.add_error 'Invalid Password'
-        $scope.error = true
-        $scope.error_message = "Invalid password"
-        $scope.finished = true
-
-        #backend.pre_register
-        #  email : 'djjordaan@gmail.com'
-        #  motivation : 'bacause'
-        #.then (data) ->
-        #  $scope.finished = true
+        backend.pre_register $scope,
+          email : $scope.$$childHead.email 
+          motivation : $scope.$$childHead.motivation 
+        ,(success) ->
+          if success
+            $scope.finished = true
         
   width = 320
   height = 240

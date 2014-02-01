@@ -1,17 +1,14 @@
 <div ng-controller="pre_registration_controller">
-  <div window title="Pre-Registration" width="450px" left="120px" top="120px">
+  <div window title="Pre-Registration" width="400px" left="100px" top="100px">
     <div ng-hide="finished">
-      <div id="error_box" class="alert alert-warning" ng-show="error">
-        <div id="error">{{ error_message }}</div>
-      </div>
       <form role="form">
         <div class="form-group">
           <label for="email">Email address</label>
-          <input type="email" class="form-control" id="email" placeholder="Enter email">
+          <input type="email" class="form-control" id="email" placeholder="Enter email" ng-model="email">
         </div>
         <div class="form-group">
           <label for="motivation">Motivation</label>
-          <textarea class="form-control" rows="3" id="motivation" placeholder="Why are you pre-registering?"></textarea>
+          <textarea class="form-control" rows="3" id="motivation" placeholder="Why are you pre-registering?" ng-model="motivation"></textarea>
         </div>
         <button type="submit" class="btn btn-default" ng-click="register()">Submit</button>
       </form>

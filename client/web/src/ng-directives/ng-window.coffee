@@ -9,9 +9,6 @@ define ['jquery','angular'],($,angular) ->
         scope.error = false
         scope_error_message = ''
 
-      scope.error_handler = (message) ->
-        alert message
-
       parent_controller.add_window scope
       scope.title = attrs.title 
       scope.closed = attrs.closed

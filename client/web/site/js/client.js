@@ -127,19 +127,13 @@
         return alert('I was told to say -> ' + what);
       };
     }).controller('login_controller', function($scope, $location, backend, auth) {
-      $scope.error_handler = function() {
-        return alert('Default');
-      };
       $scope.login = function() {
-        return backend.login({
+        return backend.login($scope, {
           email: $scope.$$childHead.email,
           password: $scope.$$childHead.password
         }, function(authenticated) {
           if (authenticated) {
             return $location.path('/main');
-          } else {
-            $scope.error = true;
-            return $scope.error_message = "Unauthersied";
           }
         });
       };
@@ -149,10 +143,14 @@
     }).controller('pre_registration_controller', function($scope, $location, $timeout, backend) {
       $scope.finished = false;
       return $scope.register = function() {
-        $scope.$$childHead.add_error('Invalid Password');
-        $scope.error = true;
-        $scope.error_message = "Invalid password";
-        return $scope.finished = true;
+        return backend.pre_register($scope, {
+          email: $scope.$$childHead.email,
+          motivation: $scope.$$childHead.motivation
+        }, function(success) {
+          if (success) {
+            return $scope.finished = true;
+          }
+        });
       };
     });
     width = 320;

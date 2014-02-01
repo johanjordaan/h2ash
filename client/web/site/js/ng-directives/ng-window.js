@@ -12,9 +12,6 @@
             scope.error = false;
             return scope_error_message = '';
           };
-          scope.error_handler = function(message) {
-            return alert(message);
-          };
           parent_controller.add_window(scope);
           scope.title = attrs.title;
           scope.closed = attrs.closed;
