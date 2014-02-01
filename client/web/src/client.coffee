@@ -101,14 +101,31 @@ define ['jquery','bootstrap','underscore','require','angular','angular-route','t
         templateUrl : 'partials/workspaces/pre_registration_workspace.html'
       .when '/pre_registration/validated',
         templateUrl : 'partials/workspaces/pre_registration_validated_workspace.html'
+      .when '/main',
+        templateUrl : 'partials/workspaces/main_workspace.html'
       .otherwise
         redirectTo : '/'
-    .factory 'backend',($http) ->
+    .value 'auth',
+      authenticated : false
+      token : ''
+    .factory 'backend',($http,auth) ->
       register : (data) ->
         $http
         .post('/api/pre_registration/register',data)
         .then (result) ->
           return result.data   
+      login : (data) ->
+        $http
+        .post('/api/authentication/login',data)
+        .then (result) ->
+          auth.authenticated = result.data.error_code == 0   
+          if auth.authenticated
+            auth.token = result.data.auth_token
+          else 
+            auth.token = ''
+          return result.data.error_code == 0  
+
+
     .directive('draggable',draggable) 
     .directive('window',window)
     .directive('workspace',workspace)
@@ -122,7 +139,19 @@ define ['jquery','bootstrap','underscore','require','angular','angular-route','t
       $scope.say_it = (what) ->
         $scope.xxx = what
         alert 'I was told to say -> '+what
-    .controller 'login_controller',($scope,$location) ->  
+    .controller 'login_controller',($scope,$location,backend,auth) ->  
+      $scope.login = () ->
+        backend.login
+          email : $scope.$$childHead.email        #??
+          password : $scope.$$childHead.password
+        .then (authenticated) ->
+          if authenticated 
+            $location.path '/main'
+          else
+            alert 'Go away !!!'
+
+
+
       $scope.pre_register = () ->       
         $location.path '/pre_registration'
     .controller 'pre_registration_controller',($scope,$location,$timeout,backend) ->
@@ -138,7 +167,7 @@ define ['jquery','bootstrap','underscore','require','angular','angular-route','t
         #  motivation : 'bacause'
         #.then (data) ->
         #  $scope.finished = true
-
+        
   width = 320
   height = 240
   camera = new THREE.PerspectiveCamera( 75, width / height, 1, 10000 )

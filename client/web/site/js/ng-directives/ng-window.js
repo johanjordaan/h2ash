@@ -9,6 +9,7 @@
         link: function(scope, element, attrs, parent_controller) {
           parent_controller.add_window(scope);
           scope.title = attrs.title;
+          scope.closed = attrs.closed;
           element.find('.panel-body').append("<div id='" + attrs.canvas + "'></div>");
           if (scope.add_frame != null) {
             scope.add_frame();

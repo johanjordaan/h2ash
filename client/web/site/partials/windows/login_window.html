@@ -1,7 +1,20 @@
 <div ng-controller="login_controller">
-  <div window title="Login" width='600px' left='100px' top='100px'>
-    Panel content
-    <br>
+  <div window title="Login" width='400px' left='100px' top='100px'>
+    
+    <form role="form">
+      <div class="form-group">
+        <label for="email">Email address</label>
+        <input type="email" class="form-control" id="email" placeholder="Enter email" ng-model="email">
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" id="password" placeholder="Password" ng-model="password">
+      </div>
+      <button type="submit" class="btn btn-primary" ng-click="login()">Login</button>
+    </form>
+
+    <hr>
+
     <a ng-click="pre_register()">Pre-Register</a>
   </div>
 </div>

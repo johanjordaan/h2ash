@@ -2,10 +2,11 @@ mongoose = require 'mongoose'
 
 async = require 'async'
 
-User = require '../domain/user'
+UserSchema = require '../domain/user'
+User = mongoose.model 'User', UserSchema
 Actor = require '../domain/actor'
 
-mongoose.connect 'mongodb://localhost/h2ash'
+mongoose.connect 'mongodb://localhost/h2ash_auth'
 
 admin_actor = new Actor
   name : 'q'

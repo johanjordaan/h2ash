@@ -2,16 +2,13 @@ define ['angular'],(angular) ->
   return ($document) ->
     return (scope,element,attr) ->
       xOffset = yOffset = 0
-      x = 0
-      y = 0
   
       angular.element(element.context.parentNode.parentNode.parentNode.parentNode).css
-        position: 'relative'
+        position: 'absolute'
         cursor: 'pointer'
 
       element.on 'mousedown', (event) ->
         event.preventDefault()
-        #debugger
         xOffset = event.offsetX
         yOffset = event.offsetY
         $document.on 'mousemove', mousemove

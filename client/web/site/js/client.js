@@ -108,14 +108,30 @@
         templateUrl: 'partials/workspaces/pre_registration_workspace.html'
       }).when('/pre_registration/validated', {
         templateUrl: 'partials/workspaces/pre_registration_validated_workspace.html'
+      }).when('/main', {
+        templateUrl: 'partials/workspaces/main_workspace.html'
       }).otherwise({
         redirectTo: '/'
       });
-    }).factory('backend', function($http) {
+    }).value('auth', {
+      authenticated: false,
+      token: ''
+    }).factory('backend', function($http, auth) {
       return {
         register: function(data) {
           return $http.post('/api/pre_registration/register', data).then(function(result) {
             return result.data;
+          });
+        },
+        login: function(data) {
+          return $http.post('/api/authentication/login', data).then(function(result) {
+            auth.authenticated = result.data.error_code === 0;
+            if (auth.authenticated) {
+              auth.token = result.data.auth_token;
+            } else {
+              auth.token = '';
+            }
+            return result.data.error_code === 0;
           });
         }
       };
@@ -129,7 +145,19 @@
         $scope.xxx = what;
         return alert('I was told to say -> ' + what);
       };
-    }).controller('login_controller', function($scope, $location) {
+    }).controller('login_controller', function($scope, $location, backend, auth) {
+      $scope.login = function() {
+        return backend.login({
+          email: $scope.$$childHead.email,
+          password: $scope.$$childHead.password
+        }).then(function(authenticated) {
+          if (authenticated) {
+            return $location.path('/main');
+          } else {
+            return alert('Go away !!!');
+          }
+        });
+      };
       return $scope.pre_register = function() {
         return $location.path('/pre_registration');
       };

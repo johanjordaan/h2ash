@@ -3,12 +3,10 @@
   define(['angular'], function(angular) {
     return function($document) {
       return function(scope, element, attr) {
-        var mousemove, mouseup, x, xOffset, y, yOffset;
+        var mousemove, mouseup, xOffset, yOffset;
         xOffset = yOffset = 0;
-        x = 0;
-        y = 0;
         angular.element(element.context.parentNode.parentNode.parentNode.parentNode).css({
-          position: 'relative',
+          position: 'absolute',
           cursor: 'pointer'
         });
         element.on('mousedown', function(event) {
@@ -19,6 +17,7 @@
           return $document.on('mouseup', mouseup);
         });
         mousemove = function(event) {
+          var x, y;
           x = event.pageX - xOffset;
           y = event.pageY - yOffset;
           return angular.element(element.context.parentNode.parentNode.parentNode.parentNode).css({
