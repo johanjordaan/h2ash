@@ -87,8 +87,8 @@ construct_sector  = (ra,rb,ta,tb,pa,pb) ->
 
 define ['jquery','bootstrap','underscore','require','angular','angular-route','trig'
         ,'./ng-directives/ng-draggable','./ng-directives/ng-window','./ng-directives/ng-workspace'
-        ,'./ng-directives/ng-widget','THREE' ]
-      , ($,bootstrap,_,require,angular,angular_route,trig,draggable,window,workspace,widget,THREE) ->
+        ,'./ng-directives/ng-widget','THREE','api' ]
+      , ($,bootstrap,_,require,angular,angular_route,trig,draggable,window,workspace,widget,THREE,api) ->
   
   renderer = new THREE.WebGLRenderer()
 
@@ -108,28 +108,7 @@ define ['jquery','bootstrap','underscore','require','angular','angular-route','t
     .value 'auth',
       authenticated : false
       token : ''
-    .factory 'backend',($http,auth) ->
-      register : (data) ->
-        $http
-        .post('/api/pre_registration/register',data)
-        .then (result) ->
-          return result.data   
-      login : (data,cb) ->
-        $http
-        .post('/api/authentication/login',data)
-        .error (data, status, headers, config) ->
-          auth.authenticated = false
-          auth.token = ''
-          cb false
-        .success (data, status, headers, config) ->
-          auth.authenticated = data.error_code == 0   
-          if auth.authenticated
-            auth.token = data.auth_token
-          else 
-            auth.token = ''
-          cb auth.authenticated  
-
-
+    .factory('backend', api)
     .directive('draggable',draggable) 
     .directive('window',window)
     .directive('workspace',workspace)
@@ -166,7 +145,7 @@ define ['jquery','bootstrap','underscore','require','angular','angular-route','t
         $scope.error_message = "Invalid password"
         $scope.finished = true
 
-        #backend.register
+        #backend.pre_register
         #  email : 'djjordaan@gmail.com'
         #  motivation : 'bacause'
         #.then (data) ->

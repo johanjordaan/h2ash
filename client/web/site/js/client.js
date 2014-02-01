@@ -98,7 +98,7 @@
     return sector;
   };
 
-  define(['jquery', 'bootstrap', 'underscore', 'require', 'angular', 'angular-route', 'trig', './ng-directives/ng-draggable', './ng-directives/ng-window', './ng-directives/ng-workspace', './ng-directives/ng-widget', 'THREE'], function($, bootstrap, _, require, angular, angular_route, trig, draggable, window, workspace, widget, THREE) {
+  define(['jquery', 'bootstrap', 'underscore', 'require', 'angular', 'angular-route', 'trig', './ng-directives/ng-draggable', './ng-directives/ng-window', './ng-directives/ng-workspace', './ng-directives/ng-widget', 'THREE', 'api'], function($, bootstrap, _, require, angular, angular_route, trig, draggable, window, workspace, widget, THREE, api) {
     var ah, cc, delta_phi, delta_r, delta_theta, height, i, pMaterial, particle, particles, phi_steps, r_steps, radius, sc, scale, theta_steps, width, _i, _len, _ref;
     renderer = new THREE.WebGLRenderer();
     angular.module('app', ['ngRoute']).config(function($routeProvider) {
@@ -116,30 +116,7 @@
     }).value('auth', {
       authenticated: false,
       token: ''
-    }).factory('backend', function($http, auth) {
-      return {
-        register: function(data) {
-          return $http.post('/api/pre_registration/register', data).then(function(result) {
-            return result.data;
-          });
-        },
-        login: function(data, cb) {
-          return $http.post('/api/authentication/login', data).error(function(data, status, headers, config) {
-            auth.authenticated = false;
-            auth.token = '';
-            return cb(false);
-          }).success(function(data, status, headers, config) {
-            auth.authenticated = data.error_code === 0;
-            if (auth.authenticated) {
-              auth.token = data.auth_token;
-            } else {
-              auth.token = '';
-            }
-            return cb(auth.authenticated);
-          });
-        }
-      };
-    }).directive('draggable', draggable).directive('window', window).directive('workspace', workspace).directive('widget', widget).controller('galaxy_controller', function($scope, $timeout) {
+    }).factory('backend', api).directive('draggable', draggable).directive('window', window).directive('workspace', workspace).directive('widget', widget).controller('galaxy_controller', function($scope, $timeout) {
       return $scope.add_frame = function() {
         return angular.element($('#three_target')).append(renderer.domElement);
       };
