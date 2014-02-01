@@ -113,6 +113,16 @@ define ['jquery','bootstrap','underscore','require','angular','angular-route','t
     .directive('window',window)
     .directive('workspace',workspace)
     .directive('widget',widget)
+    .controller 'leads_controller',($scope,$timeout,backend)->
+      $scope.leads = []
+      for i in _.range(20)
+        $scope.leads.push
+          email : 'email'+i
+          motivation : 'halloooeee '+i
+          validated : true
+      #backend.get_leads $scope,{}
+      #,(leads) ->
+      #  $scope.leads = leads 
     .controller 'galaxy_controller',($scope,$timeout)->
       $scope.add_frame = () ->
         angular.element($('#three_target')).append( renderer.domElement )

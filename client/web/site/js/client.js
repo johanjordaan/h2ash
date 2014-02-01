@@ -116,7 +116,21 @@
     }).value('auth', {
       authenticated: false,
       token: ''
-    }).factory('backend', api).directive('draggable', draggable).directive('window', window).directive('workspace', workspace).directive('widget', widget).controller('galaxy_controller', function($scope, $timeout) {
+    }).factory('backend', api).directive('draggable', draggable).directive('window', window).directive('workspace', workspace).directive('widget', widget).controller('leads_controller', function($scope, $timeout, backend) {
+      var i, _i, _len, _ref, _results;
+      $scope.leads = [];
+      _ref = _.range(20);
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        i = _ref[_i];
+        _results.push($scope.leads.push({
+          email: 'email' + i,
+          motivation: 'halloooeee ' + i,
+          validated: true
+        }));
+      }
+      return _results;
+    }).controller('galaxy_controller', function($scope, $timeout) {
       return $scope.add_frame = function() {
         return angular.element($('#three_target')).append(renderer.domElement);
       };

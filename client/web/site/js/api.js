@@ -27,7 +27,9 @@
           });
         },
         login: function(scope, data, cb) {
+          var email;
           clear_error(scope);
+          email = data.email;
           return $http.post('/api/authentication/login', data).error(function(data, status, headers, config) {
             auth.authenticated = false;
             auth.token = '';
@@ -37,11 +39,27 @@
             auth.authenticated = data.error_code === 0;
             if (auth.authenticated) {
               auth.token = data.auth_token;
+              auth.email = email;
             } else {
               auth.token = '';
               set_error(scope, data.error_message);
             }
             return cb(auth.authenticated);
+          });
+        },
+        get_leads: function(scope, data, cb) {
+          clear_error(scope);
+          data.auth_token = auth.token;
+          data.auth_email = auth.email;
+          return $http.post('/api/admin/get_leads', data).error(function(data, status, headers, config) {
+            set_error(scope, status);
+            return cb(false);
+          }).success(function(data, status, headers, config) {
+            auth.token = data.auth_token;
+            if (data.error_code !== 0) {
+              set_error(scope, data.error_message);
+            }
+            return cb(data.leads);
           });
         }
       };
