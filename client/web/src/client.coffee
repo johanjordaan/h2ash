@@ -114,16 +114,20 @@ define ['jquery','bootstrap','underscore','require','angular','angular-route','t
         .post('/api/pre_registration/register',data)
         .then (result) ->
           return result.data   
-      login : (data) ->
+      login : (data,cb) ->
         $http
         .post('/api/authentication/login',data)
-        .then (result) ->
-          auth.authenticated = result.data.error_code == 0   
+        .error (data, status, headers, config) ->
+          auth.authenticated = false
+          auth.token = ''
+          cb false
+        .success (data, status, headers, config) ->
+          auth.authenticated = data.error_code == 0   
           if auth.authenticated
-            auth.token = result.data.auth_token
+            auth.token = data.auth_token
           else 
             auth.token = ''
-          return result.data.error_code == 0  
+          cb auth.authenticated  
 
 
     .directive('draggable',draggable) 
@@ -144,7 +148,7 @@ define ['jquery','bootstrap','underscore','require','angular','angular-route','t
         backend.login
           email : $scope.$$childHead.email        #??
           password : $scope.$$childHead.password
-        .then (authenticated) ->
+        ,(authenticated) ->
           if authenticated 
             $location.path '/main'
           else

@@ -123,15 +123,19 @@
             return result.data;
           });
         },
-        login: function(data) {
-          return $http.post('/api/authentication/login', data).then(function(result) {
-            auth.authenticated = result.data.error_code === 0;
+        login: function(data, cb) {
+          return $http.post('/api/authentication/login', data).error(function(data, status, headers, config) {
+            auth.authenticated = false;
+            auth.token = '';
+            return cb(false);
+          }).success(function(data, status, headers, config) {
+            auth.authenticated = data.error_code === 0;
             if (auth.authenticated) {
-              auth.token = result.data.auth_token;
+              auth.token = data.auth_token;
             } else {
               auth.token = '';
             }
-            return result.data.error_code === 0;
+            return cb(auth.authenticated);
           });
         }
       };
@@ -150,7 +154,7 @@
         return backend.login({
           email: $scope.$$childHead.email,
           password: $scope.$$childHead.password
-        }).then(function(authenticated) {
+        }, function(authenticated) {
           if (authenticated) {
             return $location.path('/main');
           } else {
