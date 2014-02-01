@@ -11,6 +11,7 @@
       reply = _.extend(reply, data);
     }
     if (req.auth_user != null) {
+      reply.admin = req.auth_user.admin;
       reply.auth_token = req.auth_user.token;
     }
     return res.json(reply);

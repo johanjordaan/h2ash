@@ -26,7 +26,7 @@ do_auth = (req,res,next,admin) ->
       console.log 'Found ...'
 
       if admin and !user.admin
-        consoe.log 'Admin right required'
+        console.log 'Admin right required'
         res.json errors.NOT_AUTHED
         return
 

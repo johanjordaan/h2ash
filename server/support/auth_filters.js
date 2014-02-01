@@ -23,7 +23,7 @@
       if ((!err) && (user != null)) {
         console.log('Found ...');
         if (admin && !user.admin) {
-          consoe.log('Admin right required');
+          console.log('Admin right required');
           res.json(errors.NOT_AUTHED);
           return;
         }
