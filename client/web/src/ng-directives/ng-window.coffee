@@ -4,6 +4,14 @@ define ['jquery','angular'],($,angular) ->
     restrict    : 'A'
     transclude  : true
     link : (scope,element,attrs,parent_controller) ->
+      
+      scope.dismiss_error = () ->
+        scope.error = false
+        scope_error_message = ''
+
+      scope.error_handler = (message) ->
+        alert message
+
       parent_controller.add_window scope
       scope.title = attrs.title 
       scope.closed = attrs.closed

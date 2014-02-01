@@ -7,6 +7,14 @@
         restrict: 'A',
         transclude: true,
         link: function(scope, element, attrs, parent_controller) {
+          scope.dismiss_error = function() {
+            var scope_error_message;
+            scope.error = false;
+            return scope_error_message = '';
+          };
+          scope.error_handler = function(message) {
+            return alert(message);
+          };
           parent_controller.add_window(scope);
           scope.title = attrs.title;
           scope.closed = attrs.closed;

@@ -127,6 +127,9 @@
         return alert('I was told to say -> ' + what);
       };
     }).controller('login_controller', function($scope, $location, backend, auth) {
+      $scope.error_handler = function() {
+        return alert('Default');
+      };
       $scope.login = function() {
         return backend.login({
           email: $scope.$$childHead.email,
@@ -135,7 +138,8 @@
           if (authenticated) {
             return $location.path('/main');
           } else {
-            return alert('Go away !!!');
+            $scope.error = true;
+            return $scope.error_message = "Unauthersied";
           }
         });
       };

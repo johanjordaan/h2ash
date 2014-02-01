@@ -123,6 +123,8 @@ define ['jquery','bootstrap','underscore','require','angular','angular-route','t
         $scope.xxx = what
         alert 'I was told to say -> '+what
     .controller 'login_controller',($scope,$location,backend,auth) ->  
+      $scope.error_handler = () ->
+        alert 'Default'
       $scope.login = () ->
         backend.login
           email : $scope.$$childHead.email        #??
@@ -131,8 +133,11 @@ define ['jquery','bootstrap','underscore','require','angular','angular-route','t
           if authenticated 
             $location.path '/main'
           else
-            alert 'Go away !!!'
-
+            $scope.error = true
+            $scope.error_message = "Unauthersied"
+            #debugger
+            #if $scope.error_handler?
+            #  $scope.error_handler('Go awaaaay !!!')    
 
 
       $scope.pre_register = () ->       

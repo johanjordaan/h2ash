@@ -1,7 +1,13 @@
 <div>
   <div class="panel panel-primary">
     <div class="panel-heading" ng-dblclick="toggle()" draggable>{{ title }}</div>
-    <div class="panel-body" ng-hide="closed" ng-transclude>
+    <div class="panel-body" ng-hide="closed">
+      <div class="alert alert-danger" ng-show="error">
+        <button type="button" class="close"  aria-hidden="true" ng-click="dismiss_error()">&times;</button>
+        <div>{{ error_message }}</div>
+      </div>
+      <div ng-transclude>
+      </div>
     </div>
   </div>
 </div>
