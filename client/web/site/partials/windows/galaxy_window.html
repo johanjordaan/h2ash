@@ -1,5 +1,12 @@
 <div ng-controller="galaxy_controller">
-  <div window title="The Galaxy" width='350px' left='550px' top='150px' 
+  <div window title="The Galaxy" width='350px' left='920px' top='150px' 
        canvas='galaxy_canvas'>
+
+    <div>
+      <button class="btn btn-xs" ng-click="dec_speed()">-</button>
+      {{ speed }}
+      <button class="btn btn-xs" ng-click="inc_speed()">+</button>
+    </div>
+
   </div>
 </div>

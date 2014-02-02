@@ -34,7 +34,7 @@
     }
   });
 
-  define(['jquery', 'bootstrap', 'underscore', 'require', 'angular', 'angular-route', 'trig', './directives/draggable', './directives/window', './directives/workspace', './directives/widget', 'THREE', './services/api', './services/renderers'], function($, bootstrap, _, require, angular, angular_route, trig, draggable, window, workspace, widget, THREE, api, renderers) {
+  define(['jquery', 'bootstrap', 'underscore', 'require', 'angular', 'angular-route', 'trig', './directives/draggable', './directives/window', './directives/workspace', './directives/widget', 'THREE', './services/api', './services/renderers', './controllers/galaxy', './controllers/planet'], function($, bootstrap, _, require, angular, angular_route, trig, draggable, window, workspace, widget, THREE, api, renderers, galaxy_controller, planet_controller) {
     angular.module('app', ['ngRoute']).config(function($routeProvider) {
       return $routeProvider.when('/', {
         templateUrl: 'partials/workspaces/login_workspace.html'
@@ -51,26 +51,11 @@
       authenticated: false,
       token: ''
     }).service('backend', api).service('renderers', renderers).directive('draggable', draggable).directive('window', window).directive('workspace', workspace).directive('widget', widget).controller('leads_controller', function($scope, $timeout, backend) {
-      var i, _i, _len, _ref, _results;
       $scope.leads = [];
-      _ref = _.range(20);
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        i = _ref[_i];
-        _results.push($scope.leads.push({
-          email: 'email' + i,
-          motivation: 'halloooeee ' + i,
-          validated: true
-        }));
-      }
-      return _results;
-    }).controller('galaxy_controller', function($scope, $timeout, renderers) {
-      var renderer;
-      renderer = renderers.create_renderer("three_target", 320, 240);
-      return $scope.add_renderer_to = function(element) {
-        return element.append(renderer.renderer.domElement);
-      };
-    }).controller('about_controller', function($scope) {
+      return backend.get_leads($scope, {}, function(leads) {
+        return $scope.leads = leads;
+      });
+    }).controller('galaxy_controller', galaxy_controller).controller('planet_controller', planet_controller).controller('about_controller', function($scope) {
       $scope.xxx = 'Here';
       return $scope.say_it = function(what) {
         $scope.xxx = what;

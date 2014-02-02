@@ -26,9 +26,10 @@ require.config
 
 define ['jquery','bootstrap','underscore','require','angular','angular-route','trig'
         ,'./directives/draggable','./directives/window','./directives/workspace'
-        ,'./directives/widget','THREE','./services/api','./services/renderers']
+        ,'./directives/widget','THREE','./services/api','./services/renderers'
+        ,'./controllers/galaxy','./controllers/planet']
       , ($,bootstrap,_,require,angular,angular_route,trig,draggable,window,workspace
-          ,widget,THREE,api,renderers) ->
+          ,widget,THREE,api,renderers,galaxy_controller,planet_controller) ->
   
   angular.module('app',['ngRoute'])
     .config ($routeProvider) ->
@@ -54,21 +55,16 @@ define ['jquery','bootstrap','underscore','require','angular','angular-route','t
     .directive('widget',widget)
     .controller 'leads_controller',($scope,$timeout,backend)->
       $scope.leads = []
-      for i in _.range(20)
-        $scope.leads.push
-          email : 'email'+i
-          motivation : 'halloooeee '+i
-          validated : true
-      #backend.get_leads $scope,{}
-      #,(leads) ->
-      #  $scope.leads = leads 
-    .controller 'galaxy_controller',($scope,$timeout,renderers)->
-      renderer = renderers.create_renderer "three_target",320,240
-      $scope.add_renderer_to = (element) ->
-        element.append renderer.renderer.domElement
-        #angular.element($('#three_target')).append( renderer.domElement )
-        #angular.element($('#three_target')).append( renderer.renderer )
-    
+      #for i in _.range(20)
+      #  $scope.leads.push
+      #    email : 'email'+i
+      #    motivation : 'halloooeee '+i
+      #    validated : true
+      backend.get_leads $scope,{}
+      ,(leads) ->
+        $scope.leads = leads 
+    .controller('galaxy_controller',galaxy_controller)
+    .controller('planet_controller',planet_controller)
     .controller 'about_controller',($scope)->
       #alert 'loading about controller'
       $scope.xxx = 'Here'
@@ -100,10 +96,5 @@ define ['jquery','bootstrap','underscore','require','angular','angular-route','t
 
   require ['domReady!'], (document) ->
     angular.bootstrap document,['app']
-    
-    #renderers.run()
-
-    #animate();
-
     $('body').css('background-image', "url('/images/ClientBackground.jpg')")
 
