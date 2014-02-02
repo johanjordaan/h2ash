@@ -12,9 +12,12 @@ define ['jquery','angular'],($,angular) ->
       parent_controller.add_window scope
       scope.title = attrs.title 
       scope.closed = attrs.closed
-      element.find('.panel-body').append("<div id='#{attrs.canvas}'></div>")
-      if scope.add_frame?
-        scope.add_frame()
+
+      if scope.add_renderer_to?
+        if attrs.canvas?
+          element.find('.panel-body').append("<div id='#{attrs.canvas}'></div>")
+          scope.add_renderer_to angular.element($('#'+attrs.canvas))
+      
       angular.element(element[0].parentNode).css
         position  : 'absolute'
         left      : attrs.left
