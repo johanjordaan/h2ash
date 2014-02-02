@@ -340,7 +340,7 @@
       batch_size: input.batch_size,
       batch_cb: input.batch_cb,
       run: function(target_object) {
-        var batch_cb, batch_count, batch_size, batch_stack, count, default_probability, enable_batching, f, generate, return_one, values;
+        var batch_busy, batch_cb, batch_count, batch_size, count, default_probability, enable_batching, extra_batch, f, generate, num_batches, return_one, values;
         if (nox.check_fields(this, ['values'])) {
           return this._nox_errors;
         }
@@ -362,11 +362,17 @@
           return this._nox_errors;
         }
         default_probability = 1 / _.size(values);
+        extra_batch = 0;
+        if (count % batch_size > 0) {
+          extra_batch = 1;
+        }
+        num_batches = Math.floor(count / batch_size) + extra_batch;
         batch_count = 0;
-        batch_stack = [];
+        batch_busy = false;
         ret_val = [];
         generate = function() {
           var i, item, last_batch, probability, r, ret_arr, start, stop, total_probability, _i, _j, _len, _len1, _ref;
+          batch_busy = true;
           ret_arr = [];
           start = 0;
           stop = count;
@@ -421,10 +427,7 @@
             batch_cb(batch_size, batch_count, last_batch, ret_arr, function() {
               console.log('Here....');
               batch_count += 1;
-              ret_arr = [];
-              if (!last_batch) {
-                return batch_stack.push(generate);
-              }
+              return batch_busy = false;
             });
           }
           return ret_arr;
@@ -432,8 +435,12 @@
         ret_val = generate();
         if (enable_batching) {
           f = function() {
-            if (batch_stack.length > 0) {
-              batch_stack.shift()();
+            if (batch_count <= num_batches) {
+              if (!batch_busy) {
+                generate();
+              } else {
+                console.log('Waiting...');
+              }
               return setTimeout(f, 100);
             }
           };

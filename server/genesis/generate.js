@@ -107,17 +107,25 @@
     GALAXY = nox.create_template('GALAXY', {
       name: 'a galaxy (it might be far far away)',
       stars: nox.select_batched({
-        count: 1000000,
+        count: 1000,
         values: STAR_TYPE_DISTRIBUTION,
-        batch_size: 10000,
+        batch_size: 100,
         batch_cb: function(batch_size, batch_number, last_batch, current_batch, cb) {
           console.log(batch_size, batch_number, last_batch, current_batch.length);
           console.log("Saving batch ... " + batch_number);
-          return cb();
+          return save_stars(batch_size * (batch_number - 1), current_batch, last_batch, function(err, res) {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log("Batch saved ..." + batch_number);
+            }
+            return cb();
+          });
         }
       })
     });
     g = nox.construct_template(GALAXY);
+    console.log('----------------');
     console.log(g.stars.length);
     return;
     total_planets = 0;

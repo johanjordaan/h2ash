@@ -263,12 +263,22 @@ nox.select = (input) ->
         return @_nox_errors
 
       default_probability = 1/_.size(values)
-      batch_count = 0
+      
 
-      batch_stack = []
+      # Handle the half batches at the end
+      #
+      extra_batch = 0
+      if count%batch_size > 0
+        extra_batch = 1
+      # Calculate the number of batches required
+      #
+      num_batches = Math.floor(count/batch_size)+extra_batch
+      batch_count = 0
+      batch_busy = false
 
       ret_val = []
       generate = () -> 
+        batch_busy = true
         ret_arr = []
 
         start = 0
@@ -315,9 +325,7 @@ nox.select = (input) ->
           batch_cb batch_size,batch_count,last_batch,ret_arr, () ->
             console.log 'Here....'
             batch_count += 1
-            ret_arr = []
-            if !last_batch
-              batch_stack.push generate
+            batch_busy = false
 
         return ret_arr
 
@@ -325,8 +333,11 @@ nox.select = (input) ->
 
       if enable_batching
         f = () ->
-          if batch_stack.length > 0
-            batch_stack.shift()()
+          if batch_count <= num_batches
+            if not batch_busy
+              generate()
+            else
+              console.log 'Waiting...'
             setTimeout f,100
 
         setTimeout f,100  
