@@ -10,55 +10,101 @@
 
   rnd = require('../../utils/rnd');
 
-  saved_random = Math.random;
+  saved_random = rnd.rnd;
 
   fix_random_value = function(value) {
-    return Math.random = function() {
-      return value;
-    };
+    return rnd.restore();
   };
 
   ff = 0.0001;
 
   describe('rnd', function() {
-    afterEach(function(done) {
-      Math.random = saved_random;
-      return done();
+    describe('rnd.rand', function() {
+      return it('should should return the same random sequence give the same seed', function() {
+        var a, b, i, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _results;
+        rnd.srand(10);
+        a = [];
+        _ref = _.range(1000);
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          i = _ref[_i];
+          a.push(rnd.rand());
+        }
+        rnd.srand(10);
+        b = [];
+        _ref1 = _.range(1000);
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          i = _ref1[_j];
+          b.push(rnd.rand());
+        }
+        _ref2 = _.range(1000);
+        _results = [];
+        for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+          i = _ref2[_k];
+          _results.push(a[i].should.equal(b[i]));
+        }
+        return _results;
+      });
+    });
+    describe('rnd.random', function() {
+      return it('should should return the same random sequence give the same seed', function() {
+        var a, b, i, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _results;
+        rnd.srand(10);
+        a = [];
+        _ref = _.range(1000);
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          i = _ref[_i];
+          a.push(rnd.random());
+        }
+        rnd.srand(10);
+        b = [];
+        _ref1 = _.range(1000);
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          i = _ref1[_j];
+          b.push(rnd.random());
+        }
+        _ref2 = _.range(1000);
+        _results = [];
+        for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+          i = _ref2[_k];
+          _results.push(a[i].should.equal(b[i]));
+        }
+        return _results;
+      });
     });
     describe('rnd.rnd_float_between', function() {
       it('should return the min on a 0', function() {
-        fix_random_value(0);
+        rnd.fix_value(0);
         return rnd.rnd_float_between(-100.334, 100.991).should.equal(-100.334);
       });
       it('should return the max on a 1', function() {
-        fix_random_value(1);
+        rnd.fix_value(1);
         return rnd.rnd_float_between(-100.334, 100.991).should.be.within(100.991 - ff, 100.991 + ff);
       });
       return it('should return the mid on a 0.5', function() {
         var mid;
-        fix_random_value(0.5);
+        rnd.fix_value(0.5);
         mid = -100.334 + (100.991 - (-100.334)) / 2;
         return rnd.rnd_float_between(-100.334, 100.991).should.be.within(mid - ff, mid + ff);
       });
     });
     return describe('rnd.rnd_int_between', function() {
       it('should return the min on a 0', function() {
-        fix_random_value(0);
+        rnd.fix_value(0);
         return rnd.rnd_int_between(-132, 334).should.equal(-132);
       });
       it('should return the max on a 1', function() {
-        fix_random_value(1);
+        rnd.fix_value(1);
         return rnd.rnd_int_between(-132, 334).should.equal(334);
       });
       it('should return the mid on a 0.5', function() {
         var mid;
-        fix_random_value(0.5);
+        rnd.fix_value(0.5);
         mid = -132 + (334 - (-132)) / 2;
         return rnd.rnd_int_between(-132, 334).should.be.within(mid - ff, mid + ff);
       });
       return it('should return the mid on a 0.5 it should return the floored value id the list length is not odd', function() {
         var mid;
-        fix_random_value(0.5);
+        rnd.fix_value(0.5);
         mid = 2;
         return rnd.rnd_int_between(1, 4).should.be.within(mid - ff, mid + ff);
       });
