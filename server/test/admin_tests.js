@@ -19,7 +19,7 @@
   errors = require('../support/errors');
 
   describe('Admin process', function() {
-    var app, dbs;
+    var app, dbs, token;
     app = {};
     dbs = {};
     before(function(done) {
@@ -66,37 +66,32 @@
         });
       });
     });
+    token = '';
+    beforeEach(function(done) {
+      return request(app).post("/authentication/login").send({
+        email: 'admin@h2ash.com',
+        password: '123'
+      }).end(function(err, res) {
+        var json;
+        json = JSON.parse(res.text);
+        token = json.auth_token;
+        return done();
+      });
+    });
     return describe('get_leads', function() {
       return it('should load all the leads', function(done) {
-        var token;
-        token = '';
-        return async.series([
-          function(cb) {
-            return request(app).post("/authentication/login").send({
-              email: 'admin@h2ash.com',
-              password: '123'
-            }).end(function(err, res) {
-              var json;
-              json = JSON.parse(res.text);
-              token = json.auth_token;
-              return cb(null, '');
-            });
-          }, function(cb) {
-            return request(app).post("/admin/get_leads").send({
-              auth_email: 'admin@h2ash.com',
-              auth_token: token
-            }).end(function(err, res) {
-              var json;
-              res.status.should.equal(200);
-              json = JSON.parse(res.text);
-              json.error_code.should.equal(errors.OK.error_code);
-              json.error_message.should.equal(errors.OK.error_message);
-              json.leads.length.should.equal(2);
-              done();
-              return cb(null, '');
-            });
-          }
-        ]);
+        return request(app).post("/admin/get_leads").send({
+          auth_email: 'admin@h2ash.com',
+          auth_token: token
+        }).end(function(err, res) {
+          var json;
+          res.status.should.equal(200);
+          json = JSON.parse(res.text);
+          json.error_code.should.equal(errors.OK.error_code);
+          json.error_message.should.equal(errors.OK.error_message);
+          json.leads.length.should.equal(2);
+          return done();
+        });
       });
     });
   });

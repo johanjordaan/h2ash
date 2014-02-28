@@ -51,36 +51,35 @@ describe 'Admin process', ->
         ], () ->
           done()
 
+  token = ''        
+  beforeEach (done) ->
+    request(app)
+    .post("/authentication/login")
+    .send 
+      email : 'admin@h2ash.com'
+      password : '123'
+    .end (err,res) ->
+      json = JSON.parse(res.text)
+      token = json.auth_token
+      done()
+            
+
   describe 'get_leads', ->
     it 'should load all the leads', (done) ->
-      token = ''
-      async.series [
-        (cb) ->
-          request(app)
-          .post("/authentication/login")
-          .send 
-            email : 'admin@h2ash.com'
-            password : '123'
-          .end (err,res) ->
-            json = JSON.parse(res.text)
-            token = json.auth_token
-            cb null,''
-        ,(cb) ->
-          request(app)
-          .post("/admin/get_leads")
-          .send  
-            auth_email : 'admin@h2ash.com'
-            auth_token : token
-          .end (err,res) ->
-            res.status.should.equal 200
-            json = JSON.parse(res.text)
-            json.error_code.should.equal errors.OK.error_code
-            json.error_message.should.equal errors.OK.error_message
-            
-            json.leads.length.should.equal 2
+      request(app)
+      .post("/admin/get_leads")
+      .send  
+        auth_email : 'admin@h2ash.com'
+        auth_token : token
+      .end (err,res) ->
+        res.status.should.equal 200
+        json = JSON.parse(res.text)
+        json.error_code.should.equal errors.OK.error_code
+        json.error_message.should.equal errors.OK.error_message
+        
+        json.leads.length.should.equal 2
 
-            done()
-            cb null,''
-      ] 
+        done()
+
 
       
