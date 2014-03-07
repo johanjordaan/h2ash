@@ -1,5 +1,5 @@
 #http://www.bluh.org/code-the-diamond-square-algorithm/
-define [],() ->
+define ['underscore'],(_) ->
   HMAP = (width,height) ->
     return ret_val = 
       width : width
@@ -68,6 +68,20 @@ define [],() ->
         sample_diamond(hmap,x + halfstep, y, stepsize, frand() * scale)
         sample_diamond(hmap,x, y + halfstep, stepsize, frand() * scale)
 
+  normalise = (hmap) ->
+    min = max = hmap.data[0]
+    for c in hmap.data
+      if c<min
+        min = c
+      if c>max
+        max = c
+
+    ret_val = new HMAP(hmap.width,hmap.height)    
+    for i in _.range(hmap.width*hmap.height)
+      ret_val.data[i] = (hmap.data[i]+Math.abs(min)) / (max-min)
+    return ret_val
+
+
   generate = (width,height,feature_size) ->
     new_hmap = new HMAP(width,height)
     init new_hmap,feature_size    
@@ -82,4 +96,6 @@ define [],() ->
       sample_size = sample_size/2
       scale = scale/2.0
 
-    return new_hmap  
+    normalised_hmap = normalise(new_hmap)
+
+    return normalised_hmap  

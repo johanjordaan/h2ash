@@ -14,7 +14,12 @@ define ['THREE','underscore'],(THREE,_) ->
 
   return () ->
     create_renderer : (name,width,height,scene,camera,update) ->
-      renderer = new THREE.WebGLRenderer()
+      renderer = {}
+      if name in _.keys(renderers)
+        renderer = renderers[name].renderer
+      else  
+        renderer = new THREE.WebGLRenderer()
+      
       renderer.setSize(width,height) 
       renderer.setClearColor( 0x000000, 1) 
 
