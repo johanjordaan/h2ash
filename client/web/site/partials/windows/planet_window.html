@@ -1,8 +1,20 @@
 <div ng-controller="planet_controller">
-  <div window title="A Planet" width='350px' left='550px' top='150px' 
-       canvas='planet_canvas'>
-
-    <button class="btn btn-xs" ng-click="generate()">Generate</button>
+  <div window title="A Planet" width='500px' left='550px' top='150px'>
+    <div>
+      <div renderer="planet" width=0 style="display:inline-block;"></div>
+      <input type="text" ng-model="$parent.idx"/>
+      <input type="number" ng-model="$parent.feature_size"/>
+      <button class="btn btn-xs" ng-click="generate()" style="float:top;">Generate</button>
+    </div>
+    <hr>
+    <div>
+      <ul>
+        <li> This is some stats </li>
+        <li> ... and some more  </li>
+        <li> ... and some more  </li>
+        <li> ... and some more  </li>
+        <li> ... and some more  </li>
+      </ul>
+    </div>
   </div>
-
 </div>

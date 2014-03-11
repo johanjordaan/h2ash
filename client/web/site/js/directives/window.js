@@ -7,6 +7,7 @@
         restrict: 'A',
         transclude: true,
         link: function(scope, element, attrs, parent_controller) {
+          var r;
           scope.dismiss_error = function() {
             var scope_error_message;
             scope.error = false;
@@ -15,11 +16,9 @@
           parent_controller.add_window(scope);
           scope.title = attrs.title;
           scope.closed = attrs.closed;
+          r = $('div[renderer]');
           if (scope.add_renderer_to != null) {
-            if (attrs.canvas != null) {
-              element.find('.panel-body').append("<div id='" + attrs.canvas + "'></div>");
-              scope.add_renderer_to(angular.element($('#' + attrs.canvas)));
-            }
+            scope.add_renderer_to(angular.element(r[0]));
           }
           angular.element(element[0].parentNode).css({
             position: 'absolute',

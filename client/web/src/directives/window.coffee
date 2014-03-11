@@ -13,10 +13,12 @@ define ['jquery','angular'],($,angular) ->
       scope.title = attrs.title 
       scope.closed = attrs.closed
 
+      r = $('div[renderer]')
+
       if scope.add_renderer_to?
-        if attrs.canvas?
-          element.find('.panel-body').append("<div id='#{attrs.canvas}'></div>")
-          scope.add_renderer_to angular.element($('#'+attrs.canvas))
+        #if attrs.canvas?
+          #element.find('.panel-body').append("<div id='#{attrs.canvas}'></div>")
+        scope.add_renderer_to angular.element(r[0])
       
       angular.element(element[0].parentNode).css
         position  : 'absolute'

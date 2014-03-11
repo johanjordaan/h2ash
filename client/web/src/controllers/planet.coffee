@@ -1,6 +1,6 @@
 define ['../services/renderers','underscore','../utils/hmap','../utils/cmap'], (renderers,_,hmap,cmap) ->
 
-  gen = (width,height) ->
+  gen = (width,height,index,feature_size) ->
     scene = new THREE.Scene()
 
     camera = new THREE.PerspectiveCamera(45, width / height, 0.01, 1000)
@@ -12,38 +12,32 @@ define ['../services/renderers','underscore','../utils/hmap','../utils/cmap'], (
     light.position.set(5,3,5)
     scene.add(light)
 
-    hdata = hmap(512,256,40)
 
-    size = 512*256
+    map_width = 512
+    map_height = 256
+    bump_scale = 0.1
     
-    bumpmap_data = new Uint8Array(4*size)
-    for i in _.range(size)
-      c = (hdata.data[i]+1)/2
-      bumpmap_data[0+i*4] = (c*0xff)&0xFF
-      bumpmap_data[1+i*4] = (c*0xff)&0xFF
-      bumpmap_data[2+i*4] = (c*0xff)&0xFF
-      bumpmap_data[3+i*4] = 0xff
 
-    bumpmap = new THREE.DataTexture(bumpmap_data,512,256) 
-    bumpmap.needsUpdate = true
+    hdata = hmap(map_width,map_height,feature_size)
 
-    cdata = cmap(hdata)
-    texture_data = new Uint8Array(4*size)
-    for i in _.range(size*4)
-      texture_data[i] = cdata.data[i]
-    texture = new THREE.DataTexture(texture_data,512,256) 
+    size = map_width*map_height
+
+    cdata = cmap(hdata,index)
+
+    texture = new THREE.DataTexture(cdata.cmap.data,map_width,map_height) 
     texture.needsUpdate = true
 
+    spec = new THREE.DataTexture(cdata.smap.data,map_width,map_height) 
+    spec.needsUpdate = true
 
+    bumpmap = new THREE.DataTexture(cdata.bmap.data,map_width,map_height) 
+    bumpmap.needsUpdate = true
 
-    #texture = THREE.ImageUtils.generateDataTexture(512,256,new THREE.Color(0x00ff00))
     material = new THREE.MeshPhongMaterial
         map : texture
-        #map: THREE.ImageUtils.loadTexture('images/2_no_clouds_4k.jpg')
-        #bumpMap: THREE.ImageUtils.loadTexture('images/elev_bump_4k.jpg')
         bumpMap : bumpmap
-        bumpScale:   0.1
-        #specularMap: THREE.ImageUtils.loadTexture('images/water_4k.png')
+        bumpScale:   bump_scale
+        specularMap: spec
         specular: new THREE.Color('grey')
 
     earth = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 24),material)
@@ -65,15 +59,17 @@ define ['../services/renderers','underscore','../utils/hmap','../utils/cmap'], (
     $scope.speed = 0.01
     $scope.width = 320
     $scope.height = 240
+    $scope.idx = 1
+    $scope.feature_size = 32
 
-    gen_data = gen($scope.width,$scope.height)
+    gen_data = gen($scope.width,$scope.height,$scope.idx,$scope.feature_size)
     
     renderer = renderers.create_renderer "planet",$scope.width,$scope.height,gen_data.scene,gen_data.camera,() ->
       gen_data.planet.rotation.y += $scope.speed
       #clouds.rotation.y += $scope.speed*1.5
         
     $scope.generate = () ->
-      gen_data = gen($scope.width,$scope.height)
+      gen_data = gen($scope.width,$scope.height,$scope.idx,$scope.feature_size)
       renderer = renderers.create_renderer "planet",$scope.width,$scope.height,gen_data.scene,gen_data.camera,() ->
         gen_data.planet.rotation.y += $scope.speed
 

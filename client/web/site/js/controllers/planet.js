@@ -2,8 +2,8 @@
 (function() {
   define(['../services/renderers', 'underscore', '../utils/hmap', '../utils/cmap'], function(renderers, _, hmap, cmap) {
     var gen;
-    gen = function(width, height) {
-      var bumpmap, bumpmap_data, c, camera, cdata, earth, hdata, i, light, material, ret_val, scene, size, texture, texture_data, _i, _j, _len, _len1, _ref, _ref1;
+    gen = function(width, height, index, feature_size) {
+      var bump_scale, bumpmap, camera, cdata, earth, hdata, light, map_height, map_width, material, ret_val, scene, size, spec, texture;
       scene = new THREE.Scene();
       camera = new THREE.PerspectiveCamera(45, width / height, 0.01, 1000);
       camera.position.z = 1.5;
@@ -11,33 +11,23 @@
       light = new THREE.DirectionalLight(0xffffff, 1);
       light.position.set(5, 3, 5);
       scene.add(light);
-      hdata = hmap(512, 256, 40);
-      size = 512 * 256;
-      bumpmap_data = new Uint8Array(4 * size);
-      _ref = _.range(size);
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        i = _ref[_i];
-        c = (hdata.data[i] + 1) / 2;
-        bumpmap_data[0 + i * 4] = (c * 0xff) & 0xFF;
-        bumpmap_data[1 + i * 4] = (c * 0xff) & 0xFF;
-        bumpmap_data[2 + i * 4] = (c * 0xff) & 0xFF;
-        bumpmap_data[3 + i * 4] = 0xff;
-      }
-      bumpmap = new THREE.DataTexture(bumpmap_data, 512, 256);
-      bumpmap.needsUpdate = true;
-      cdata = cmap(hdata);
-      texture_data = new Uint8Array(4 * size);
-      _ref1 = _.range(size * 4);
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        i = _ref1[_j];
-        texture_data[i] = cdata.data[i];
-      }
-      texture = new THREE.DataTexture(texture_data, 512, 256);
+      map_width = 512;
+      map_height = 256;
+      bump_scale = 0.1;
+      hdata = hmap(map_width, map_height, feature_size);
+      size = map_width * map_height;
+      cdata = cmap(hdata, index);
+      texture = new THREE.DataTexture(cdata.cmap.data, map_width, map_height);
       texture.needsUpdate = true;
+      spec = new THREE.DataTexture(cdata.smap.data, map_width, map_height);
+      spec.needsUpdate = true;
+      bumpmap = new THREE.DataTexture(cdata.bmap.data, map_width, map_height);
+      bumpmap.needsUpdate = true;
       material = new THREE.MeshPhongMaterial({
         map: texture,
         bumpMap: bumpmap,
-        bumpScale: 0.1,
+        bumpScale: bump_scale,
+        specularMap: spec,
         specular: new THREE.Color('grey')
       });
       earth = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 24), material);
@@ -53,12 +43,14 @@
       $scope.speed = 0.01;
       $scope.width = 320;
       $scope.height = 240;
-      gen_data = gen($scope.width, $scope.height);
+      $scope.idx = 1;
+      $scope.feature_size = 32;
+      gen_data = gen($scope.width, $scope.height, $scope.idx, $scope.feature_size);
       renderer = renderers.create_renderer("planet", $scope.width, $scope.height, gen_data.scene, gen_data.camera, function() {
         return gen_data.planet.rotation.y += $scope.speed;
       });
       $scope.generate = function() {
-        gen_data = gen($scope.width, $scope.height);
+        gen_data = gen($scope.width, $scope.height, $scope.idx, $scope.feature_size);
         return renderer = renderers.create_renderer("planet", $scope.width, $scope.height, gen_data.scene, gen_data.camera, function() {
           return gen_data.planet.rotation.y += $scope.speed;
         });
