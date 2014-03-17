@@ -89,11 +89,11 @@
         {
           from: 0.0,
           to: 1.0,
-          from_color: 0xAAAAAA,
-          to_color: 0xCCCCCC,
+          from_color: 0x000000,
+          to_color: 0xFFFFFF,
           specular: 0x000000,
           bump_from: 0.0,
-          bump_to: 0.5
+          bump_to: 1.0
         }
       ], [
         {
@@ -152,7 +152,7 @@
     interpolate_color = function(from, to, val) {
       var from_rgb, rgb, to_rgb;
       from_rgb = split_hex_color_to_rbg(from);
-      to_rgb = split_hex_color_to_rbg(from);
+      to_rgb = split_hex_color_to_rbg(to);
       rgb = {
         r: from_rgb.r + val * (to_rgb.r - from_rgb.r),
         g: from_rgb.g + val * (to_rgb.g - from_rgb.g),

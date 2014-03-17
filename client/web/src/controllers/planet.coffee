@@ -1,4 +1,4 @@
-define ['../services/renderers','underscore','../utils/hmap','../utils/cmap'], (renderers,_,hmap,cmap) ->
+define ['../services/renderers','underscore','../utils/hmap','../utils/cmap','../utils/noise'], (renderers,_,hmap,cmap,noise) ->
 
   gen = (width,height,index,feature_size) ->
     scene = new THREE.Scene()
@@ -18,7 +18,8 @@ define ['../services/renderers','underscore','../utils/hmap','../utils/cmap'], (
     bump_scale = 0.1
     
 
-    hdata = hmap(map_width,map_height,feature_size)
+    #hdata = hmap(map_width,map_height,feature_size)
+    hdata = noise(map_width,map_height,0,1)
 
     size = map_width*map_height
 
@@ -35,10 +36,10 @@ define ['../services/renderers','underscore','../utils/hmap','../utils/cmap'], (
 
     material = new THREE.MeshPhongMaterial
         map : texture
-        bumpMap : bumpmap
-        bumpScale:   bump_scale
-        specularMap: spec
-        specular: new THREE.Color('grey')
+        #bumpMap : bumpmap
+        #bumpScale:   bump_scale
+        #specularMap: spec
+        #specular: new THREE.Color('grey')
 
     earth = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 24),material)
 
@@ -59,7 +60,7 @@ define ['../services/renderers','underscore','../utils/hmap','../utils/cmap'], (
     $scope.speed = 0.01
     $scope.width = 320
     $scope.height = 240
-    $scope.idx = 1
+    $scope.idx = 2
     $scope.feature_size = 32
 
     gen_data = gen($scope.width,$scope.height,$scope.idx,$scope.feature_size)

@@ -1,3 +1,5 @@
+# nice noise http://lodev.org/cgtutor/randomnoise.html
+
 define [],() ->
   CMAP = (width,height) ->
     size = width*height
@@ -38,7 +40,7 @@ define [],() ->
       { from : 0.90, to : 1.00, from_color : 0xFFFFFF, to_color : 0xFFFFFF, specular : 0xaaaaaa, bump_from : 0.90, bump_to : 1.00 },
     ],
     [
-      { from : 0.0 , to : 1.0 , from_color : 0xAAAAAA, to_color : 0xCCCCCC, specular : 0x000000, bump_from : 0.0 , bump_to : 0.5 },
+      { from : 0.0 , to : 1.0 , from_color : 0x000000, to_color : 0xFFFFFF, specular : 0x000000, bump_from : 0.0 , bump_to : 1.0 },
     ],
     [
       { from : 0.0 , to : 0.5 , from_color : 0xFFFFFF, to_color : 0xFFFFFF, specular : 0x555555, bump_from : 0.4 , bump_to : 0.5 },
@@ -54,8 +56,7 @@ define [],() ->
 
   interpolate_color = (from,to,val) ->
     from_rgb = split_hex_color_to_rbg(from)
-    to_rgb = split_hex_color_to_rbg(from)
-
+    to_rgb = split_hex_color_to_rbg(to)
     rgb = 
       r : from_rgb.r +  val*(to_rgb.r - from_rgb.r)
       g : from_rgb.g +  val*(to_rgb.g - from_rgb.g)
