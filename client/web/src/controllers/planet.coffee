@@ -38,7 +38,7 @@ define ['../services/renderers','underscore','../utils/hmap','../utils/cmap','..
         map : texture
         #bumpMap : bumpmap
         #bumpScale:   bump_scale
-        #specularMap: spec
+        specularMap: spec
         #specular: new THREE.Color('grey')
 
     earth = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 24),material)

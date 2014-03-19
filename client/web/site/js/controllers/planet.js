@@ -24,7 +24,8 @@
       bumpmap = new THREE.DataTexture(cdata.bmap.data, map_width, map_height);
       bumpmap.needsUpdate = true;
       material = new THREE.MeshPhongMaterial({
-        map: texture
+        map: texture,
+        specularMap: spec
       });
       earth = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 24), material);
       scene.add(earth);
