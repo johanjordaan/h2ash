@@ -69,7 +69,7 @@ define ['underscore','../utils/rnd'],(_,rnd) ->
     
     while(size >= 1)
         value += bilinear_filter(noise, x, y, size) * size;
-        size /= 2;
+        size /= 4;
     
     return value
 
@@ -84,9 +84,9 @@ define ['underscore','../utils/rnd'],(_,rnd) ->
     return zoomed_noise
 
   turbulence2_noise = (noise,size) ->
-    x_period = 0
-    y_period = 3
-    turbo_power = 5
+    x_period = 10
+    y_period = 10
+    turbo_power = 6
     turbo_size = size  
 
     zoomed_noise = []
@@ -97,9 +97,9 @@ define ['underscore','../utils/rnd'],(_,rnd) ->
 
       x_v = x * x_period / noise.width 
       y_v = y * y_period / noise.height
-      turbo = turbo_power * turbulence(noise,x, y, turbo_size) / noise.width
+      turbo = turbo_power * turbulence(noise,x, y, turbo_size) / size/10
       xy_v = x_v + y_v + turbo
-      v = noise.width*Math.abs(Math.sin( (xy_v)* 3.14159) )
+      v = Math.abs(Math.sin( (xy_v)* 3.14159) )
       
       zoomed_noise[i] = v
       i = i + 1
@@ -123,7 +123,7 @@ define ['underscore','../utils/rnd'],(_,rnd) ->
     noise = new HMAP(width,height,generate_noise(width,height))
     zoomed_noise = new HMAP(width,height,zoom(noise,16))
     smoothed_noise = new HMAP(width,height,smooth_noise(noise,8))
-    tnoise = new HMAP(width,height,turbulence2_noise(noise,32))
+    tnoise = new HMAP(width,height,turbulence2_noise(noise,64))
     ntnoise = normalise(tnoise)
 
 
