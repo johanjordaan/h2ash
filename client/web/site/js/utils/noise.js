@@ -87,12 +87,8 @@
       }
       return zoomed_noise;
     };
-    turbulence2_noise = function(noise, size) {
-      var i, turbo, turbo_power, turbo_size, v, x, x_period, x_v, xy_v, y, y_period, y_v, zoomed_noise;
-      x_period = 10;
-      y_period = 10;
-      turbo_power = 6;
-      turbo_size = size;
+    turbulence2_noise = function(noise, x_period, y_period, power, size) {
+      var i, turbo, v, x, x_v, xy_v, y, y_v, zoomed_noise;
       zoomed_noise = [];
       i = 0;
       while (i < noise.size) {
@@ -100,7 +96,7 @@
         x = i % noise.width;
         x_v = x * x_period / noise.width;
         y_v = y * y_period / noise.height;
-        turbo = turbo_power * turbulence(noise, x, y, turbo_size) / size / 10;
+        turbo = power * turbulence(noise, x, y, size) / size / 30;
         xy_v = x_v + y_v + turbo;
         v = Math.abs(Math.sin(xy_v * 3.14159));
         zoomed_noise[i] = v;
@@ -125,16 +121,14 @@
       _ref1 = _.range(noise.width * noise.height);
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
         i = _ref1[_j];
-        ret_val.data[i] = (noise.data[i] - Math.abs(min)) / (max - min);
+        ret_val.data[i] = (noise.data[i] - min) / (max - min);
       }
       return ret_val;
     };
-    return generate = function(width, height) {
-      var noise, ntnoise, smoothed_noise, tnoise, zoomed_noise;
+    return generate = function(width, height, x_period, y_period, power, size) {
+      var noise, ntnoise, tnoise;
       noise = new HMAP(width, height, generate_noise(width, height));
-      zoomed_noise = new HMAP(width, height, zoom(noise, 16));
-      smoothed_noise = new HMAP(width, height, smooth_noise(noise, 8));
-      tnoise = new HMAP(width, height, turbulence2_noise(noise, 64));
+      tnoise = new HMAP(width, height, turbulence2_noise(noise, x_period, y_period, power, size));
       ntnoise = normalise(tnoise);
       return ntnoise;
     };

@@ -6,14 +6,22 @@
     var animate, render, renderers;
     renderers = {};
     render = function() {
-      var renderer, renderer_key, _i, _len, _ref, _results;
+      var p, renderer, renderer_key, v, vector, _i, _len, _ref, _results;
       _ref = _.keys(renderers);
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         renderer_key = _ref[_i];
         renderer = renderers[renderer_key];
         renderer.update();
-        _results.push(renderer.renderer.render(renderer.scene, renderer.camera));
+        renderer.renderer.clear();
+        renderer.renderer.render(renderer.scene, renderer.camera);
+        p = new THREE.Projector();
+        vector = new THREE.Vector3(3000, -3000, 3000);
+        v = p.projectVector(vector, renderer.camera);
+        renderer.sceneOrtho.children[0].position.x = 160 * .6 * v.x;
+        renderer.sceneOrtho.children[0].position.y = 120 * .6 * v.y;
+        renderer.renderer.clearDepth();
+        _results.push(renderer.renderer.render(renderer.sceneOrtho, renderer.cameraOrtho));
       }
       return _results;
     };
@@ -23,7 +31,7 @@
     };
     return function() {
       return {
-        create_renderer: function(name, width, height, scene, camera, update) {
+        create_renderer: function(name, width, height, scene, sceneOrtho, camera, cameraOrtho, update) {
           var renderer;
           renderer = {};
           if (__indexOf.call(_.keys(renderers), name) >= 0) {
@@ -33,11 +41,14 @@
           }
           renderer.setSize(width, height);
           renderer.setClearColor(0x000000, 1);
+          renderer.autoClear = false;
           renderers[name] = {
             active: true,
             renderer: renderer,
             camera: camera,
+            cameraOrtho: cameraOrtho,
             scene: scene,
+            sceneOrtho: sceneOrtho,
             update: update
           };
           return renderers[name];

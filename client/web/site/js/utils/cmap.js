@@ -16,21 +16,21 @@
     split_hex_color_to_rbg = function(hex_color) {
       var rgb;
       return rgb = {
-        r: (hex_color & 0xFF0000) >> 16,
-        g: (hex_color & 0x00FF00) >> 8,
+        r: (hex_color & 0xFF0000) >>> 16,
+        g: (hex_color & 0x00FF00) >>> 8,
         b: hex_color & 0x0000FF
       };
     };
     combine_rgb_into_hex_color = function(rgb) {
-      return (rgb.r << 16) + (rgb.g << 8) + rgb.b;
+      return ((rgb.r & 0xFF) << 16) + ((rgb.g & 0xFF) << 8) + (rgb.b & 0xFF);
     };
-    pixel = function(cmap, i, hex_color) {
+    pixel = function(cmap, i, hex_color, alpha) {
       var rgb;
       rgb = split_hex_color_to_rbg(hex_color);
       cmap.data[0 + i * 4] = rgb.r;
       cmap.data[1 + i * 4] = rgb.g;
       cmap.data[2 + i * 4] = rgb.b;
-      return cmap.data[3 + i * 4] = 0xff;
+      return cmap.data[3 + i * 4] = alpha;
     };
     types = [
       [
@@ -39,14 +39,18 @@
           to: 0.5,
           from_color: 0x3299CC,
           to_color: 0x3299CC,
-          specular: 0x555555,
+          from_alpha: 0x00,
+          to_alpha: 0xFF,
+          specular: 0xFFFFFF,
           bump_from: 0.5,
           bump_to: 0.5
         }, {
           from: 0.5,
           to: 0.95,
           from_color: 0x8B4513,
-          to_color: 0x5C4033,
+          to_color: 0x5C4013,
+          from_alpha: 0xFF,
+          to_alpha: 0xFF,
           specular: 0x000000,
           bump_from: 0.5,
           bump_to: 0.95
@@ -55,6 +59,8 @@
           to: 1.00,
           from_color: 0xFFFFFF,
           to_color: 0xFFFFFF,
+          from_alpha: 0xFF,
+          to_alpha: 0xFF,
           specular: 0xaaaaaa,
           bump_from: 0.95,
           bump_to: 1.00
@@ -62,25 +68,31 @@
       ], [
         {
           from: 0.0,
-          to: 0.4,
+          to: 0.8,
           from_color: 0x0000AA,
           to_color: 0x0000AA,
+          from_alpha: 0xFF,
+          to_alpha: 0xFF,
           specular: 0x555555,
           bump_from: 0.4,
           bump_to: 0.4
         }, {
-          from: 0.4,
-          to: 0.9,
+          from: 0.8,
+          to: 0.95,
           from_color: 0x009900,
           to_color: 0x003300,
+          from_alpha: 0xFF,
+          to_alpha: 0xFF,
           specular: 0x000000,
           bump_from: 0.4,
           bump_to: 0.90
         }, {
-          from: 0.90,
+          from: 0.95,
           to: 1.00,
           from_color: 0xFFFFFF,
           to_color: 0xFFFFFF,
+          from_alpha: 0xFF,
+          to_alpha: 0xFF,
           specular: 0xaaaaaa,
           bump_from: 0.90,
           bump_to: 1.00
@@ -89,8 +101,10 @@
         {
           from: 0.0,
           to: 1.0,
-          from_color: 0x000000,
-          to_color: 0xFFFFFF,
+          from_color: 0x333333,
+          to_color: 0xAAAAAA,
+          from_alpha: 0xFF,
+          to_alpha: 0xFF,
           specular: 0x000000,
           bump_from: 0.0,
           bump_to: 1.0
@@ -101,6 +115,8 @@
           to: 0.5,
           from_color: 0xFFFFFF,
           to_color: 0xFFFFFF,
+          from_alpha: 0xFF,
+          to_alpha: 0xFF,
           specular: 0x555555,
           bump_from: 0.4,
           bump_to: 0.5
@@ -109,6 +125,8 @@
           to: 0.95,
           from_color: 0x8B4513,
           to_color: 0x5C4033,
+          from_alpha: 0xFF,
+          to_alpha: 0xFF,
           specular: 0x000000,
           bump_from: 0.5,
           bump_to: 0.95
@@ -117,6 +135,8 @@
           to: 1.00,
           from_color: 0xFFFFFF,
           to_color: 0xFFFFFF,
+          from_alpha: 0xFF,
+          to_alpha: 0xFF,
           specular: 0xaaaaaa,
           bump_from: 0.95,
           bump_to: 1.00
@@ -127,6 +147,8 @@
           to: 0.5,
           from_color: 0xFF3333,
           to_color: 0xFF6666,
+          from_alpha: 0xFF,
+          to_alpha: 0xFF,
           specular: 0x555555,
           bump_from: 0.4,
           bump_to: 0.5
@@ -135,6 +157,8 @@
           to: 0.95,
           from_color: 0xFF4513,
           to_color: 0xFF4033,
+          from_alpha: 0xFF,
+          to_alpha: 0xFF,
           specular: 0x000000,
           bump_from: 0.5,
           bump_to: 0.95
@@ -143,9 +167,47 @@
           to: 1.00,
           from_color: 0xFFFFFF,
           to_color: 0xFFFFFF,
+          from_alpha: 0xFF,
+          to_alpha: 0xFF,
           specular: 0xaaaaaa,
           bump_from: 0.95,
           bump_to: 1.00
+        }
+      ], [
+        {
+          from: 0.5,
+          to: 1.0,
+          from_color: 0xFFFFFF,
+          to_color: 0xFFFFFF,
+          from_alpha: 0x00,
+          to_alpha: 0xFF,
+          specular: 0x000000,
+          bump_from: 0.0,
+          bump_to: 0.0
+        }
+      ], [
+        {
+          from: 0.3,
+          to: 1.0,
+          from_color: 0x8B4513,
+          to_color: 0x8B4513,
+          from_alpha: 0x00,
+          to_alpha: 0xFF,
+          specular: 0x000000,
+          bump_from: 0.0,
+          bump_to: 0.0
+        }
+      ], [
+        {
+          from: 0.3,
+          to: 1.0,
+          from_color: 0x0000FF,
+          to_color: 0x0000FF,
+          from_alpha: 0x00,
+          to_alpha: 0xFF,
+          specular: 0x000000,
+          bump_from: 0.0,
+          bump_to: 0.0
         }
       ]
     ];
@@ -174,7 +236,7 @@
       return ret_val;
     };
     return generate = function(hmap, index) {
-      var band, c, cmaps, i, new_bmap, new_cmap, new_smap, type, _i, _j, _len, _len1, _ref;
+      var band, c, c_n, cmaps, i, new_bmap, new_cmap, new_smap, type, _i, _j, _len, _len1, _ref;
       new_cmap = new CMAP(hmap.width, hmap.height);
       new_smap = new CMAP(hmap.width, hmap.height);
       new_bmap = new CMAP(hmap.width, hmap.height);
@@ -186,9 +248,10 @@
         for (_j = 0, _len1 = type.length; _j < _len1; _j++) {
           band = type[_j];
           if (c >= band.from && c < band.to) {
-            pixel(new_cmap, i, interpolate_color(band.from_color, band.to_color, c));
-            pixel(new_smap, i, band.specular);
-            pixel(new_bmap, i, scale_color(0xFFFFFF, interpolate(band.bump_from, band.bump_to, c)));
+            c_n = (c - band.from) / (band.to - band.from);
+            pixel(new_cmap, i, interpolate_color(band.from_color, band.to_color, c_n), interpolate(band.from_alpha, band.to_alpha, c_n));
+            pixel(new_smap, i, band.specular, 0xFF);
+            pixel(new_bmap, i, scale_color(0xFFFFFF, interpolate(band.bump_from, band.bump_to, c_n)), 0xFF);
           }
         }
         i = i + 1;
