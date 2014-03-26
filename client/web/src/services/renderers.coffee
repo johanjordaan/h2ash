@@ -10,13 +10,34 @@ define ['THREE','underscore'],(THREE,_) ->
       renderer.renderer.clear()
       renderer.renderer.render renderer.scene,renderer.camera
       
+
+      #p = new THREE.Projector()
+      #o = p.projectScene(renderer.scene,renderer.camera)
+      #debugger
+
+
       p = new THREE.Projector()
       vector = new THREE.Vector3( 3000, -3000, 3000 )
       v = p.projectVector(vector,renderer.camera)
-      renderer.sceneOrtho.children[0].position.x = 160*.6*v.x
-      renderer.sceneOrtho.children[0].position.y = 120*.6*v.y
-      #renderer.sceneOrtho.children[0].position.x = 0
-      #renderer.sceneOrtho.children[0].position.y = 0
+      debugger
+      renderer.sceneOrtho.children[0].position.x = 160*v.x
+      renderer.sceneOrtho.children[0].position.y = 120*v.y
+      renderer.sceneOrtho.children[0].position.z = 0
+
+      #renderer.cameraOrtho.position = renderer.camera.position.clone()
+      #renderer.cameraOrtho.position.add(new THREE.Vector3(120,120,0))
+
+      #renderer.cameraOrtho.rotation = renderer.camera.rotation.clone()
+      
+      #renderer.cameraOrtho.lookAt()
+      #renderer.sceneOrtho.matrixWorldInverse = renderer.camera.matrixWorldInverse.clone()
+      #renderer.sceneOrtho.projectionMatrix =  renderer.camera.projectionMatrix.clone()
+      #renderer.cameraOrtho.projectionMatrix = renderer.camera.projectionMatrix.clone()
+      #renderer.cameraOrtho.matrixWorldInverse = renderer.camera.matrixWorldInverse.clone()
+
+      
+      #renderer.cameraOrtho.rotation = renderer.camera.rotation.clone()
+
 
       renderer.renderer.clearDepth()
       renderer.renderer.render renderer.sceneOrtho, renderer.cameraOrtho

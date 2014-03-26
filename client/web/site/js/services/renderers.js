@@ -18,8 +18,10 @@
         p = new THREE.Projector();
         vector = new THREE.Vector3(3000, -3000, 3000);
         v = p.projectVector(vector, renderer.camera);
-        renderer.sceneOrtho.children[0].position.x = 160 * .6 * v.x;
-        renderer.sceneOrtho.children[0].position.y = 120 * .6 * v.y;
+        debugger;
+        renderer.sceneOrtho.children[0].position.x = 160 * v.x;
+        renderer.sceneOrtho.children[0].position.y = 120 * v.y;
+        renderer.sceneOrtho.children[0].position.z = 0;
         renderer.renderer.clearDepth();
         _results.push(renderer.renderer.render(renderer.sceneOrtho, renderer.cameraOrtho));
       }
