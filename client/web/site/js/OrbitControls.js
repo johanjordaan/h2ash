@@ -116,6 +116,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 	var mouseUpEvent = { type : 'mouseup' };
   var mouseDownEvent = { type : 'mousedown' };
   var mouseMoveEvent = { type : 'mousemove' };
+  var mousedblclickEvent = { type : 'mousedblclick' };
 	var mouseWheelEvent = { type : 'mousewheel' };
 	var touchstartEvent = { type : 'touchstart' };
 	var touchendEvent = { type : 'touchend' };
@@ -628,11 +629,17 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	}
 
+	function onMouseDblClick(event) {
+		scope.event = event;
+		scope.dispatchEvent( mousedblclickEvent );
+	}
+
 	this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
 	this.domElement.addEventListener( 'mousedown', onMouseDown, false );
 	this.domElement.addEventListener( 'mousemove', onMouseMove, false );
 	this.domElement.addEventListener( 'mouseup', onMouseUp, false );
 	this.domElement.addEventListener( 'mousewheel', onMouseWheel, false );
+	this.domElement.addEventListener( 'dblclick', onMouseDblClick, false );	
 	this.domElement.addEventListener( 'DOMMouseScroll', onMouseWheel, false ); // firefox
 
 	this.domElement.addEventListener( 'touchstart', touchstart, false );

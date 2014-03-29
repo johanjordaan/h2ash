@@ -37,9 +37,9 @@
         {
           from: 0.0,
           to: 0.5,
-          from_color: 0x3299CC,
+          from_color: 0x000000,
           to_color: 0x3299CC,
-          from_alpha: 0x00,
+          from_alpha: 0xFF,
           to_alpha: 0xFF,
           specular: 0xFFFFFF,
           bump_from: 0.5,

@@ -30,7 +30,7 @@ define [],() ->
 
   types = [
     [
-      { from : 0.0 , to : 0.5 , from_color : 0x3299CC, to_color : 0x3299CC, from_alpha : 0x00, to_alpha: 0xFF, specular : 0xFFFFFF, bump_from : 0.5 , bump_to : 0.5 },
+      { from : 0.0 , to : 0.5 , from_color : 0x000000, to_color : 0x3299CC, from_alpha : 0xFF, to_alpha: 0xFF, specular : 0xFFFFFF, bump_from : 0.5 , bump_to : 0.5 },
       { from : 0.5 , to : 0.95, from_color : 0x8B4513, to_color : 0x5C4013, from_alpha : 0xFF, to_alpha: 0xFF, specular : 0x000000, bump_from : 0.5 , bump_to : 0.95 },
       { from : 0.95, to : 1.00, from_color : 0xFFFFFF, to_color : 0xFFFFFF, from_alpha : 0xFF, to_alpha: 0xFF, specular : 0xaaaaaa, bump_from : 0.95, bump_to : 1.00 },
     ],
