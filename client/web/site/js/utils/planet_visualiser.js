@@ -20,8 +20,7 @@
         bumpMap: bumpmap,
         bumpScale: bump_scale,
         specularMap: spec,
-        specular: new THREE.Color('grey'),
-        transparent: true
+        specular: new THREE.Color('grey')
       });
       planet = new THREE.Mesh(new THREE.SphereGeometry(planet_size, 24, 24), material);
       if ((clouds_ind != null) && clouds_ind) {

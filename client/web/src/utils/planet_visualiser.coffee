@@ -23,7 +23,7 @@ define ['underscore','../utils/cmap','../utils/noise'], (_,cmap,noise) ->
         bumpScale:   bump_scale
         specularMap: spec
         specular: new THREE.Color('grey')
-        transparent: true
+        #transparent: true
 
     planet = new THREE.Mesh(new THREE.SphereGeometry(planet_size, 24, 24),material)
 

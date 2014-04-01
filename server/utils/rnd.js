@@ -2,8 +2,6 @@
 (function() {
   var rnd, _;
 
-  _ = require('underscore');
-
   rnd = {
     lcg_parm: {
       seed: new Date().getTime(),
@@ -61,6 +59,7 @@
   };
 
   if (typeof module !== "undefined" && module !== null) {
+    _ = require('underscore');
     module.exports = rnd;
   }
 

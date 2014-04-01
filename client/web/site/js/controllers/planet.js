@@ -2,7 +2,7 @@
 (function() {
   define(['OrbitControls', '../utils/planet_visualiser', '../game_scene'], function(orbit, planet_visualiser, GS) {
     return function($scope) {
-      var ambient_light, circle1, circle2, circleGeometry, directional_light, geometry, icon_geometry, icon_material, material, mesh, moon, moon_go, moon_icon, planet, planet2, planet2_go, planet2_icon, planet_go, planet_icon, ship, ship_geometry, ship_go, ship_icon, ship_material;
+      var ambient_light, circle1, circle2, circleGeometry, directional_light, geometry, icon_geometry, icon_material, m1, material, mesh, moon, moon_go, moon_icon, planet, planet2, planet2_go, planet2_icon, planet_go, planet_icon, ship, ship_geometry, ship_go, ship_icon, ship_material;
       $scope.idx = 0;
       $scope.x_period = 0;
       $scope.y_period = 0;
@@ -61,6 +61,9 @@
       $scope.gs.add(moon_go, planet_go);
       ship_icon = new THREE.Mesh(icon_geometry, icon_material);
       ship_geometry = new THREE.CylinderGeometry(0, 10, 30, 4, 1);
+      m1 = new THREE.Matrix4();
+      m1.makeRotationX(-1 * Math.PI / 2);
+      ship_geometry.applyMatrix(m1);
       ship_material = new THREE.MeshLambertMaterial({
         color: 0xffffff,
         shading: THREE.FlatShading

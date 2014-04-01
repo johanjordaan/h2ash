@@ -18,32 +18,31 @@
         if (icon != null) {
           this.icon = new GameIcon(icon);
         }
-        this.v = new THREE.Vector3();
-        this.last_update = "";
+        this.position = this.object.position.clone();
+        this.velocity = new THREE.Vector3();
+        this.rotation = this.object.rotation.clone();
+        this.angular_velocity = new THREE.Vector2();
+        this.last_update = Date.now();
         this.target = null;
+        this.direction = null;
         this.vector_to_target = new THREE.Vector3();
       }
 
       GameObject.prototype.set_direction = function(direction) {
         this.direction = direction;
+        return this.target = null;
       };
 
       GameObject.prototype.set_target = function(target) {
-        return call_backend(set_target, function() {
-          return this.target = target;
-        });
+        this.target = target;
       };
 
-      GameObject.prototype.set_velocity = function(velocity) {
-        return call_backend(set_velocity, function() {
-          return this.velocity = velocity;
-        });
-      };
+      GameObject.prototype.set_velocity = function(velocity) {};
 
       GameObject.prototype.update = function() {
         if (this.direction != null) {
-          debugger;
-          this.object.position.add(this.direction.clone().multiplyScalar(1));
+          this.speed = 1;
+          this.object.translateOnAxis(this.direction, this.speed * 1);
         }
         if (this.update_fn != null) {
           return this.update_fn();
@@ -89,11 +88,12 @@
       }
 
       GameScene.prototype.dbl_click = function(e) {
-        var direction, v, x, y;
-        x = (e.target.event.layerX / this.width) * 2 - 1;
-        y = -((e.target.event.layerY / this.height) * 2 - 1);
-        v = new THREE.Vector3(x, y, 0);
-        direction = this.projector.unprojectVector(v.clone(), this.visual.camera.clone()).negate().normalize();
+        var direction, v, x, y, z;
+        x = e.target.event.layerX - (this.width / 2);
+        y = e.target.event.layerY - (this.height / 2);
+        z = (this.width / 2) / Math.tan(this.visual.camera.fov / 180 * Math.PI);
+        v = new THREE.Vector3(x, -y, -z);
+        direction = v.clone().normalize().applyQuaternion(this.visual.camera.quaternion);
         return this.active_object.set_direction(direction);
       };
 
@@ -141,7 +141,12 @@
             camera_object_vector = object_position.clone().sub(camera_position);
             camera_object_direction = camera_object_vector.normalize();
             v = this.projector.projectVector(object_position.clone(), this.visual.camera);
-            _results.push(object.icon.object.position.set((this.width / 2) * v.x, (this.height / 2) * v.y, -20));
+            if (v.z < 1) {
+              object.icon.object.visible = true;
+              _results.push(object.icon.object.position.set((this.width / 2) * v.x, (this.height / 2) * v.y, -20));
+            } else {
+              _results.push(object.icon.object.visible = false);
+            }
           } else {
             _results.push(void 0);
           }

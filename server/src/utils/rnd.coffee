@@ -1,5 +1,3 @@
-_ = require 'underscore'
-
 rnd = 
 
   lcg_parm : 
@@ -52,6 +50,7 @@ rnd =
     @random = _saved
 
 if module?
+  _ = require 'underscore'
   module.exports = rnd
 
 if define?

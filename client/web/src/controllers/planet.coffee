@@ -65,6 +65,9 @@ define ['OrbitControls','../utils/planet_visualiser','../game_scene'], (orbit,pl
 
     ship_icon = new THREE.Mesh( icon_geometry, icon_material )
     ship_geometry = new THREE.CylinderGeometry( 0, 10, 30, 4, 1 )
+    m1 = new THREE.Matrix4()
+    m1.makeRotationX( -1*Math.PI/2)
+    ship_geometry.applyMatrix(m1)
     ship_material =  new THREE.MeshLambertMaterial( { color:0xffffff, shading: THREE.FlatShading } )
     ship = new THREE.Mesh( ship_geometry, ship_material )
     ship.position.set(0,0,200)
