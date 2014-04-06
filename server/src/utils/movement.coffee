@@ -27,11 +27,11 @@ movement =
 
     _get_target_direction : () ->
       if @target?
-        return @position.clone().sub(@target.position).normalize()
+        return @target.position.clone().sub(@position).normalize()
       else if @target_position?
-        return @position.clone().sub(@target_position).normalize()
+        return @target_position.clone().sub(@position).normalize()
       else 
-        return @direction
+        return @direction.clone()
 
     _get_target_position : () ->
       if @target?
@@ -78,6 +78,7 @@ movement =
       # Unit vector describing the exis of rotation the vector
       #
       k = @direction.clone().cross(@_get_target_direction()).normalize()
+      #k = @_get_target_direction().cross(@direction).normalize()
 
       # Calculate all the constants
       #
@@ -101,7 +102,7 @@ movement =
         _target_time = time
 
       if time > _target_time
-        return
+        return  
 
       # Calculate how much time has passed since the last update
       #
@@ -109,7 +110,10 @@ movement =
       # Calculate the curent direction to the target
       #
       current_target_direction = @_get_target_direction()
-      angular_distance = current_target_direction.angleTo(@direction)
+      angular_distance = @direction.angleTo(current_target_direction)
+
+      #console.log @position,@direction,current_target_direction,angular_distance
+      #console.log '----',time,_target_time
 
       # If we are not pointed in the direction of the target then rotate towards
       # the target
@@ -135,9 +139,12 @@ movement =
 
       # We are pointed in the direction of the target so apply the required translation
       #    
-      else  
-        @last_update += delta 
-        @_update_translation(delta)
+      else
+        if @speed >0   
+          @last_update += delta 
+          @_update_translation(delta)
+        else
+          @last_update = _target_time
         
       
 

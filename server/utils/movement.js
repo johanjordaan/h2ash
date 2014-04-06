@@ -48,11 +48,11 @@
 
       Movable.prototype._get_target_direction = function() {
         if (this.target != null) {
-          return this.position.clone().sub(this.target.position).normalize();
+          return this.target.position.clone().sub(this.position).normalize();
         } else if (this.target_position != null) {
-          return this.position.clone().sub(this.target_position).normalize();
+          return this.target_position.clone().sub(this.position).normalize();
         } else {
-          return this.direction;
+          return this.direction.clone();
         }
       };
 
@@ -111,7 +111,7 @@
         }
         delta = time - this.last_update;
         current_target_direction = this._get_target_direction();
-        angular_distance = current_target_direction.angleTo(this.direction);
+        angular_distance = this.direction.angleTo(current_target_direction);
         if (angular_distance > 0.01 && this.angular_speed > 0) {
           if (delta > this.rotation_granularity) {
             this._update_translation(this.rotation_granularity);
@@ -125,8 +125,12 @@
             return this.update(this.last_update + delta, _target_time);
           }
         } else {
-          this.last_update += delta;
-          return this._update_translation(delta);
+          if (this.speed > 0) {
+            this.last_update += delta;
+            return this._update_translation(delta);
+          } else {
+            return this.last_update = _target_time;
+          }
         }
       };
 
