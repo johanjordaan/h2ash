@@ -15,7 +15,7 @@ new_movable = () ->
 
 check_vector = (v1,v2) ->
   distance = v1.distanceTo(v2)
-  distance.should.be.below(0.001)
+  distance.should.be.below(0.01)
 
 
 describe 'movement', () ->
@@ -51,7 +51,7 @@ describe 'movement', () ->
         check_vector(o.direction,(new THREE.Vector3(1,1,0).normalize() ))
         o.last_update.should.equal(45000)
 
-      it 'should rotate to (0.7,0.7,0) ', () ->
+      it 'should rotate to (0.7,-0.7,0) ', () ->
         o = new_movable()
         o.set_target_position(new THREE.Vector3(0,-10,0))
         o.set_angular_speed((Math.PI/180)*1) 
@@ -66,4 +66,13 @@ describe 'movement', () ->
         o.update(99000)
         check_vector(o.direction,(new THREE.Vector3(0,1,0).normalize() ))
         o.last_update.should.equal(99000)
+
+      it 'should rotate to (1,1,-1) ', () ->
+        o = new_movable()
+        o.set_target_position(new THREE.Vector3(100,100,-100))
+        o.set_angular_speed((Math.PI/180)*1) 
+        o.update(99000)
+        check_vector(o.direction,(new THREE.Vector3(1,1,-1).normalize() ))
+        o.last_update.should.equal(99000)
+
 

@@ -25,7 +25,7 @@
   check_vector = function(v1, v2) {
     var distance;
     distance = v1.distanceTo(v2);
-    return distance.should.be.below(0.001);
+    return distance.should.be.below(0.01);
   };
 
   describe('movement', function() {
@@ -63,7 +63,7 @@
           check_vector(o.direction, new THREE.Vector3(1, 1, 0).normalize());
           return o.last_update.should.equal(45000);
         });
-        it('should rotate to (0.7,0.7,0) ', function() {
+        it('should rotate to (0.7,-0.7,0) ', function() {
           var o;
           o = new_movable();
           o.set_target_position(new THREE.Vector3(0, -10, 0));
@@ -72,13 +72,22 @@
           check_vector(o.direction, new THREE.Vector3(1, -1, 0).normalize());
           return o.last_update.should.equal(45000);
         });
-        return it('should rotate to (0,1,0) ', function() {
+        it('should rotate to (0,1,0) ', function() {
           var o;
           o = new_movable();
           o.set_target_position(new THREE.Vector3(0, 100, 0));
           o.set_angular_speed((Math.PI / 180) * 1);
           o.update(99000);
           check_vector(o.direction, new THREE.Vector3(0, 1, 0).normalize());
+          return o.last_update.should.equal(99000);
+        });
+        return it('should rotate to (1,1,-1) ', function() {
+          var o;
+          o = new_movable();
+          o.set_target_position(new THREE.Vector3(100, 100, -100));
+          o.set_angular_speed((Math.PI / 180) * 1);
+          o.update(99000);
+          check_vector(o.direction, new THREE.Vector3(1, 1, -1).normalize());
           return o.last_update.should.equal(99000);
         });
       });

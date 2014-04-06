@@ -1,4 +1,4 @@
-define ['underscore','THREE','OrbitControls'],(_,THREE,OrbitControls) ->
+define ['underscore','THREE','OrbitControls','movement'],(_,THREE,OrbitControls,movement) ->
   
   class GameIcon
     constructor : (@object) ->
@@ -9,50 +9,22 @@ define ['underscore','THREE','OrbitControls'],(_,THREE,OrbitControls) ->
       if icon?
         @icon = new GameIcon(icon)  
       
-      @position = @object.position.clone()
-      @velocity = new THREE.Vector3()
-      @rotation = @object.rotation.clone()
-      @angular_velocity = new THREE.Vector2()   # pi,phi
+      direction = new THREE.Vector3(0,0,-1)  
+      max_speed = 100 # 1 m per second
+      max_angular_speed = Math.PI/4  #180 deg per second
+      now = Date.now()
+      @movement = new movement.Movable(@object.position,direction,max_speed,max_angular_speed,now)
+      @movement.set_speed(100)
+      @movement.set_angular_speed(Math.PI/4)
 
-      @last_update = Date.now()
-      
-      @target = null
-      @direction = null
-      
-      @vector_to_target = new THREE.Vector3()
+    update : (date) ->
 
-    set_direction : (@direction) -> 
-      @target = null
-      #call_backend set_direction,() ->
-      #  @direction = direction 
-
-    set_target : (@target) ->
-      #call_backend set_target,() ->
-      #  @target = target
-
-    set_velocity : (velocity) ->
-      #call_backend set_velocity,() ->
-      #  @velocity = velocity
 
     update : () ->
-      #v1 = (new THREE.Vector3(3,0,0)).normalize()
-      #v2 = (new THREE.Vector3(3,3,0)).normalize()
-      #k = v1.clone().cross(v2).normalize()
-      #theta = v1.clone().angleTo(v2)
-
-      #vr_1 = v1.clone().multiplyScalar(Math.cos(theta)) 
-      #vr_2 = (k.clone().cross(v1)).multiplyScalar(Math.sin(theta))
-
-      #kdotv = k.clone().dot(v1)
-      #vr_3 = k.clone().multiplyScalar(kdotv*(1-Math.cos(theta)))
-
-      #vr = vr_1.clone().add(vr_2).add(vr_3)
-      #debugger
-
-
-      if @direction?
-        @speed = 1
-        @object.translateOnAxis(@direction,@speed * 1)
+      @movement.update(Date.now())
+      #@object.position.copy(@movement.position)
+      #if @movement.target_position? 
+      #  @object.lookAt @movement.target_position.clone().negate()
 
       if @update_fn?
         @update_fn()
@@ -105,7 +77,7 @@ define ['underscore','THREE','OrbitControls'],(_,THREE,OrbitControls) ->
       z =  (@width / 2) / Math.tan(@visual.camera.fov / 180 * Math.PI) 
       v = new THREE.Vector3(x, -y , -z)
       direction = v.clone().normalize().applyQuaternion(@visual.camera.quaternion)
-      @active_object.set_direction(direction)
+      @active_object.movement.set_target_position(direction.multiplyScalar(1000))
 
     attach_to_element : (element) ->
       element.append @renderer.domElement    
@@ -144,12 +116,11 @@ define ['underscore','THREE','OrbitControls'],(_,THREE,OrbitControls) ->
           camera_object_vector = object_position.clone().sub(camera_position)
           camera_object_direction = camera_object_vector.normalize()
           
-          #angle = camera_direction.angleTo(camera_object_direction)
           v = @projector.projectVector(object_position.clone(),@visual.camera)
           
           if v.z < 1
             object.icon.object.visible = true
-            object.icon.object.position.set( (@width/2)*v.x, (@height/2)*v.y, -20 )
+            object.icon.object.position.set( (@width/2)*v.x, (@height/2)*v.y, -1 )
           else
             object.icon.object.visible = false
 

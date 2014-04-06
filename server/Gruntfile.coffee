@@ -9,7 +9,7 @@ module.exports = (grunt) ->
     copy :
       target :
         files :
-          '../client/web/site/js/': ['utils/rnd.js','utils/trig.js']
+          '../client/web/site/js/': ['utils/rnd.js','utils/trig.js','utils/movement.js']
     #,
     #coffee :
     #  glob_to_multiple :

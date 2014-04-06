@@ -9,7 +9,8 @@
       'domReady': '../bower_components/requirejs-domready/domReady',
       'underscore': '../bower_components/underscore/underscore',
       'trig': '../js/utils/trig',
-      'THREE': '../bower_components/three.js/three.min'
+      'THREE': '../bower_components/three.js/three.min',
+      'movement': '../js/utils/movement'
     },
     shim: {
       'bootstrap': {

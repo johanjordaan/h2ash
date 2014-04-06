@@ -8,6 +8,7 @@ require.config
       'underscore' : '../bower_components/underscore/underscore'
       'trig' : '../js/utils/trig'
       'THREE' : '../bower_components/three.js/three.min'
+      'movement' : '../js/utils/movement'
 
   shim :  
     'bootstrap' :
